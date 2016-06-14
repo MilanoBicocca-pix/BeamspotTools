@@ -2,6 +2,7 @@
 
 import ROOT
 from array import array
+from collections import OrderedDict
 from RecoVertex.BeamSpotProducer.BeamspotTools.objects.BeamSpot import BeamSpot
 from RecoVertex.BeamSpotProducer.BeamspotTools.objects.IOV import IOV
 from RecoVertex.BeamSpotProducer.BeamspotTools.utils.fillRunDict import labelByFill
@@ -87,8 +88,11 @@ class Payload(object):
                 except:
                     toadd = { bs.Run : {lsrange : bs} }
                     beamspots.update( toadd )
-                   
-        return beamspots
+        
+        
+        sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(beamspots.keys()))
+           
+        return sortedbeamspots
     
     def getProcessedLumiSections(self):
         '''
