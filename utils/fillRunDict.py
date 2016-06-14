@@ -19,8 +19,8 @@ def _createFillList():
                        'RecoVertex'            , 
                        'BeamSpotProducer'      ,
                        'python'                ,
-                       'workflow'              ,
-                       'objects'               ,
+                       'BeamspotTools'         ,
+                       'data'                  ,
                        'fills.txt'             ])
         
     with open(fname) as f:
