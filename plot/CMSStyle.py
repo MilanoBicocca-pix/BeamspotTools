@@ -24,7 +24,8 @@ relExtraDY = 1.2
 
 extraOverCmsTextSize  = 0.8
 
-lumi_13TeV = 'Run2015 B, C, D'
+lumi_13TeV = 'Run 2016'
+# lumi_13TeV = 'Run2015 B, C, D'
 #lumi_13TeV = "Run2015B"
 #lumi_13TeV = "Run2015C"
 #lumi_13TeV = "Run2015D"

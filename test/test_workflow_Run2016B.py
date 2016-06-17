@@ -62,7 +62,7 @@ variables = [
 ]
 
 for ivar in variables: 
-    histos.append(myPayload.plot(ivar , -999999, 999999, savePdf = True, dilated = 5, byFill = True, returnHisto = True))
+    histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 5, byFill = False, returnHisto = True))
 
 histo_file = ROOT.TFile.Open('histos.root', 'recreate')
 histo_file.cd()

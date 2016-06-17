@@ -120,9 +120,9 @@ def _splitByMagneticFieldJson(histo, json3p8, json2p8, json0, irun, frun):
     if json2p8: myjson2p8 = readJson(fileName = json2p8)
     if json0  : myjson0   = readJson(fileName = json0  )
     
-    runs3p8T   = sorted([i for i in myjson3p8.keys() if i >= irun and i <= frun])
-    runs2p8T   = sorted([i for i in myjson2p8.keys() if i >= irun and i <= frun])
-    runs0T     = sorted([i for i in myjson0  .keys() if i >= irun and i <= frun])
+    runs3p8T  = sorted([i for i in myjson3p8.keys() if i >= irun and i <= frun])
+    runs2p8T  = sorted([i for i in myjson2p8.keys() if i >= irun and i <= frun])
+    runs0T    = sorted([i for i in myjson0  .keys() if i >= irun and i <= frun])
     runsOther = []
 
     histo0T = histo.Clone()
@@ -144,7 +144,7 @@ def _splitByMagneticFieldJson(histo, json3p8, json2p8, json0, irun, frun):
         histoOther: runsOther,
     }
     
-    for k, v in mydict.items():
+    for k, v in mydict.iteritems():
         k.Reset()
         add = False
         for ibin in range(k.GetNbinsX()):
