@@ -53,7 +53,7 @@ class Payload(object):
             # make it read .dat files as dumped from the database as well
             if 'Beam Spot Data' in line:
                 singleFits.append([self.lines[j].rstrip() \
-                                   for j in range(i-3, i+13)])
+                                   for j in range(i-2, i+13)])
 
         return singleFits    
 
@@ -185,12 +185,14 @@ class Payload(object):
         beforeLast = lambda x : (x.RunLast  <= fRun and x.LumiLast  <= fLS)
         
         # get the list of BS objects
-        myBS = {k:v for k, v in self.fromTextToBS(iov = True).items()
+        myBS = {k:v for k, v in self.fromTextToBS(iov = True).iteritems()
                 if afterFirst(k) and beforeLast(k)}
+
 
         runs = list(set(v.Run for v in myBS.values()))
         
         byrun = False
+
         if len(runs) == len(myBS):
             byrun = True
         
@@ -305,23 +307,65 @@ class Payload(object):
 
 if __name__ == '__main__':
 
-    file = '/afs/cern.ch/user/f/fiorendi/public/beamSpot/'\
-           'beamspot_firstData_run247324_byLumi_all_lumi98_107.txt'
-    file = '/afs/cern.ch/user/f/fiorendi/public/beamSpot/bs_weighted_results_246908.txt'
+    #file = '/afs/cern.ch/user/f/fiorendi/public/beamSpot/'\
+    #       'beamspot_firstData_run247324_byLumi_all_lumi98_107.txt'
+    
+    #file = '/afs/cern.ch/user/f/fiorendi/public/beamSpot/bs_weighted_results_246908.txt'
+   
+   
+   
+   
+   
+   
+   
+    file = ['/afs/cern.ch/work/m/manzoni/public/september2016rereco/perIoV/2016Bv2/total_bs_2016Bv2_%d.txt' %i for i in range(1279)]
+    
     myPL = Payload(file)
-    
-    allLines = myPL.splitBySingleFit()
-    
     allBs = myPL.fromTextToBS()
 
-    allBs2 = myPL.fromTextToBS(iov = True)
+    histosTXT = []
     
-    myPL.plot('X'         , 246908, 246908, savePdf = True)
-    myPL.plot('Y'         , 246908, 246908, savePdf = True)
-    myPL.plot('Z'         , 246908, 246908, savePdf = True)
-    myPL.plot('sigmaZ'    , 246908, 246908, savePdf = True)
-    myPL.plot('dxdz'      , 246908, 246908, savePdf = True)
-    myPL.plot('dydz'      , 246908, 246908, savePdf = True)
-    myPL.plot('beamWidthX', 246908, 246908, savePdf = True)
-    myPL.plot('beamWidthY', 246908, 246908, savePdf = True)
+    histosTXT.append(myPL.plot('X'         , 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('Y'         , 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('Z'         , 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('sigmaZ'    , 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('dxdz'      , 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('dydz'      , 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('beamWidthX', 0, 999999999999, returnHisto = True))
+    histosTXT.append(myPL.plot('beamWidthY', 0, 999999999999, returnHisto = True))
+
+
+
+    file = '/afs/cern.ch/user/f/fiorendi/public/reference_prompt_BeamSpotObjects_2016_LumiBased_v0_offline.txt'
+        
+    myPL = Payload(file)    
+    allBs = myPL.fromTextToBS()
+
+    histosDB = []
+    
+    histosDB.append(myPL.plot('X'         , 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('Y'         , 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('Z'         , 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('sigmaZ'    , 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('dxdz'      , 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('dydz'      , 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('beamWidthX', 0, 999999999999, returnHisto = True))
+    histosDB.append(myPL.plot('beamWidthY', 0, 999999999999, returnHisto = True))
+
+    
+    ROOT.gROOT.SetBatch(True)
+    for h1, h2 in zip(histosTXT, histosDB):
+        h1.SetMarkerColor(ROOT.kBlue)
+        h2.SetMarkerColor(ROOT.kYellow)
+        h2.SetMarkerSize(0.3)
+        h1.Draw()
+        h2.Draw('SAME')
+        ROOT.gPad.SaveAs(h1.GetName() + '.pdf')
+
+
+
+
+
+
+
 
