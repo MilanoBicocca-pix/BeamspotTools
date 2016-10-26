@@ -185,6 +185,7 @@ class BeamSpot(object):
             self.IOVEndTime    = int  ( payload[ 2].split('GMT')[1] )
             self.IOVfirst      = int  ( payload[ 3].split()[1] )
             self.IOVlast       = int  ( payload[ 3].split()[3] )
+            #self.IOVlast       = self.IOVfirst # DONT DO THIS
             self.Type          = int  ( payload[ 4].split()[1] )
     
             self.X             = float( payload[ 5].split()[1] )
@@ -226,35 +227,37 @@ class BeamSpot(object):
     
         if any(['Beam Spot Data' in i for i in  payload]):
             
-            self.Run           = int  ( payload[ 1].split()[-1]                              )
-            self.IOVfirst      = int  ( payload[ 0].split('LumiSection')[1].split()[0]       )
+            # FIXME! format changed!
+            self.Run           = int  ( payload[ 0].split()[2]                               )
+#             self.IOVfirst      = int  ( payload[ 0].split('LumiSection')[1].split()[0]       )
+            self.IOVfirst      = int  ( payload[ 0].split('-')[-1]                           )
             self.IOVlast       = self.IOVfirst
-            self.Type          = int  ( payload[ 5].split('=')[1]                            )
+            self.Type          = int  ( payload[ 4].split('=')[1]                            )
     
-            self.X             = float( payload[ 6].split('=')[1].split('+/-')[0]            )
-            self.Y             = float( payload[ 7].split('=')[1].split('+/-')[0]            )
-            self.Z             = float( payload[ 8].split('=')[1].split('+/-')[0]            )
+            self.X             = float( payload[ 5].split('=')[1].split('+/-')[0]            )
+            self.Y             = float( payload[ 6].split('=')[1].split('+/-')[0]            )
+            self.Z             = float( payload[ 7].split('=')[1].split('+/-')[0]            )
                
-            self.sigmaZ        = float( payload[ 9].split('=')[1].split('+/-')[0]            )
-            self.dxdz          = float( payload[10].split('=')[1].split('+/-')[0]            )
-            self.dydz          = float( payload[11].split('=')[1].split('+/-')[0]            )
+            self.sigmaZ        = float( payload[ 8].split('=')[1].split('+/-')[0]            )
+            self.dxdz          = float( payload[ 9].split('=')[1].split('+/-')[0]            )
+            self.dydz          = float( payload[10].split('=')[1].split('+/-')[0]            )
                
-            self.beamWidthX    = float( payload[12].split('=')[1].split('+/-')[0]            )
-            self.beamWidthY    = float( payload[13].split('=')[1].split('+/-')[0]            )
+            self.beamWidthX    = float( payload[11].split('=')[1].split('+/-')[0]            )
+            self.beamWidthY    = float( payload[12].split('=')[1].split('+/-')[0]            )
             
-            self.Xerr          = float( payload[ 6].split('=')[1].split('+/-')[1].split()[0] )
-            self.Yerr          = float( payload[ 7].split('=')[1].split('+/-')[1].split()[0] )
-            self.Zerr          = float( payload[ 8].split('=')[1].split('+/-')[1].split()[0] )
-            self.sigmaZerr     = float( payload[ 9].split('=')[1].split('+/-')[1].split()[0] )
+            self.Xerr          = float( payload[ 5].split('=')[1].split('+/-')[1].split()[0] )
+            self.Yerr          = float( payload[ 6].split('=')[1].split('+/-')[1].split()[0] )
+            self.Zerr          = float( payload[ 7].split('=')[1].split('+/-')[1].split()[0] )
+            self.sigmaZerr     = float( payload[ 8].split('=')[1].split('+/-')[1].split()[0] )
             
-            self.dxdzerr       = float( payload[10].split('=')[1].split('+/-')[1].split()[0] )
-            self.dydzerr       = float( payload[11].split('=')[1].split('+/-')[1].split()[0] )
+            self.dxdzerr       = float( payload[ 9].split('=')[1].split('+/-')[1].split()[0] )
+            self.dydzerr       = float( payload[10].split('=')[1].split('+/-')[1].split()[0] )
             
-            self.beamWidthXerr = float( payload[12].split('=')[1].split('+/-')[1].split()[0] )
-            self.beamWidthYerr = float( payload[13].split('=')[1].split('+/-')[1].split()[0] )
+            self.beamWidthXerr = float( payload[11].split('=')[1].split('+/-')[1].split()[0] )
+            self.beamWidthYerr = float( payload[12].split('=')[1].split('+/-')[1].split()[0] )
                 
-            self.EmittanceX    = float( payload[14].split('=')[1].split()[0]                 )
-            self.EmittanceY    = float( payload[15].split('=')[1].split()[0]                 )
+            self.EmittanceX    = float( payload[13].split('=')[1].split()[0]                 )
+            self.EmittanceY    = float( payload[14].split('=')[1].split()[0]                 )
 
     def Dump(self, file, mode = 'a'):
         '''
