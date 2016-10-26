@@ -64,8 +64,9 @@ def labelByTime(histo, granularity = 1, fromRun = False):
     granularity
       0 --> years
       1 --> months
-      2 --> days
-      3 --> hours
+      2 --> weeks
+      3 --> days
+      4 --> hours
     to be implemented
     '''
 
@@ -86,32 +87,77 @@ def labelByTime(histo, granularity = 1, fromRun = False):
     
     if fromRun: 
         labelByFill(histo)
+        
+    creationYearPrecedent  = -99
+    creationMonthPrecedent = -99
+    creationDayPrecedent   = -99
+    creationHourPrecedent  = -99
     
-    timeGrainDict = {0 : 'year', 1 : 'month', 2 : 'day', 3 : 'hour'}
-    timeGrain = timeGrainDict[granularity]
-    
-    
-    creationTimePrecedent = -99
-    
-    for ibin in range(histo.GetNbinsX()):
+    for j, ibin in enumerate(range(histo.GetNbinsX())):
 
         ifill = histo.GetXaxis().GetBinLabel(ibin+1)        
-
+                
         if ifill == '':  
             continue
+            
+        myfill = fillDict[int(ifill)]
         
-        creationTime = getattr(fillDict[int(ifill)].CreateTime, timeGrain)        
+        creationYear  = getattr(myfill.CreateTime, 'year' )        
+        creationMonth = getattr(myfill.CreateTime, 'month')        
+        creationDay   = getattr(myfill.CreateTime, 'day'  )        
+        creationHour  = getattr(myfill.CreateTime, 'hour' )        
         
-        if creationTime == creationTimePrecedent:
+        if granularity==0 and creationYear == creationYearPrecedent:
             histo.GetXaxis().SetBinLabel(ibin + 1, '')
             continue
 
-        creationTimePrecedent = creationTime
-        
+        if granularity==1 and creationMonth == creationMonthPrecedent:
+            histo.GetXaxis().SetBinLabel(ibin + 1, '')
+            continue
+
+        if (granularity==2 or granularity==3) and creationDay == creationDayPrecedent:
+            histo.GetXaxis().SetBinLabel(ibin + 1, '')
+            continue
+
+        if granularity==4 and creationHour == creationHourPrecedent:
+            histo.GetXaxis().SetBinLabel(ibin + 1, '')
+            continue
+
+
+        if granularity == 0:
+            creationTime = str(creationYear)
+
         if granularity == 1:
-            creationTime = monthDict[creationTime]
+            if creationMonthPrecedent != creationMonth:
+                creationTime = monthDict[creationMonth]
+            else:
+                creationTime = ''
+
+        if granularity == 2:
+            if creationMonthPrecedent != creationMonth:
+                creationTime = str(creationDay) + ' ' + monthDict[creationMonth] + ' ---'
+            elif creationDay%7==0:
+                creationTime = str(creationDay)
+            else:
+                creationTime = ''
+
+        if granularity == 3:
+            if creationMonthPrecedent != creationMonth:
+                creationTime = str(creationDay) + ' ' + monthDict[creationMonth] + ' ---'
+            elif creationDayPrecedent != creationDay:
+                creationTime = str(creationDay)
+            else:
+                creationTime == ''
         
+        if granularity == 4:
+            creationTime = '%d/%d - h%d' %(creationDay, creationMonth, creationHour)
+
         histo.GetXaxis().SetBinLabel(ibin + 1, str(creationTime))
+
+        creationYearPrecedent  = creationYear 
+        creationMonthPrecedent = creationMonth
+        creationDayPrecedent   = creationDay  
+        creationHourPrecedent  = creationHour 
  
  
 def _splitByMagneticFieldJson(histo, json3p8, json2p8, json0, irun, frun):
