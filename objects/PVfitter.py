@@ -1,0 +1,182 @@
+#!/usr/bin/python
+
+import iminuit
+import numpy as np
+from scipy.stats import multivariate_normal
+from time import time
+from MultiVariateGauss import MultivariateGaussianFitterNLL
+
+
+class PVfitter(MultivariateGaussianFitterNLL):
+    '''
+    '''
+    def __init__(self, positions, verbose=False):
+        self.events = positions
+        self.positions = np.mean(positions, axis=0)
+        self.widths = np.std(positions, axis=0)
+        self.thetas = np.array([0., 0., 0.]).astype('float64')
+        self.verbose = verbose
+        
+    def fitPositions(self):
+        minimizer = iminuit.Minuit(
+            self.nll,
+            pedantic=False,
+            x=self.positions[0],
+            y=self.positions[1],
+            z=self.positions[2],
+            theta_x=self.thetas[0],
+            theta_y=self.thetas[1],
+            theta_z=self.thetas[2],
+            sigma_x=self.widths[0],
+            sigma_y=self.widths[1],
+            sigma_z=self.widths[2],
+            fix_theta_x=True,      
+            fix_theta_y=True,      
+            fix_theta_z=True,      
+            fix_sigma_x=True,      
+            fix_sigma_y=True,      
+            fix_sigma_z=True,      
+        )
+        
+        # run the minimization            
+        minimizer.migrad()
+        
+        self.positions[0] = minimizer.values['x']
+        self.positions[1] = minimizer.values['y']
+        self.positions[2] = minimizer.values['z']
+        
+        return minimizer
+
+    def fitWidths(self):
+        minimizer = iminuit.Minuit(
+            self.nll,
+            pedantic=False,
+            x=self.positions[0],
+            y=self.positions[1],
+            z=self.positions[2],
+            theta_x=self.thetas[0],
+            theta_y=self.thetas[1],
+            theta_z=self.thetas[2],
+            sigma_x=self.widths[0],
+            sigma_y=self.widths[1],
+            sigma_z=self.widths[2],
+            fix_x=True,      
+            fix_y=True,      
+            fix_z=True,      
+            fix_theta_x=True,      
+            fix_theta_y=True,      
+            fix_theta_z=True,      
+        )
+        
+        # run the minimization            
+        minimizer.migrad()
+        
+        self.widths[0] = minimizer.values['sigma_x']
+        self.widths[1] = minimizer.values['sigma_y']
+        self.widths[2] = minimizer.values['sigma_z']
+        
+        return minimizer
+
+    def fitThetas(self):
+        minimizer = iminuit.Minuit(
+            self.nll,
+            pedantic=False,
+            x=self.positions[0],
+            y=self.positions[1],
+            z=self.positions[2],
+            theta_x=self.thetas[0],
+            theta_y=self.thetas[1],
+            theta_z=self.thetas[2],
+            sigma_x=self.widths[0],
+            sigma_y=self.widths[1],
+            sigma_z=self.widths[2],
+            fix_x=True,      
+            fix_y=True,      
+            fix_z=True,      
+            fix_theta_z=True, # no tilt along the z axis   
+            fix_sigma_x=True,      
+            fix_sigma_y=True,      
+            fix_sigma_z=True,      
+        )
+        
+        # run the minimization            
+        minimizer.migrad()
+        
+        self.thetas[0] = minimizer.values['theta_x']
+        self.thetas[1] = minimizer.values['theta_y']
+        self.thetas[2] = minimizer.values['theta_z']
+        
+        return minimizer
+    
+    def fit(self):
+        self.fitPositions()
+        self.fitWidths()
+        self.fitThetas()
+
+        minimizer = iminuit.Minuit(
+            self.nll,
+            pedantic=False,
+            x=self.positions[0],
+            y=self.positions[1],
+            z=self.positions[2],
+            theta_x=self.thetas[0],
+            theta_y=self.thetas[1],
+            theta_z=self.thetas[2],
+            sigma_x=self.widths[0],
+            sigma_y=self.widths[1],
+            sigma_z=self.widths[2],
+            fix_theta_z=True, # no tilt along the z axis   
+        ) 
+        
+        # run the minimization            
+        minimizer.migrad()        
+        
+        return minimizer
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+
+    # ---------- GENERATE EVENTS -----------
+    # generate events with somewhat realistic parameters
+    ntoys = 1000000
+          
+    # centroid       position
+    pos = np.array([0.067, 0.109, .805,])
+    
+    # build the covariance matrix from angles and widths,
+    # easier to read
+    cov = MultivariateGaussianFitterNLL._compute_covariance_matrix(
+        theta_x=170.e-6, 
+        theta_y=170.e-6, 
+        theta_z=0., 
+        sigma_x=2.e-3, 
+        sigma_y=2.e-3, 
+        sigma_z=4.
+    )
+    
+    # fix random seed
+    rng = np.random.RandomState(1986)
+    
+    # generate multivariate normal
+    mvg = rng.multivariate_normal(pos, cov, ntoys)
+    
+    print 'generated %d toys' %ntoys
+    
+    # create PVfitter object
+    beamspot = PVfitter(mvg)
+    
+    # fit
+    results = beamspot.fit()
+    
+    # print results
+    print '\n========== FIT RESULTS ============'
+    for k in ['x', 'y', 'z', 'theta_x', 'theta_y', 'theta_z', 
+              'sigma_x', 'sigma_y', 'sigma_z']:
+        print '%s:\t %.5f +/- %.6f [cm]' %(k, results.values[k], results.errors[k])
+    
