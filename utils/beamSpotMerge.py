@@ -4,7 +4,9 @@ import ROOT
 from math import sqrt, pow
 from numpy import average
 from collections import OrderedDict # only with python >= 2.7
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.BeamSpot import BeamSpot
+import sys
+sys.path.append('..')
+from objects.BeamSpot import BeamSpot
 
 def cleanAndSort(fullList, cleanBadFits = True):
     '''

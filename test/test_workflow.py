@@ -1,12 +1,14 @@
 import os
 from collections import OrderedDict
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.Payload     import Payload
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.beamSpotMerge import cleanAndSort
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.beamSpotMerge import splitByDrift
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.beamSpotMerge import averageBeamSpot
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.readJson      import readJson
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.compareLists  import compareLists
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.getFiles      import get_files
+import sys
+sys.path.append('..')
+from objects.Payload     import Payload
+from utils.beamSpotMerge import cleanAndSort
+from utils.beamSpotMerge import splitByDrift
+from utils.beamSpotMerge import averageBeamSpot
+from utils.readJson      import readJson
+from utils.compareLists  import compareLists
+from utils.getFiles      import get_files
 
 # input parameters
 runNumber = 247324

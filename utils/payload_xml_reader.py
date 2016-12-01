@@ -2,12 +2,14 @@
 
 from math import sqrt
 from subprocess import PIPE, Popen
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.BeamSpot import BeamSpot
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.DBEntry  import DBEntry
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.IOV      import IOV
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.Payload  import Payload
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.condDbCommands import getListOfUploadedIOV
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.condDbCommands import dumpXMLPayloadByHash
+import sys
+sys.path.append('..')
+from objects.BeamSpot import BeamSpot
+from objects.DBEntry  import DBEntry
+from objects.IOV      import IOV
+from objects.Payload  import Payload
+from utils.condDbCommands import getListOfUploadedIOV
+from utils.condDbCommands import dumpXMLPayloadByHash
 
 
 # databaseTag = 'BeamSpotObjects_PCL_byLumi_v0_prompt'

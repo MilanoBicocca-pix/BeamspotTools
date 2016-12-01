@@ -1,12 +1,13 @@
 import os
-import sys
 import select
 import ROOT
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.Payload     import Payload
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.beamSpotMerge import cleanAndSort
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.beamSpotMerge import splitByDrift
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.beamSpotMerge import averageBeamSpot
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.getFileList   import get_files
+import sys
+sys.path.append('..')
+from objects.Payload     import Payload
+from utils.beamSpotMerge import cleanAndSort
+from utils.beamSpotMerge import splitByDrift
+from utils.beamSpotMerge import averageBeamSpot
+from utils.getFileList   import get_files
 
 files  = get_files('/afs/cern.ch/work/m/manzoni/public/bs_2016B/PromptReco-v1/*'           , prependPath=True)
 files += get_files('/afs/cern.ch/work/m/manzoni/public/bs_2016B/PromptReco-v2-upTo274443/*', prependPath=True)

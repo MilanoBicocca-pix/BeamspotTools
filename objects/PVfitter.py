@@ -38,12 +38,15 @@ class PVfitter(MultivariateGaussianFitterNLL):
             fix_sigma_z=True,      
         )
         
-        # run the minimization            
-        minimizer.migrad()
-        
-        self.positions[0] = minimizer.values['x']
-        self.positions[1] = minimizer.values['y']
-        self.positions[2] = minimizer.values['z']
+        try:
+            # run the minimization            
+            minimizer.migrad()
+            
+            self.positions[0] = minimizer.values['x']
+            self.positions[1] = minimizer.values['y']
+            self.positions[2] = minimizer.values['z']
+        except:
+            print 'ERROR! NLL Minimization failed'
         
         return minimizer
 
@@ -67,13 +70,16 @@ class PVfitter(MultivariateGaussianFitterNLL):
             fix_theta_y=True,      
             fix_theta_z=True,      
         )
-        
-        # run the minimization            
-        minimizer.migrad()
-        
-        self.widths[0] = minimizer.values['sigma_x']
-        self.widths[1] = minimizer.values['sigma_y']
-        self.widths[2] = minimizer.values['sigma_z']
+
+        try:       
+            # run the minimization            
+            minimizer.migrad()
+            
+            self.widths[0] = minimizer.values['sigma_x']
+            self.widths[1] = minimizer.values['sigma_y']
+            self.widths[2] = minimizer.values['sigma_z']
+        except:
+            print 'ERROR! NLL Minimization failed'
         
         return minimizer
 
@@ -99,12 +105,14 @@ class PVfitter(MultivariateGaussianFitterNLL):
             fix_sigma_z=True,      
         )
         
-        # run the minimization            
-        minimizer.migrad()
-        
-        self.thetas[0] = minimizer.values['theta_x']
-        self.thetas[1] = minimizer.values['theta_y']
-        self.thetas[2] = minimizer.values['theta_z']
+        try:
+            # run the minimization            
+            minimizer.migrad()
+            self.thetas[0] = minimizer.values['theta_x']
+            self.thetas[1] = minimizer.values['theta_y']
+            self.thetas[2] = minimizer.values['theta_z']        
+        except:
+            print 'ERROR! NLL Minimization failed'
         
         return minimizer
     
@@ -128,8 +136,21 @@ class PVfitter(MultivariateGaussianFitterNLL):
             fix_theta_z=True, # no tilt along the z axis   
         ) 
         
-        # run the minimization            
-        minimizer.migrad()        
+        try:       
+            # run the minimization            
+            minimizer.migrad() 
+            self.positions[0] = minimizer.values['x']
+            self.positions[1] = minimizer.values['y']
+            self.positions[2] = minimizer.values['z']
+            self.widths[0] = minimizer.values['sigma_x']
+            self.widths[1] = minimizer.values['sigma_y']
+            self.widths[2] = minimizer.values['sigma_z']
+            self.thetas[0] = minimizer.values['theta_x']
+            self.thetas[1] = minimizer.values['theta_y']
+            self.thetas[2] = minimizer.values['theta_z']
+       
+        except:
+            print 'ERROR! NLL Minimization failed'
         
         return minimizer
 

@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 import sys
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.unpackList import unpackList
+sys.path.append('..')
+from utils.unpackList import unpackList
 
 if sys.version_info < (2,6,0):
     import json

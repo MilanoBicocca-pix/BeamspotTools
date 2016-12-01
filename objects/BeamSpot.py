@@ -4,7 +4,7 @@ import os
 import datetime
 from math import pow, sqrt
 import xml.etree.ElementTree as et
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.IOV import IOV
+from IOV import IOV
 
 class BeamSpot(object):
     '''
@@ -181,8 +181,8 @@ class BeamSpot(object):
         if any(['Runnumber' in i for i in  payload]):
         
             self.Run           = int  ( payload[ 0].split()[1] )
-            self.IOVBeginTime  = int  ( payload[ 1].split('GMT')[1] )
-            self.IOVEndTime    = int  ( payload[ 2].split('GMT')[1] )
+            self.IOVBeginTime  = int  ( float(payload[ 1].split('GMT')[1]) )
+            self.IOVEndTime    = int  ( float(payload[ 2].split('GMT')[1]) )
             self.IOVfirst      = int  ( payload[ 3].split()[1] )
             self.IOVlast       = int  ( payload[ 3].split()[3] )
             #self.IOVlast       = self.IOVfirst # DONT DO THIS

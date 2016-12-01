@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
 from subprocess import PIPE, Popen
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.errorMessages import *
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.DBEntry import DBEntry
+import sys
+sys.path.append('..')
+from utils.errorMessages import *
+from objects.DBEntry import DBEntry
 
 def getLastUploadedIOV(databaseTag, tagName, logger = None, maxIOV = 2e13):
     '''

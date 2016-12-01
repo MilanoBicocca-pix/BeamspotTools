@@ -1,5 +1,7 @@
 import os
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.Fill import Fill
+import sys
+sys.path.append('..')
+from objects.Fill import Fill
 
 '''
 Dictionary to connect the number of (stable) LHC Fill to
@@ -14,12 +16,16 @@ def _createFillList():
     
     fillDict = {}
     
-    fname = '/'.join( [os.environ['CMSSW_BASE'], 
-                       'src'                   , 
-                       'RecoVertex'            , 
-                       'BeamSpotProducer'      ,
-                       'python'                ,
-                       'BeamspotTools'         ,
+#     fname = '/'.join( [os.environ['CMSSW_BASE'], 
+#                        'src'                   , 
+#                        'RecoVertex'            , 
+#                        'BeamSpotProducer'      ,
+#                        'python'                ,
+#                        'BeamspotTools'         ,
+#                        'data'                  ,
+#                        'fills.txt'             ])
+
+    fname = '/'.join( ['..', 
                        'data'                  ,
                        'fills.txt'             ])
         

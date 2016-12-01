@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
-from RecoVertex.BeamSpotProducer.workflow.utils.readJson import readJson
-from RecoVertex.BeamSpotProducer.workflow.utils.unpackList import unpackList
+import sys
+sys.path.append('..')
+utils.readJson import readJson
+utils.unpackList import unpackList
 
 def group(lslist, groupLength = 10, maxGap = 1):
     '''

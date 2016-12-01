@@ -3,9 +3,13 @@
 import ROOT
 from array import array
 from collections import OrderedDict
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.BeamSpot import BeamSpot
-from RecoVertex.BeamSpotProducer.BeamspotTools.objects.IOV import IOV
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.fillRunDict import labelByFill
+from BeamSpot import BeamSpot
+from IOV import IOV
+import sys
+sys.path.append('..')
+from utils.fillRunDict import labelByFill
+
+
 
 class Payload(object):
     '''
@@ -288,7 +292,7 @@ class Payload(object):
         histo.GetYaxis().SetTitleOffset(1.5 - 0.2 * dilated)
         histo.GetYaxis().SetRangeUser(mymin, mymax)
        
-        c1 = ROOT.TCanvas('', '', 1400 + 600 * dilated, 800)
+        c1 = ROOT.TCanvas('c1', 'c1', 1400 + 600 * dilated, 800)
         ROOT.gPad.SetGridx()
         ROOT.gPad.SetGridy()
         gridLineWidth = int(max(1, ROOT.gStyle.GetGridWidth() / max(1., dilated)))
@@ -299,6 +303,7 @@ class Payload(object):
             labelByFill(histo)
             histo.GetXaxis().SetTitle('Fill')
         histo.Draw()
+        ROOT.gPad.Update()
         if savePdf: 
             c1.SaveAs('BS_plot_%d_%d_%s.pdf' %(iRun, fRun, variable))
 
