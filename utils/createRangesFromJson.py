@@ -2,8 +2,8 @@
 
 import sys
 sys.path.append('..')
-utils.readJson import readJson
-utils.unpackList import unpackList
+from utils.readJson import readJson
+from utils.unpackList import unpackList
 
 def group(lslist, groupLength = 10, maxGap = 1):
     '''
