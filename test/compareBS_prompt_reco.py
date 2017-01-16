@@ -29,7 +29,7 @@ ROOT.gStyle.SetCanvasDefH(1500) #Height of canvas
 ROOT.gStyle.SetCanvasDefW(6000) #Width of canvas
 
 
-verbosePrinting = False
+verbosePrinting = True
 doFromScratch   = True
 
 
@@ -62,13 +62,16 @@ variables = [
   'beamWidthY'
 ]
 
+runstring = '2016Bv2' 
 if doFromScratch:
-  r_files  = get_files('/afs/cern.ch/work/f/fiorendi/public/beamspot_ReRecoJune2016/PromptReco-v1/*'                 , prependPath=True)
-  r_files += get_files('/afs/cern.ch/work/f/fiorendi/public/beamspot_ReRecoJune2016/PromptReco-v2/allFromScratch/*'  , prependPath=True)
+#   r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/LegacyRepro2016/crab_jobs/crab_BS_LegacyRepro2016_Run2016G_v2/*'  , prependPath=True)
+  r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/LegacyRepro2016/crab_jobs/Run2016B_v2_NONmerged/*'  , prependPath=True)
+#   r_files += get_files('/afs/cern.ch/work/m/manzoni/public/september2016rereco/perLS/Run2016G_topup/*'  , prependPath=True)
   
-  p_files  = get_files('/afs/cern.ch/work/f/fiorendi/public/beamspot_ReRecoJune2016/noRefit-PromptReco-v1/*'  , prependPath=True)
-  p_files += get_files('/afs/cern.ch/work/f/fiorendi/public/beamspot_ReRecoJune2016/noRefit-PromptReco-v2/*'  , prependPath=True)
-  
+  p_files  = get_files('/afs/cern.ch/work/m/manzoni/public/september2016rereco/perLS/Run2016Bv2/*'        , prependPath=True)
+#   p_files += get_files('/afs/cern.ch/work/m/manzoni/public/september2016rereco/perLS/Run2016G_topup/*'  , prependPath=True)
+#   p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/LegacyRepro2016/crab_jobs/Run2016B_v2_NONmerged/*'  , prependPath=True)
+ 
   print 'start loading payloads ...'
   promptPayload = Payload(p_files)
   recoPayload   = Payload(r_files)
@@ -98,13 +101,15 @@ if doFromScratch:
       print 'Run ' + str(irun) + ': ' + s
   
   # remove from reco collection the LSs not in prompt file 
+#     import pdb; pdb.set_trace()
     for ls in LSinRecoNotInPrompt:
-#       if recoBS[irun][ls]:
-      del recoBS[irun][ls]
+      if recoBS[irun][ls]:
+        del recoBS[irun][ls]
   
   # remove from prompt collection the LSs not in reco file 
     for ls in LSinPromptNotInReco:
-      del promptBS[irun][ls]
+      if promptBS[irun][ls]:
+        del promptBS[irun][ls]
   
   
   newPromptBS = {k:v for k, v in promptBS.iteritems() if k in runsCommon}
@@ -131,12 +136,13 @@ if doFromScratch:
   
   
   # dump the list into a txt file, and save histos into root files
-  promptname = 'prompt_payloads.txt'
-  reconame   = 'reco_payloads.txt'
+  promptname = 'prompt_payloads' + runstring + '.txt'
+  reconame   = 'reco_payloads' + runstring + '.txt'
   
   _doMerge(newPromptBS, promptname)
   _doMerge(newRecoBS  , reconame  )
   
+ 
   
   merged_payload_p = Payload(promptname)
   merged_payload_r = Payload(reconame)
@@ -148,13 +154,13 @@ if doFromScratch:
       p_histos.append(merged_payload_p.plot(ivar , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
       r_histos.append(merged_payload_r.plot(ivar , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
   
-  _doSaveHistos( p_histos, 'histos_prompt.root' )
-  _doSaveHistos( r_histos, 'histos_reco.root'   )
+  _doSaveHistos( p_histos, 'histos_prompt' + runstring + '.root' )
+  _doSaveHistos( r_histos, 'histos_reco' + runstring + '.root'   )
   
   
 
-histo_file_p = ROOT.TFile.Open('histos_prompt.root', 'read')
-histo_file_r = ROOT.TFile.Open('histos_reco.root'  , 'read')
+histo_file_p = ROOT.TFile.Open('histos_prompt' + runstring + '.root', 'read')
+histo_file_r = ROOT.TFile.Open('histos_reco' + runstring + '.root'  , 'read')
 
 for ivar in variables: 
   print ivar
@@ -190,12 +196,12 @@ for ivar in variables:
   leg = ROOT.TLegend( 0.902, 0.6, 1.0, 0.75 )
   leg.SetFillColor(ROOT.kWhite)
   leg.SetLineColor(ROOT.kWhite)
-  leg.AddEntry(h_p   , 'Prompt'   , 'pel')
-  leg.AddEntry(h_r   , 'Refit'    , 'pel')
+  leg.AddEntry(h_p   , 'September ReReco'   , 'pel')
+  leg.AddEntry(h_r   , 'Legacy 2016'    , 'pel')
   leg.SetTextSize(0.03)
   leg.Draw('SAME')
   
   can.Update()
   can.Modified()
-  can.SaveAs(ivar + '_prompt_reco.pdf')
+  can.SaveAs('compareLegacy_September/' + runstring + '/'+ivar + '_Legacy_vs_September_' + runstring + '.pdf')
 
