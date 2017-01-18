@@ -167,7 +167,7 @@ def labelByTime(histo, granularity = 1, fromRun = False):
  
  
 def _splitByMagneticFieldJson(histo, json3p8, json2p8, json0, irun, frun):
-    from RecoVertex.BeamSpotProducer.BeamspotTools.utils.readJson import readJson
+    from utils.readJson import readJson
     if json3p8: myjson3p8 = readJson(fileName = json3p8)
     if json2p8: myjson2p8 = readJson(fileName = json2p8)
     if json0  : myjson0   = readJson(fileName = json0  )

@@ -1,7 +1,9 @@
+import sys
+sys.path.append('..')
 import ROOT
 from PlotStyle import PlotStyle
 from CMSStyle import CMS_lumi
-from RecoVertex.BeamSpotProducer.BeamspotTools.utils.fillRunDict import labelByTime, labelByFill, splitByMagneticField
+from utils.fillRunDict import labelByTime, labelByFill, splitByMagneticField
  
 ROOT.gROOT.SetBatch(False)
 ROOT.gROOT.Reset()
@@ -24,7 +26,8 @@ ROOT.gStyle.SetPadGridY(True)
 # ROOT.gStyle.SetGridWidth(1)
 ROOT.gStyle.SetLegendFont(42)
 
-file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
+# file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
+file = ROOT.TFile.Open('/Users/manzoni/Desktop/BeamspotTools/test/histos_reco.root')
 
 file.cd()
 
@@ -91,11 +94,11 @@ def saveHisto(var):
     histo0T, histo3p8T, histo2p8T, histoOther = splitByMagneticField(
         histo, 
         json    = True, 
-        json3p8 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt',
-        json2p8 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/DCSOnly/json_DCSONLY_2.8T.txt', # dummy
-        json0   = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY_noBField.txt',
+        json3p8 = 'json_DCSONLY.txt',
+        json2p8 = 'json_DCSONLY_2.8T.txt', # dummy
+        json0   = 'json_DCSONLY_noBField.txt',
     )
-    
+        
     histo0T   .SetMarkerColor(ROOT.kRed   + 1)
     histo3p8T .SetMarkerColor(ROOT.kBlack    )
     histo2p8T .SetMarkerColor(ROOT.kGreen + 1)
@@ -149,7 +152,7 @@ def saveHisto(var):
 
     ROOT.gPad.Print('BS_plot_full_by_fill_run2016B_%s.pdf' %histo.GetName())
 
-c1 = ROOT.TCanvas('', '', 3000, 1000)
+c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
     saveHisto(var)
 
