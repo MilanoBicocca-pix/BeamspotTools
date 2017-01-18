@@ -9,8 +9,6 @@ import sys
 sys.path.append('..')
 from utils.fillRunDict import labelByFill
 
-
-
 class Payload(object):
     '''
     Class meant to connect the BeamSpot fit results as saved in a typical
@@ -179,7 +177,7 @@ class Payload(object):
 
 
     def plot(self, variable, iRun, fRun, iLS = -1, fLS = 1e6, 
-             savePdf = False, returnHisto = False, dilated = 0, byFill = False):
+             savePdf = False, returnHisto = False, dilated = 0, byFill = False, unitLengthIoV = False):
         '''
         Plot a BS parameter as a function of LS.
         Allows multiple LS bins.
@@ -191,7 +189,11 @@ class Payload(object):
         # get the list of BS objects
         myBS = {k:v for k, v in self.fromTextToBS(iov = True).iteritems()
                 if afterFirst(k) and beforeLast(k)}
-
+        
+        # for the comparison to DB objects, need to put IOV first = last by hand
+        if unitLengthIoV:  
+          for ibs in myBS:  
+            ibs.LumiLast = ibs.LumiFirst
 
         runs = list(set(v.Run for v in myBS.values()))
         
@@ -287,11 +289,14 @@ class Payload(object):
         mymin = min(0.9 * ave, funcmin)
 
         histo.SetMarkerStyle(8)
+        histo.SetMarkerSize(0.3)
         histo.SetLineColor(ROOT.kRed)
         histo.SetMarkerColor(ROOT.kBlack)
         histo.GetYaxis().SetTitleOffset(1.5 - 0.2 * dilated)
         histo.GetYaxis().SetRangeUser(mymin, mymax)
-       
+        histo.SetTitleSize(0.04, 'XY')
+        histo.SetLabelSize(0.03, 'XY')
+        
         c1 = ROOT.TCanvas('c1', 'c1', 1400 + 600 * dilated, 800)
         ROOT.gPad.SetGridx()
         ROOT.gPad.SetGridy()
