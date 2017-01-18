@@ -19,7 +19,7 @@ Standalone package to handle beam spot stuff
 ```shell
   git clone git@github.com:MilanoBicocca-pix/BeamspotTools.git
   cd BeamspotTools
-  source set_environment.[c]sh   # this adds the base BeamspotTools directory to your PATH variable 
+  source set_environment.[c]sh   # this adds the base BeamspotTools directory to your PYTHONPATH variable 
 ```
 
 
