@@ -25,9 +25,13 @@ def _createFillList():
 #                        'data'                  ,
 #                        'fills.txt'             ])
 
-    fname = '/'.join( ['..', 
-                       'data'                  ,
-                       'fills.txt'             ])
+    if 'BSBASE' in os.environ.keys():
+        prepath = os.environ['BSBASE']
+    else:
+        prepath = '..'
+    fname = '/'.join( [prepath    , 
+                       'data'     ,
+                       'fills.txt'])
         
     with open(fname) as f:
         content = f.readlines()
