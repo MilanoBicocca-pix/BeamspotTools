@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append('..')
 from objects.Fill import Fill
+from collections import OrderedDict
 
 '''
 Dictionary to connect the number of (stable) LHC Fill to
@@ -14,7 +15,7 @@ A handy re-labeling function is also provided.
 
 def _createFillList():
     
-    fillDict = {}
+    fillDict = OrderedDict()
     
 #     fname = '/'.join( [os.environ['CMSSW_BASE'], 
 #                        'src'                   , 
