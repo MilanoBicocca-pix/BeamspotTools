@@ -70,8 +70,8 @@ class MultivariateGaussianFitterNLL():
         cov = self._compute_covariance_matrix(theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z)
         
         if self.verbose:
-            print 'covariance matrix', np.matrix(cov)
-            print 'determinant: ', cov.det()
+            print 'covariance matrix', cov
+            print 'determinant: ', np.linalg.det(cov) 
         
         # check singularity / inveritbility
         if np.linalg.det(cov) > 0.:
@@ -104,6 +104,63 @@ class MultivariateGaussianFitterNLL():
                                                      allow_singular=True) for i in rnevents]).sum()
         
         return nlls
+
+
+
+
+
+class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
+    '''
+    '''
+    def nll(self, x, y, z, corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz):
+        '''
+        Modeled on official CMS beam spot fit.
+        https://github.com/cms-sw/cmssw/blob/master/RecoVertex/BeamSpotProducer/src/FcnBeamSpotFitPV.cc#L59
+        '''
+        
+        if self.verbose:
+            print '\n=========='
+            print 'x                :\t', x          , '[cm]'
+            print 'y                :\t', y          , '[cm]'
+            print 'z                :\t', z          , '[cm]'
+            print 'corrxy           :\t', corrxy
+            print 'effective sigma x:\t', sigma_x_eff, '[cm]'
+            print 'effective sigma y:\t', sigma_y_eff, '[cm]'
+            print 'effective sigma z:\t', sigma_z_eff, '[cm]'
+            print 'dx/dz            :\t', dxdz
+            print 'dy/dz            :\t', dydz
+        
+        sx  = sigma_x_eff
+        sy  = sigma_y_eff
+        sz  = sigma_z_eff
+        sx2 = np.power(sigma_x_eff, 2)
+        sy2 = np.power(sigma_y_eff, 2)
+        sz2 = np.power(sigma_z_eff, 2)
+        
+        cov = np.matrix([
+            [sx2                                         , corrxy * sx * sy                            , - dxdz * (sz2-sx2) - dydz * corrxy * sx * sy],
+            [corrxy * sx * sy                            , sy2                                         , - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy],
+            [- dxdz * (sz2-sx2) - dydz * corrxy * sx * sy, - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy, sz2                                         ],
+        ]).astype(np.float64)
+        
+        if self.verbose:
+            print 'covariance matrix', cov
+            print 'determinant: ', np.linalg.det(cov) 
+        
+        # check singularity / inveritbility
+        if np.linalg.det(cov) > 0.:
+            nll = -multivariate_normal.logpdf(self.events,
+                                              mean=np.array([x, y, z]),
+                                              cov=cov).sum()
+        else:
+            print 'WARNING! Singular covariance matrix, cannot invert!'
+            return float('nan')
+
+        if self.verbose:
+            print 'nLL: ', nll
+        
+        return nll
+
 
 
 if __name__ == '__main__':
