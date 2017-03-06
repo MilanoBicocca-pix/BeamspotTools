@@ -347,7 +347,8 @@ class BeamSpot(object):
         '''
         Nice printer.
         '''
-        toWrite = 'X0         = {:3.6f} +/- {:3.4E} [cm]\n' \
+        toWrite = 'Run {} - LS {}-{}\n'\
+                  'X0         = {:3.6f} +/- {:3.4E} [cm]\n' \
                   'Y0         = {:3.6f} +/- {:3.4E} [cm]\n' \
                   'Z0         = {:3.6f} +/- {:3.4E} [cm]\n' \
                   'BeamWidthX = {:3.6f} +/- {:3.4E} [cm]\n' \
@@ -355,7 +356,8 @@ class BeamSpot(object):
                   'sigmaZ0    = {:3.6f} +/- {:3.4E} [cm]\n' \
                   'dxdz       = {:3.6E} +/- {:3.4E} [rad]\n'\
                   'dydz       = {:3.6E} +/- {:3.4E} [rad]'  \
-                  .format(self.X         , self.Xerr         ,
+                  .format(self.Run, str(self.IOVfirst), str(self.IOVlast),
+                          self.X         , self.Xerr         ,
                           self.Y         , self.Yerr         ,
                           self.Z         , self.Zerr         ,
                           self.beamWidthX, self.beamWidthXerr,

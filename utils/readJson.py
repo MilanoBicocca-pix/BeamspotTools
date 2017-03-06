@@ -4,10 +4,13 @@ import sys
 sys.path.append('..')
 from utils.unpackList import unpackList
 
-if sys.version_info < (2,6,0):
-    import json
-else:
-    import simplejson as json
+# if sys.version_info < (2,6,0):
+#     import json
+# else:
+#     import simplejson as json
+
+# RM: this should work now, else, revert back
+import json
 
 def readJson(firstRun = -1, lastRun = 99999999, fileName = '', packed = True):
     '''

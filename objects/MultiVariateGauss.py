@@ -4,13 +4,18 @@ import iminuit
 import numpy as np
 from scipy.stats import multivariate_normal
 
+# from time import time
+
 class MultivariateGaussianFitterNLL():
     '''
     Fit 3D gaussian cloud.
     '''
-    def __init__(self, events, verbose=False):
-        self.events    = events
-        self.verbose   = verbose # should use a logger...
+    def __init__(self, events, uncertainties=None, verbose=False):
+        self.events        = events
+        self.uncertainties = uncertainties
+        self.verbose       = verbose # should use a logger...
+        self.nevents       = len(self.events)/3
+        self.rnevents      = np.arange(nevents)
       
     @staticmethod
     def _compute_covariance_matrix(theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z):
@@ -81,7 +86,37 @@ class MultivariateGaussianFitterNLL():
             print 'nLL: ', nll
         
         return nll
+    
+    def nlle(self, x, y, z, theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z):
+        '''
+        '''
+        
+        #import pdb ; pdb.set_trace()
+                        
+        nlls = np.array([-multivariate_normal.logpdf(self.events[i],
+                                                     mean=np.array([x, y, z]),
+                                                     cov=self._compute_covariance_matrix(theta_x,
+                                                                                         theta_y,
+                                                                                         theta_z, 
+                                                                                         sigma_x + self.uncertainties[i][0],
+                                                                                         sigma_y + self.uncertainties[i][1],
+                                                                                         sigma_z + self.uncertainties[i][2]),
+                                                     allow_singular=True) for i in rnevents]).sum()
+        
+        return nlls
 
 
 if __name__ == '__main__':
     pass
+    
+    
+    
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append('..')
 from objects.Fill import Fill
+from collections import OrderedDict
 
 '''
 Dictionary to connect the number of (stable) LHC Fill to
@@ -14,7 +15,7 @@ A handy re-labeling function is also provided.
 
 def _createFillList():
     
-    fillDict = {}
+    fillDict = OrderedDict()
     
 #     fname = '/'.join( [os.environ['CMSSW_BASE'], 
 #                        'src'                   , 
@@ -25,9 +26,13 @@ def _createFillList():
 #                        'data'                  ,
 #                        'fills.txt'             ])
 
-    fname = '/'.join( ['..', 
-                       'data'                  ,
-                       'fills.txt'             ])
+    if 'BSBASE' in os.environ.keys():
+        prepath = os.environ['BSBASE']
+    else:
+        prepath = '..'
+    fname = '/'.join( [prepath    , 
+                       'data'     ,
+                       'fills.txt'])
         
     with open(fname) as f:
         content = f.readlines()
@@ -167,7 +172,7 @@ def labelByTime(histo, granularity = 1, fromRun = False):
  
  
 def _splitByMagneticFieldJson(histo, json3p8, json2p8, json0, irun, frun):
-    from RecoVertex.BeamSpotProducer.BeamspotTools.utils.readJson import readJson
+    from utils.readJson import readJson
     if json3p8: myjson3p8 = readJson(fileName = json3p8)
     if json2p8: myjson2p8 = readJson(fileName = json2p8)
     if json0  : myjson0   = readJson(fileName = json0  )

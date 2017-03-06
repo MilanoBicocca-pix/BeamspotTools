@@ -10,16 +10,22 @@ from MultiVariateGauss import MultivariateGaussianFitterNLL
 class PVfitter(MultivariateGaussianFitterNLL):
     '''
     '''
-    def __init__(self, positions, verbose=False):
+    def __init__(self, positions, uncertainties=None, verbose=False):
         self.events = positions
+        self.uncertainties = uncertainties
         self.positions = np.mean(positions, axis=0)
         self.widths = np.std(positions, axis=0)
         self.thetas = np.array([0., 0., 0.]).astype('float64')
         self.verbose = verbose
+        if uncertainties is not None:
+            self.fcn = self.nlle
+        else:
+            self.fcn = self.nll
+        
         
     def fitPositions(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -52,7 +58,7 @@ class PVfitter(MultivariateGaussianFitterNLL):
 
     def fitWidths(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -85,7 +91,7 @@ class PVfitter(MultivariateGaussianFitterNLL):
 
     def fitThetas(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -99,7 +105,8 @@ class PVfitter(MultivariateGaussianFitterNLL):
             fix_x=True,      
             fix_y=True,      
             fix_z=True,      
-            fix_theta_z=True, # no tilt along the z axis   
+            # fix_theta_z=True, # no tilt along the z axis   
+            limit_theta_z=(-np.pi/2., np.pi/2.), # resolve periodicity, but leave theta_z free
             fix_sigma_x=True,      
             fix_sigma_y=True,      
             fix_sigma_z=True,      
@@ -133,7 +140,8 @@ class PVfitter(MultivariateGaussianFitterNLL):
             sigma_x=self.widths[0],
             sigma_y=self.widths[1],
             sigma_z=self.widths[2],
-            fix_theta_z=True, # no tilt along the z axis   
+            #fix_theta_z=True, # no tilt along the z axis   
+            limit_theta_z=(-np.pi/2., np.pi/2.), # resolve periodicity, but leave theta_z free
         ) 
         
         try:       
@@ -165,20 +173,24 @@ if __name__ == '__main__':
 
     # ---------- GENERATE EVENTS -----------
     # generate events with somewhat realistic parameters
-    ntoys = 1000000
+    ntoys = 200000
           
     # centroid       position
-    pos = np.array([0.067, 0.109, .805,])
+#     pos = np.array([0.066, 0.094, 0.5,])
+#     pos = np.array([0., 0., 0.,])
+#     pos = np.array([1., 2., 5.,])
+    pos = np.array([1., 2., 25.,])
     
     # build the covariance matrix from angles and widths,
     # easier to read
     cov = MultivariateGaussianFitterNLL._compute_covariance_matrix(
-        theta_x=170.e-6, 
-        theta_y=170.e-6, 
-        theta_z=0., 
-        sigma_x=2.e-3, 
-        sigma_y=2.e-3, 
-        sigma_z=4.
+#         theta_x= 0.00015, #[rad]
+        theta_x= 0.15, #[rad]
+        theta_y=-0.00002, #[rad]
+        theta_z= 0.2, #[rad]
+        sigma_x= 0.0085, #[cm]
+        sigma_y= 0.0077, #[cm]
+        sigma_z= 3.4 #[cm]
     )
     
     # fix random seed
