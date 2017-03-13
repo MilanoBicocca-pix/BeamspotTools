@@ -47,27 +47,29 @@ class BeamSpot(object):
         self._computeProperWidths()
         
 
-    self _computeProperWidths(self):
+    def _computeProperWidths(self):
         '''
         Rotate back the covariance matrix by -dx/dz and -dy/dz.
         The sigma_x and sigma_y *of the luminous region itelf* are set.
         The dx/dy rotation is not corrected (but it's small).
         '''
         
-        # xx = np.pow(self.beamWidthX, 2)
-        # yy = np.pow(self.beamWidthY, 2)
-        # zz = np.pow(self.sigmaZ    , 2)
-        # xy = np.pow(self.XYerr     , 2)
-        # xz = np.pow(,2)
-        # yz = np.pow(,2)
+        # xx = np.power(self.beamWidthX, 2)
+        # yy = np.power(self.beamWidthY, 2)
+        # zz = np.power(self.sigmaZ    , 2)
+        # xy = np.power(self.XYerr     , 2)
+        # xz = np.power(,2)
+        # yz = np.power(,2)
         # cov_cms = np.matrix([
         #     [self.beamWidthX, self.XYerr,],
         #     [self.XYerr, self.beamWidthX,],
         #     [self.X, self.XYerr,self.sigmaZ**],
         # ]).astype(np.float64)
         
+        alpha = -self.dydz
+        beta  = -self.dxdz
         # actually take the algebra already done elsewhere
-        self.sigmaXtrue = np.sqrt(np.pow(self.beamWidthX, 2) - np.pow(beta, 2) * np.pow(self.sigmaZ, 2))
+        self.sigmaXtrue = np.sqrt(np.power(self.beamWidthX, 2) - np.power(beta, 2) * np.power(self.sigmaZ, 2))
         self.sigmaYtrue = self.beamWidthY + alpha * self.sigmaZ
 
         self.sigmaXtrueerr = self.sigmaXtrue * self.beamWidthXerr / max(1.e-12, self.beamWidthX)
@@ -397,8 +399,8 @@ class BeamSpot(object):
                           self.Z         , self.Zerr         ,
                           self.beamWidthX, self.beamWidthXerr,
                           self.beamWidthY, self.beamWidthYerr,
-                          self.sigmaXtrue, self.beamWidthXerr,
-                          self.sigmaYtrue, self.beamWidthYerr,
+                          self.sigmaXtrue, self.sigmaXtrueerr,
+                          self.sigmaYtrue, self.sigmaYtrueerr,
                           self.sigmaZ    , self.sigmaZerr    ,
                           self.dxdz      , self.dxdzerr      ,
                           self.dydz      , self.dydzerr      )
