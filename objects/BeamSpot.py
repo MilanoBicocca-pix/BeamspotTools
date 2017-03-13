@@ -47,29 +47,31 @@ class BeamSpot(object):
         self._computeProperWidths()
         
 
-    self _computeProperWidths(self):
+    def _computeProperWidths(self):
         '''
         Rotate back the covariance matrix by -dx/dz and -dy/dz.
         The sigma_x and sigma_y *of the luminous region itelf* are set.
         The dx/dy rotation is not corrected (but it's small).
+        The effect on sigma_z is neglected as it's small.
         '''
-        
-        # xx = np.pow(self.beamWidthX, 2)
-        # yy = np.pow(self.beamWidthY, 2)
-        # zz = np.pow(self.sigmaZ    , 2)
-        # xy = np.pow(self.XYerr     , 2)
-        # xz = np.pow(,2)
-        # yz = np.pow(,2)
-        # cov_cms = np.matrix([
-        #     [self.beamWidthX, self.XYerr,],
-        #     [self.XYerr, self.beamWidthX,],
-        #     [self.X, self.XYerr,self.sigmaZ**],
-        # ]).astype(np.float64)
-        
-        # actually take the algebra already done elsewhere
-        self.sigmaXtrue = np.sqrt(np.pow(self.beamWidthX, 2) - np.pow(beta, 2) * np.pow(self.sigmaZ, 2))
-        self.sigmaYtrue = self.beamWidthY + alpha * self.sigmaZ
 
+        alpha = -self.dydz
+        beta  = -self.dxdz
+
+        s_xx = np.power(self.beamWidthX, 2)
+        s_yy = np.power(self.beamWidthY, 2)
+        s_zz = np.power(self.sigmaZ    , 2)
+                
+        s_xz = beta  * (s_zz - s_xx) + alpha * self.XYerr
+        s_yz = alpha * (s_yy - s_zz) - beta  * self.XYerr
+        
+        s_xx_true = s_xx - 2. * beta  * s_xz + np.power(beta , 2) * s_zz
+        s_yy_true = s_yy - 2. * alpha * s_yz + np.power(alpha, 2) * s_zz
+                
+        self.sigmaXtrue = np.sqrt(max(0., s_xx_true))
+        self.sigmaYtrue = np.sqrt(max(0., s_yy_true))
+
+        # RIC: FIXME! do the error propagation properly
         self.sigmaXtrueerr = self.sigmaXtrue * self.beamWidthXerr / max(1.e-12, self.beamWidthX)
         self.sigmaYtrueerr = self.sigmaYtrue * self.beamWidthYerr / max(1.e-12, self.beamWidthY)
     
@@ -397,8 +399,8 @@ class BeamSpot(object):
                           self.Z         , self.Zerr         ,
                           self.beamWidthX, self.beamWidthXerr,
                           self.beamWidthY, self.beamWidthYerr,
-                          self.sigmaXtrue, self.beamWidthXerr,
-                          self.sigmaYtrue, self.beamWidthYerr,
+                          self.sigmaXtrue, self.sigmaXtrueerr,
+                          self.sigmaYtrue, self.sigmaYtrueerr,
                           self.sigmaZ    , self.sigmaZerr    ,
                           self.dxdz      , self.dxdzerr      ,
                           self.dydz      , self.dydzerr      )
