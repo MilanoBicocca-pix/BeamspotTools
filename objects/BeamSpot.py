@@ -4,6 +4,7 @@ import os
 import datetime
 from math import pow, sqrt
 import numpy as np
+import uncertainties as unc
 import xml.etree.ElementTree as et
 from IOV import IOV
 
@@ -44,8 +45,10 @@ class BeamSpot(object):
         self.YXerr         =  0.
         self.dxdzdydzerr   =  0.
         self.dydzdxdzerr   =  0.
-        self._computeProperWidths()
-        
+        self.sigmaXtrue    =  0.
+        self.sigmaYtrue    =  0.        
+        self.sigmaXtrueerr =  0.
+        self.sigmaYtrueerr =  0.
 
     def _computeProperWidths(self):
         '''
@@ -55,25 +58,24 @@ class BeamSpot(object):
         The effect on sigma_z is neglected as it's small.
         '''
 
-        alpha = -self.dydz
-        beta  = -self.dxdz
+        alpha = unc.ufloat(-self.dydz, self.dydzerr)
+        beta  = unc.ufloat(-self.dxdz, self.dxdzerr)
 
-        s_xx = np.power(self.beamWidthX, 2)
-        s_yy = np.power(self.beamWidthY, 2)
-        s_zz = np.power(self.sigmaZ    , 2)
+        s_xx = unc.ufloat(np.power(self.beamWidthX, 2), np.power(self.beamWidthXerr, 2))
+        s_yy = unc.ufloat(np.power(self.beamWidthY, 2), np.power(self.beamWidthYerr, 2))
+        s_zz = unc.ufloat(np.power(self.sigmaZ    , 2), np.power(self.sigmaZerr    , 2))
                 
-        s_xz = beta  * (s_zz - s_xx) + alpha * self.XYerr
-        s_yz = alpha * (s_yy - s_zz) - beta  * self.XYerr
+        s_xz = beta  * (s_zz - s_xx) + alpha * unc.ufloat(self.XYerr, self.XYerr) # 100% uncertainty
+        s_yz = alpha * (s_yy - s_zz) - beta  * unc.ufloat(self.XYerr, self.XYerr) # 100% uncertainty
         
         s_xx_true = s_xx - 2. * beta  * s_xz + np.power(beta , 2) * s_zz
         s_yy_true = s_yy - 2. * alpha * s_yz + np.power(alpha, 2) * s_zz
                 
-        self.sigmaXtrue = np.sqrt(max(0., s_xx_true))
-        self.sigmaYtrue = np.sqrt(max(0., s_yy_true))
+        self.sigmaXtrue = np.sqrt(max(0., s_xx_true.n))
+        self.sigmaYtrue = np.sqrt(max(0., s_yy_true.n))
         
-        # RIC: FIXME! do the error propagation properly
-        self.sigmaXtrueerr = self.sigmaXtrue * self.beamWidthXerr / max(1.e-12, self.beamWidthX)
-        self.sigmaYtrueerr = self.sigmaYtrue * self.beamWidthYerr / max(1.e-12, self.beamWidthY)
+        self.sigmaXtrueerr = np.sqrt(max(0., s_xx_true.s))
+        self.sigmaYtrueerr = np.sqrt(max(0., s_yy_true.s))
     
     def SetIOV(self, iov):
         '''
