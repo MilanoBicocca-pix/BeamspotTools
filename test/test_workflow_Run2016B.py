@@ -9,8 +9,8 @@ from utils.beamSpotMerge import splitByDrift
 from utils.beamSpotMerge import averageBeamSpot
 from utils.getFileList   import get_files
 
-files  = get_files('/afs/cern.ch/work/m/manzoni/public/bs_2016B/PromptReco-v1/*'           , prependPath=True)
-files += get_files('/afs/cern.ch/work/m/manzoni/public/bs_2016B/PromptReco-v2-upTo274443/*', prependPath=True)
+files  = get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_Legacy2016/measurementOnJetHT/Run2016D/*'           , prependPath=True)
+# files += get_files('/afs/cern.ch/work/m/manzoni/public/bs_2016B/PromptReco-v2-upTo274443/*', prependPath=True)
 
 print 'start loading payloads ...'
 myPayload = Payload(files)
@@ -23,7 +23,7 @@ for irun, ivalues in allBS.iteritems():
     allBS[irun] = cleanAndSort(ivalues)
 
 # check if output file exists
-fname = 'total_bs.txt'
+fname = 'total_bs_JetHT_2016D.txt'
 if os.path.isfile(fname):
     print 'File %s exists. Recreate? (10 sec before defaults to True)' %fname
     i, o, e = select.select( [sys.stdin], [], [], 10 )
@@ -39,7 +39,7 @@ if os.path.isfile(fname):
 
 # check drifts and create IOV
 for irun, ibs in allBS.iteritems():
-    pairs = splitByDrift(ibs)
+    pairs = splitByDrift(ibs, slopes=True)
     for p in pairs:
         myrange = set(range(p[0], p[1] + 1)) & set(ibs.keys())
         bs_list = [ibs[i] for i in sorted(list(myrange))]
@@ -65,7 +65,7 @@ variables = [
 for ivar in variables: 
     histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 5, byFill = False, returnHisto = True))
 
-histo_file = ROOT.TFile.Open('histos.root', 'recreate')
+histo_file = ROOT.TFile.Open('histos_2016D_JetHT.root', 'recreate')
 histo_file.cd()
 for histo in histos:
     histo.Write()
