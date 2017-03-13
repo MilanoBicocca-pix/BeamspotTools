@@ -68,6 +68,9 @@ class BeamSpot(object):
         s_xx_true = s_xx - 2. * beta  * s_xz + np.power(beta , 2) * s_zz
         s_yy_true = s_yy - 2. * alpha * s_yz + np.power(alpha, 2) * s_zz
                 
+        self.sigmaXtrue = np.sqrt(max(0., s_xx_true))
+        self.sigmaYtrue = np.sqrt(max(0., s_yy_true))
+        
         # RIC: FIXME! do the error propagation properly
         self.sigmaXtrueerr = self.sigmaXtrue * self.beamWidthXerr / max(1.e-12, self.beamWidthX)
         self.sigmaYtrueerr = self.sigmaYtrue * self.beamWidthYerr / max(1.e-12, self.beamWidthY)
