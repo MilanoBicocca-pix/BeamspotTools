@@ -3,6 +3,7 @@
 import os
 import datetime
 from math import pow, sqrt
+import numpy as np
 import xml.etree.ElementTree as et
 from IOV import IOV
 
@@ -43,6 +44,34 @@ class BeamSpot(object):
         self.YXerr         =  0.
         self.dxdzdydzerr   =  0.
         self.dydzdxdzerr   =  0.
+        self._computeProperWidths()
+        
+
+    self _computeProperWidths(self):
+        '''
+        Rotate back the covariance matrix by -dx/dz and -dy/dz.
+        The sigma_x and sigma_y *of the luminous region itelf* are set.
+        The dx/dy rotation is not corrected (but it's small).
+        '''
+        
+        # xx = np.pow(self.beamWidthX, 2)
+        # yy = np.pow(self.beamWidthY, 2)
+        # zz = np.pow(self.sigmaZ    , 2)
+        # xy = np.pow(self.XYerr     , 2)
+        # xz = np.pow(,2)
+        # yz = np.pow(,2)
+        # cov_cms = np.matrix([
+        #     [self.beamWidthX, self.XYerr,],
+        #     [self.XYerr, self.beamWidthX,],
+        #     [self.X, self.XYerr,self.sigmaZ**],
+        # ]).astype(np.float64)
+        
+        # actually take the algebra already done elsewhere
+        self.sigmaXtrue = np.sqrt(np.pow(self.beamWidthX, 2) - np.pow(beta, 2) * np.pow(self.sigmaZ, 2))
+        self.sigmaYtrue = self.beamWidthY + alpha * self.sigmaZ
+
+        self.sigmaXtrueerr = self.sigmaXtrue * self.beamWidthXerr / max(1.e-12, self.beamWidthX)
+        self.sigmaYtrueerr = self.sigmaYtrue * self.beamWidthYerr / max(1.e-12, self.beamWidthY)
     
     def SetIOV(self, iov):
         '''
@@ -123,6 +152,8 @@ class BeamSpot(object):
         self.EmittanceX    = float( dbentry[ d['emittanceX'] ].text                    )
         self.EmittanceY    = float( dbentry[ d['emittanceY'] ].text                    )
         self.betastar      = float( dbentry[ d['betaStar'  ] ].text                    )
+
+        self._computeProperWidths()
 
     def Read(self, payload):
         '''
@@ -259,6 +290,8 @@ class BeamSpot(object):
             self.EmittanceX    = float( payload[13].split('=')[1].split()[0]                 )
             self.EmittanceY    = float( payload[14].split('=')[1].split()[0]                 )
 
+        self._computeProperWidths()
+
     def Dump(self, file, mode = 'a'):
         '''
         Dumps a Beam Spot objects into a Payload-like file.
@@ -347,19 +380,25 @@ class BeamSpot(object):
         '''
         Nice printer.
         '''
-        toWrite = 'X0         = {:3.6f} +/- {:3.4E} [cm]\n' \
-                  'Y0         = {:3.6f} +/- {:3.4E} [cm]\n' \
-                  'Z0         = {:3.6f} +/- {:3.4E} [cm]\n' \
-                  'BeamWidthX = {:3.6f} +/- {:3.4E} [cm]\n' \
-                  'BeamWidthY = {:3.6f} +/- {:3.4E} [cm]\n' \
-                  'sigmaZ0    = {:3.6f} +/- {:3.4E} [cm]\n' \
-                  'dxdz       = {:3.6E} +/- {:3.4E} [rad]\n'\
-                  'dydz       = {:3.6E} +/- {:3.4E} [rad]'  \
-                  .format(self.X         , self.Xerr         ,
+        toWrite = 'Run {} - LS {}-{}\n'\
+                  'X0             = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'Y0             = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'Z0             = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'BeamWidthX     = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'BeamWidthY     = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'BeamWidthXTrue = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'BeamWidthYTrue = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'sigmaZ0        = {:3.6f} +/- {:3.4E} [cm]\n' \
+                  'dxdz           = {:3.6E} +/- {:3.4E} [rad]\n'\
+                  'dydz           = {:3.6E} +/- {:3.4E} [rad]'  \
+                  .format(self.Run, str(self.IOVfirst), str(self.IOVlast),
+                          self.X         , self.Xerr         ,
                           self.Y         , self.Yerr         ,
                           self.Z         , self.Zerr         ,
                           self.beamWidthX, self.beamWidthXerr,
                           self.beamWidthY, self.beamWidthYerr,
+                          self.sigmaXtrue, self.beamWidthXerr,
+                          self.sigmaYtrue, self.beamWidthYerr,
                           self.sigmaZ    , self.sigmaZerr    ,
                           self.dxdz      , self.dxdzerr      ,
                           self.dydz      , self.dydzerr      )
