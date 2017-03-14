@@ -30,7 +30,10 @@ For the package information:
 https://pythonhosted.org/uncertainties/
 
 ```shell
-  # local installation, e.g. on lxplus
+  # local installation, e.g. on lxplus, by default this points to the python2.6 library
   pip install --user uncertainties
+  # but you need to have uncertainties available in python2.7, which is CMSSW's python, so, in a fresh shell do
+  scl enable python27 csh
+  pip install --user uncertainties
 ```
 
