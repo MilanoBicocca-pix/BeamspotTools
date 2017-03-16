@@ -57,16 +57,16 @@ class BeamSpot(object):
         The dx/dy rotation is not corrected (but it's small).
         The effect on sigma_z is neglected as it's small.
         '''
-
+        
         alpha = unc.ufloat(-self.dydz, self.dydzerr)
         beta  = unc.ufloat(-self.dxdz, self.dxdzerr)
-
+    
         s_xx = unc.ufloat(np.power(self.beamWidthX, 2), np.power(self.beamWidthXerr, 2))
         s_yy = unc.ufloat(np.power(self.beamWidthY, 2), np.power(self.beamWidthYerr, 2))
         s_zz = unc.ufloat(np.power(self.sigmaZ    , 2), np.power(self.sigmaZerr    , 2))
                 
-        s_xz = beta  * (s_zz - s_xx) + alpha * unc.ufloat(self.XYerr, self.XYerr) # 100% uncertainty
-        s_yz = alpha * (s_yy - s_zz) - beta  * unc.ufloat(self.XYerr, self.XYerr) # 100% uncertainty
+        s_xz = beta  * (s_zz - s_xx) + alpha * unc.ufloat(self.XYerr, abs(self.XYerr)) # 100% uncertainty on XY correlation, as we don't save it...
+        s_yz = alpha * (s_yy - s_zz) - beta  * unc.ufloat(self.XYerr, abs(self.XYerr)) # 100% uncertainty on XY correlation, as we don't save it...
         
         s_xx_true = s_xx - 2. * beta  * s_xz + np.power(beta , 2) * s_zz
         s_yy_true = s_yy - 2. * alpha * s_yz + np.power(alpha, 2) * s_zz
