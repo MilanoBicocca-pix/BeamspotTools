@@ -50,12 +50,21 @@ class BeamSpot(object):
         self.sigmaXtrueerr =  0.
         self.sigmaYtrueerr =  0.
 
-    def _computeProperWidths(self):
+    def _computeProperWidths(self, full=False):
         '''
         Rotate back the covariance matrix by -dx/dz and -dy/dz.
-        The sigma_x and sigma_y *of the luminous region itelf* are set.
+        The sigma_x and sigma_y *of the luminous region itself* are set.
         The dx/dy rotation is not corrected (but it's small).
         The effect on sigma_z is neglected as it's small.
+        '''
+        if full:
+            self._fullProperWidths()
+        else:
+            self._approximateProperWidths()
+
+    def _fullProperWidths(self):
+        '''
+        full formula to compute the widths in the beam's reference frame.
         '''
         
         alpha = unc.ufloat(-self.dydz, self.dydzerr)
@@ -76,7 +85,30 @@ class BeamSpot(object):
         
         self.sigmaXtrueerr = np.sqrt(max(0., s_xx_true.s))
         self.sigmaYtrueerr = np.sqrt(max(0., s_yy_true.s))
-    
+
+    def _approximateProperWidths(self):
+        '''
+        first order formula to compute the widths in the beam's reference frame.
+        '''
+
+        alpha = -self.dydz
+        beta  = -self.dxdz
+
+        s_xx = np.power(self.beamWidthX, 2)
+        s_yy = np.power(self.beamWidthY, 2)
+        s_zz = np.power(self.sigmaZ    , 2)
+                        
+        s_xx_true = s_xx - np.power(beta , 2) * s_zz
+        s_yy_true = s_yy - np.power(alpha, 2) * s_zz
+                
+        self.sigmaXtrue = np.sqrt(max(0., s_xx_true))
+        self.sigmaYtrue = np.sqrt(max(0., s_yy_true))
+        
+        # assume that the relative uncertainty on the proper widths is equal to that of the
+        # transformed widths (approximately)
+        self.sigmaXtrueerr = self.sigmaXtrue * self.beamWidthXerr / max(1.e-12, self.beamWidthX)
+        self.sigmaYtrueerr = self.sigmaYtrue * self.beamWidthYerr / max(1.e-12, self.beamWidthY)
+
     def SetIOV(self, iov):
         '''
         Set BeamSpot interval of validity
