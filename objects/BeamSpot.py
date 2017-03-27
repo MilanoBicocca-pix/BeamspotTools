@@ -69,7 +69,7 @@ class BeamSpot(object):
         s_yz = alpha * (s_yy - s_zz) - beta  * unc.ufloat(self.XYerr, abs(self.XYerr)) # 100% uncertainty on XY correlation, as we don't save it...
         
         s_xx_true = s_xx - 2. * beta  * s_xz + np.power(beta , 2) * s_zz
-        s_yy_true = s_yy - 2. * alpha * s_yz + np.power(alpha, 2) * s_zz
+        s_yy_true = s_yy + 2. * alpha * s_yz + np.power(alpha, 2) * s_zz
                 
         self.sigmaXtrue = np.sqrt(max(0., s_xx_true.n))
         self.sigmaYtrue = np.sqrt(max(0., s_yy_true.n))
