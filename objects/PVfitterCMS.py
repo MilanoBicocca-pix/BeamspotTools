@@ -10,18 +10,19 @@ from MultiVariateGauss import MultivariateGaussianFitterNLL, AltMultivariateGaus
 class PVfitterCMS(AltMultivariateGaussianFitterNLL):
     '''
     '''
-    def __init__(self, positions, verbose=False):
-        self.events = positions
-        self.positions = np.mean(positions, axis=0)
-        self.widths = np.std(positions, axis=0)
+    def __init__(self, positions, uncertainties=None, correlations=None, errorscale=1., verbose=False):
+        super(PVfitterCMS, self).__init__(positions, uncertainties, correlations, errorscale, verbose)
         self.tilts = np.array([0., 0.]).astype('float64')
         self.corrxy = 0.
-        self.verbose = verbose
+        if uncertainties is not None and correlations is not None:
+            self.fcn = self.nlle
+        else:
+            self.fcn = self.nll
         
         
     def fitPositions(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -54,7 +55,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
 
     def fitWidths(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -87,7 +88,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
 
     def fitAllButTilts(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -119,7 +120,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
     
     def fitCorrXY(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -152,7 +153,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
     
     def fitTilts(self):
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -185,14 +186,14 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
         return minimizer
     
     def fit(self):
-        self.fitPositions()
-        self.fitWidths()
+        #self.fitPositions()
+        #self.fitWidths()
         self.fitAllButTilts()
         self.fitCorrXY()
         self.fitTilts()
 
         minimizer = iminuit.Minuit(
-            self.nll,
+            self.fcn,
             pedantic=False,
             x=self.positions[0],
             y=self.positions[1],
@@ -206,6 +207,10 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             limit_corrxy=(-1., 1.),
             limit_dxdz=(-0.0004, 0.0004),
             limit_dydz=(-0.0004, 0.0004),
+            limit_sigma_x_eff=(0.,100.),
+            limit_sigma_y_eff=(0.,100.),
+            limit_sigma_z_eff=(0.,100.),
+            print_level=self.verbose,
         ) 
         
         try:       

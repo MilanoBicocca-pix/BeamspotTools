@@ -10,14 +10,17 @@ from MultiVariateGauss import MultivariateGaussianFitterNLL
 class PVfitter(MultivariateGaussianFitterNLL):
     '''
     '''
-    def __init__(self, positions, uncertainties=None, verbose=False):
+    def __init__(self, positions, uncertainties=None, correlations=None, verbose=False):
         self.events = positions
         self.uncertainties = uncertainties
+        self.correlations = correlations
         self.positions = np.mean(positions, axis=0)
         self.widths = np.std(positions, axis=0)
         self.thetas = np.array([0., 0., 0.]).astype('float64')
         self.verbose = verbose
-        if uncertainties is not None:
+        self.nevents = len(self.events)/3
+        self.rnevents = np.arange(self.nevents)
+        if uncertainties is not None and correlations is not None:
             self.fcn = self.nlle
         else:
             self.fcn = self.nll

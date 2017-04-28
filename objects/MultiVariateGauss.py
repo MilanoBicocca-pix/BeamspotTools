@@ -6,16 +6,20 @@ from scipy.stats import multivariate_normal
 
 # from time import time
 
-class MultivariateGaussianFitterNLL():
+class MultivariateGaussianFitterNLL(object):
     '''
     Fit 3D gaussian cloud.
     '''
-    def __init__(self, events, uncertainties=None, verbose=False):
-        self.events        = events
-        self.uncertainties = uncertainties
+    def __init__(self, events, uncertainties=None, correlations=None, errorscale=1., verbose=False):
+        self.events        = events.astype(np.float64)
+        self.uncertainties = uncertainties.astype(np.float64)
+        self.correlations  = correlations.astype(np.float64)
+        self.errorscale    = errorscale
+        self.positions     = np.mean(events, axis=0).astype(np.float64)
+        self.widths        = np.std(events, axis=0).astype(np.float64)
         self.verbose       = verbose # should use a logger...
         self.nevents       = len(self.events)/3
-        self.rnevents      = np.arange(nevents)
+        self.rnevents      = np.arange(self.nevents)
       
     @staticmethod
     def _compute_covariance_matrix(theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z):
@@ -89,47 +93,59 @@ class MultivariateGaussianFitterNLL():
     
     def nlle(self, x, y, z, theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z):
         '''
-        '''
-        
-        #import pdb ; pdb.set_trace()
+        '''        
+        cov_beam = self._compute_covariance_matrix(theta_x,
+                                                   theta_y,
+                                                   theta_z,
+                                                   sigma_x,
+                                                   sigma_y,
+                                                   sigma_z)
+                                                   
+        return self._compute_sum_nll_vtx(cov_beam, x, y, z)
+                                                   
+
+    def _compute_sum_nll_vtx(self, cov_beam, x, y, z):
+
+        nlls = np.array([]).astype(np.float64)
+
+        for i in self.rnevents:
+            vtx_xx = np.power(self.errorscale * self.uncertainties[i][0], 2)
+            vtx_yy = np.power(self.errorscale * self.uncertainties[i][1], 2)
+            vtx_zz = np.power(self.errorscale * self.uncertainties[i][2], 2)
+    
+            vtx_xy = self.correlations[i][0] * self.errorscale * self.uncertainties[i][0] * self.errorscale * self.uncertainties[i][1]
+            vtx_xz = self.correlations[i][1] * self.errorscale * self.uncertainties[i][0] * self.errorscale * self.uncertainties[i][2]
+            vtx_yz = self.correlations[i][2] * self.errorscale * self.uncertainties[i][1] * self.errorscale * self.uncertainties[i][2]
+    
+            cov_vtx = np.matrix([
+                [vtx_xx, vtx_xy, vtx_xz],
+                [vtx_xy, vtx_yy, vtx_yz],
+                [vtx_xz, vtx_yz, vtx_zz],
+            ]).astype(np.float64)
+
+            cov_tot = cov_vtx + cov_beam
+            
+            nll = -multivariate_normal.logpdf(self.events[i],
+                                              mean=np.array([x, y, z]),
+                                              cov=cov_tot,
+                                              allow_singular=True) # this was needed because?
+            
+            if self.verbose and i%20==0:
+                print '\t====> evaluated %d/%d vertex, nll = %f, sum nll = %f' %(i, self.nevents, nll, nlls.sum())
+
+            nlls = np.append(nlls, nll)
                         
-        nlls = np.array([-multivariate_normal.logpdf(self.events[i],
-                                                     mean=np.array([x, y, z]),
-                                                     cov=self._compute_covariance_matrix(theta_x,
-                                                                                         theta_y,
-                                                                                         theta_z, 
-                                                                                         sigma_x + self.uncertainties[i][0],
-                                                                                         sigma_y + self.uncertainties[i][1],
-                                                                                         sigma_z + self.uncertainties[i][2]),
-                                                     allow_singular=True) for i in rnevents]).sum()
-        
-        return nlls
-
-
+        return nlls.sum()
+    
 
 
 
 class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
     '''
     '''
-    def nll(self, x, y, z, corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz):
-        '''
-        Modeled on official CMS beam spot fit.
-        https://github.com/cms-sw/cmssw/blob/master/RecoVertex/BeamSpotProducer/src/FcnBeamSpotFitPV.cc#L59
-        '''
-        
-        if self.verbose:
-            print '\n=========='
-            print 'x                :\t', x          , '[cm]'
-            print 'y                :\t', y          , '[cm]'
-            print 'z                :\t', z          , '[cm]'
-            print 'corrxy           :\t', corrxy
-            print 'effective sigma x:\t', sigma_x_eff, '[cm]'
-            print 'effective sigma y:\t', sigma_y_eff, '[cm]'
-            print 'effective sigma z:\t', sigma_z_eff, '[cm]'
-            print 'dx/dz            :\t', dxdz
-            print 'dy/dz            :\t', dydz
-        
+    
+    @staticmethod
+    def _compute_covariance_matrix(corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz):
         sx  = sigma_x_eff
         sy  = sigma_y_eff
         sz  = sigma_z_eff
@@ -142,6 +158,27 @@ class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
             [corrxy * sx * sy                            , sy2                                         , - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy],
             [- dxdz * (sz2-sx2) - dydz * corrxy * sx * sy, - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy, sz2                                         ],
         ]).astype(np.float64)
+        
+        return cov    
+    
+    def nll(self, x, y, z, corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz):
+        '''
+        Modeled on official CMS beam spot fit.
+        https://github.com/cms-sw/cmssw/blob/master/RecoVertex/BeamSpotProducer/src/FcnBeamSpotFitPV.cc#L59
+        '''
+        if self.verbose:
+            print '\n=========='
+            print 'x                :\t', x          , '[cm]'
+            print 'y                :\t', y          , '[cm]'
+            print 'z                :\t', z          , '[cm]'
+            print 'corrxy           :\t', corrxy
+            print 'effective sigma x:\t', sigma_x_eff, '[cm]'
+            print 'effective sigma y:\t', sigma_y_eff, '[cm]'
+            print 'effective sigma z:\t', sigma_z_eff, '[cm]'
+            print 'dx/dz            :\t', dxdz
+            print 'dy/dz            :\t', dydz
+        
+        cov = self._compute_covariance_matrix(corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz)
         
         if self.verbose:
             print 'covariance matrix', cov
@@ -161,6 +198,16 @@ class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
         
         return nll
 
+    def nlle(self, x, y, z, corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz):
+        '''
+        '''
+        cov_beam = self._compute_covariance_matrix(corrxy, 
+                                                   sigma_x_eff, 
+                                                   sigma_y_eff, 
+                                                   sigma_z_eff, 
+                                                   dxdz, 
+                                                   dydz)
+        return self._compute_sum_nll_vtx(cov_beam, x, y, z)
 
 
 if __name__ == '__main__':
@@ -168,12 +215,3 @@ if __name__ == '__main__':
     
     
     
-
-
-
-
-
-
-
-
-
