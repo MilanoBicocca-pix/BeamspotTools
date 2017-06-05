@@ -2,6 +2,7 @@
 
 import iminuit
 import numpy as np
+from numba import jit, vectorize
 from scipy.stats import multivariate_normal
 
 # from time import time
@@ -22,39 +23,70 @@ class MultivariateGaussianFitterNLL(object):
         self.rnevents      = np.arange(self.nevents)
       
     @staticmethod
+    @jit(nopython=True, nogil=True, cache=True)
     def _compute_covariance_matrix(theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z):
         '''
         https://en.wikipedia.org/wiki/Multivariate_normal_distribution#Density_function
         '''
-  
-        rot_x = np.matrix([
-            [ 1., 0.             ,  0.             ],
-            [ 0., np.cos(theta_x), -np.sin(theta_x)],
-            [ 0., np.sin(theta_x),  np.cos(theta_x)],
-        ]).astype(np.float64)
-        
-        rot_y = np.matrix([
-            [  np.cos(theta_y), 0., np.sin(theta_y)],
-            [  0.             , 1., 0.             ],
-            [ -np.sin(theta_y), 0., np.cos(theta_y)],
-        ]).astype(np.float64)
     
-        rot_z = np.matrix([
-            [ np.cos(theta_z), -np.sin(theta_z), 0.],
-            [ np.sin(theta_z),  np.cos(theta_z), 0.],
-            [ 0.             ,  0.             , 1.],
-        ]).astype(np.float64)
+        rot_x = np.array([
+             1., 0.             ,  0.             ,
+             0., np.cos(theta_x), -np.sin(theta_x),
+             0., np.sin(theta_x),  np.cos(theta_x),
+        ]).astype(np.float64).reshape(3,3)
         
-        widths = np.matrix([
-            [ np.power(sigma_x, 2), 0.                  , 0.                  ],
-            [ 0.                  , np.power(sigma_y, 2), 0.                  ],
-            [ 0.                  , 0.                  , np.power(sigma_z, 2)],
-        ]).astype(np.float64)
+        rot_y = np.array([
+             np.cos(theta_y), 0., np.sin(theta_y),
+             0.             , 1., 0.             ,
+            -np.sin(theta_y), 0., np.cos(theta_y),
+        ]).astype(np.float64).reshape(3,3)
+    
+        rot_z = np.array([
+             np.cos(theta_z), -np.sin(theta_z), 0.,
+             np.sin(theta_z),  np.cos(theta_z), 0.,
+             0.             ,  0.             , 1.,
+        ]).astype(np.float64).reshape(3,3)
         
-        cov = (rot_x * (rot_y * (rot_z * widths * rot_z.T) * rot_y.T) * rot_x.T)
+        widths = np.array([
+             np.power(sigma_x, 2), 0.                  , 0.                  ,
+             0.                  , np.power(sigma_y, 2), 0.                  ,
+             0.                  , 0.                  , np.power(sigma_z, 2),
+        ]).astype(np.float64).reshape(3,3)
         
+        # The following is equivalent to 
+        # cov = (rot_x * (rot_y * (rot_z * widths * rot_z.T) * rot_y.T) * rot_x.T)
+        # but expressed in a numba-understandable way, to avoid numba falling back to
+        # pythonobject mode
+        
+        cov = np.dot(rot_z, widths )
+        cov = np.dot(cov  , rot_z.T)
+        cov = np.dot(rot_y, cov    )
+        cov = np.dot(cov  , rot_y.T)
+        cov = np.dot(rot_x, cov    )
+        cov = np.dot(cov  , rot_x.T)
+            
         return cov
-                
+                    
+#     @staticmethod
+#     @jit(nopython=True)
+#     def log_multivariate_normal(points, mean, cov):
+#         '''
+#         '''
+#         npoints = len(points)
+#         cov_inv = np.linalg.inv(cov)
+#         first_term = np.log(1./np.sqrt((2.*np.pi)**3*np.linalg.det(cov)))
+#         displacement = (points - mean)
+#         
+#         nll = 0.
+#         for i in range(npoints):
+#             nll += -0.5 * np.dot(np.dot(displacement[i],cov_inv), displacement[i])
+#         
+#         
+#         second_term = np.array([np.dot(displacement[i], cov_inv        ) for i in range(npoints)])
+#         second_term = np.array([np.dot(second_term [i], displacement[i]) for i in range(npoints)])
+#         nll = -(first_term - 0.5 * second_term.sum())
+#         return nll - first_term
+
     def nll(self, x, y, z, theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z):
         '''
         '''
@@ -103,40 +135,37 @@ class MultivariateGaussianFitterNLL(object):
                                                    
         return self._compute_sum_nll_vtx(cov_beam, x, y, z)
                                                    
-
     def _compute_sum_nll_vtx(self, cov_beam, x, y, z):
 
-        nlls = np.array([]).astype(np.float64)
+        nlls = []
 
         for i in self.rnevents:
             vtx_xx = np.power(self.errorscale * self.uncertainties[i][0], 2)
             vtx_yy = np.power(self.errorscale * self.uncertainties[i][1], 2)
             vtx_zz = np.power(self.errorscale * self.uncertainties[i][2], 2)
-    
+        
             vtx_xy = self.correlations[i][0] * self.errorscale * self.uncertainties[i][0] * self.errorscale * self.uncertainties[i][1]
             vtx_xz = self.correlations[i][1] * self.errorscale * self.uncertainties[i][0] * self.errorscale * self.uncertainties[i][2]
             vtx_yz = self.correlations[i][2] * self.errorscale * self.uncertainties[i][1] * self.errorscale * self.uncertainties[i][2]
+        
+            cov_vtx = np.array([
+                vtx_xx, vtx_xy, vtx_xz,
+                vtx_xy, vtx_yy, vtx_yz,
+                vtx_xz, vtx_yz, vtx_zz,
+            ]).astype(np.float64).shape(3,3)
     
-            cov_vtx = np.matrix([
-                [vtx_xx, vtx_xy, vtx_xz],
-                [vtx_xy, vtx_yy, vtx_yz],
-                [vtx_xz, vtx_yz, vtx_zz],
-            ]).astype(np.float64)
-
+            import pdb ; pdb.set_trace()
             cov_tot = cov_vtx + cov_beam
             
-            nll = -multivariate_normal.logpdf(self.events[i],
-                                              mean=np.array([x, y, z]),
-                                              cov=cov_tot,
-                                              allow_singular=True) # this was needed because?
-            
+            nll = -multivariate_normal.logpdf(self.events[i], np.array([x, y, z]), 
+                                              cov_tot, allow_singular=True) # this was needed because?
+           
             if self.verbose and i%20==0:
                 print '\t====> evaluated %d/%d vertex, nll = %f, sum nll = %f' %(i, self.nevents, nll, nlls.sum())
 
-            nlls = np.append(nlls, nll)
+            nlls.append(nll)
                         
-        return nlls.sum()
-    
+        return np.array(nlls).sum()
 
 
 
@@ -145,6 +174,7 @@ class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
     '''
     
     @staticmethod
+    @jit(nopython=True)
     def _compute_covariance_matrix(corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz):
         sx  = sigma_x_eff
         sy  = sigma_y_eff
@@ -153,11 +183,11 @@ class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
         sy2 = np.power(sigma_y_eff, 2)
         sz2 = np.power(sigma_z_eff, 2)
         
-        cov = np.matrix([
-            [sx2                                         , corrxy * sx * sy                            , - dxdz * (sz2-sx2) - dydz * corrxy * sx * sy],
-            [corrxy * sx * sy                            , sy2                                         , - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy],
-            [- dxdz * (sz2-sx2) - dydz * corrxy * sx * sy, - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy, sz2                                         ],
-        ]).astype(np.float64)
+        cov = np.array([
+            sx2                                         , corrxy * sx * sy                            , - dxdz * (sz2-sx2) - dydz * corrxy * sx * sy,
+            corrxy * sx * sy                            , sy2                                         , - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy,
+            - dxdz * (sz2-sx2) - dydz * corrxy * sx * sy, - dydz * (sy2-sz2) + dxdz * corrxy * sx * sy, sz2                                         ,
+        ]).astype(np.float64).reshape(3,3)
         
         return cov    
     
