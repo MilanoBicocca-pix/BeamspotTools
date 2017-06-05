@@ -59,7 +59,7 @@ class Payload(object):
 
         return singleFits    
 
-    def fromTextToBS(self, iov = False):
+    def fromTextToBS(self, iov = False, fromDB = False):
         '''
         Return a dictionary of dictionaries, as the following:
         { Run : {Lumi Range: BeamSpot Fit Object} }
@@ -88,12 +88,19 @@ class Payload(object):
                 try:   
                     beamspots[bs.Run][lsrange] = bs
                 except:
-                    toadd = { bs.Run : {lsrange : bs} }
+                    toadd = OrderedDict({ bs.Run : OrderedDict({lsrange : bs}) })
                     beamspots.update( toadd )
         
-        
         sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(beamspots.keys()))
-           
+        
+        # import pdb ; pdb.set_trace()
+        
+        if fromDB:
+            for run, bss in sortedbeamspots.iteritems():
+                for i, bs in enumerate(bss.values()[:-1]):
+                    next_bs = bss.values()[i+1]
+                    bs.IOVlast = next_bs.IOVfirst - 1
+               
         return sortedbeamspots
     
     def getProcessedLumiSections(self):
@@ -105,7 +112,7 @@ class Payload(object):
         
         beamspots = self.fromTextToBS()
         
-        runsAndLumis = { run : [] for run in beamspots.keys() }
+        runsAndLumis = OrderedDict({ run : [] for run in beamspots.keys() })
         
         for k, v in beamspots.items():
             
@@ -177,7 +184,8 @@ class Payload(object):
 
 
     def plot(self, variable, iRun, fRun, iLS = -1, fLS = 1e6, 
-             savePdf = False, returnHisto = False, dilated = 0, byFill = False, unitLengthIoV = False):
+             savePdf = False, returnHisto = False, dilated = 0, byFill = False, 
+             unitLengthIoV = False):
         '''
         Plot a BS parameter as a function of LS.
         Allows multiple LS bins.
@@ -187,8 +195,8 @@ class Payload(object):
         beforeLast = lambda x : (x.RunLast  <= fRun and x.LumiLast  <= fLS)
         
         # get the list of BS objects
-        myBS = {k:v for k, v in self.fromTextToBS(iov = True).iteritems()
-                if afterFirst(k) and beforeLast(k)}
+        myBS = OrderedDict({k:v for k, v in self.fromTextToBS(iov=True).iteritems()
+                            if afterFirst(k) and beforeLast(k)})
         
         # for the comparison to DB objects, need to put IOV first = last by hand
         if unitLengthIoV:  
