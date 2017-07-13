@@ -112,8 +112,8 @@ def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1,
               ('Y'         , 'Yerr'      , 'beamWidthY', 0.0025, 3.5, True , True ),
               ('Z'         , 'Zerr'      , 'sigmaZ'    , 0.    , 3.5, False, False),
               ('sigmaZ'    , 'sigmaZerr' , ''          , 0.    , 5. , False, False),
-              ('beamWidthX', 'beamWidthX', ''          , 0.    , 5. , False, True ),
-              ('beamWidthY', 'beamWidthY', ''          , 0.    , 5. , False, True )
+              ('beamWidthX', 'beamWidthXerr', ''          , 0.    , 5. , False, True ),
+              ('beamWidthY', 'beamWidthYerr', ''          , 0.    , 5. , False, True )
             ]
             if slopes:
                 variables += [('dxdz', 'dxdzerr', '', 0., 5., False, True ),
@@ -140,6 +140,17 @@ def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1,
                             minDeviation, minSignificance,
                             checkTrendsFull = variable[5],
                             checkTrendsPartial = variable[6])
+#             if drifted:  
+# 	    print 'drift: for lumi ', lumi
+# 	    print variable[0]
+# 	    print x, z
+# 	    print 'errors ', xe, ze
+# 	    print sqrt(pow(xe, 2) + pow(ze, 2))
+# 	    print sqrt(xe**2 + ze**2)
+# 	    diff_to_pre , err_to_pre , sig_to_pre  = delta(x, xe, z, ze)
+# 	    print 'diff with next: ', diff_to_pre
+# 	    print 'err with next: ', err_to_pre
+# 	    print 'significance diff with next: ',  sig_to_pre          
             
             if drifted or i >= maxLumi:
                 breaks.append(lumi_before)  # append ending lumi
