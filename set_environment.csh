@@ -3,7 +3,7 @@
 # set path to look python bits for
 echo "adding base Beamspot directory to PYTHONPATH"
 echo $PWD
-setenv PYTHONPATH $PWD:$PYTHONPATH
+setenv PYTHONPATH ${PWD}:${PYTHONPATH}
 setenv BSBASE $PWD
 
 # also touch __init__.py files, just in case
