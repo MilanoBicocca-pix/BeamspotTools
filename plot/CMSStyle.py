@@ -24,7 +24,7 @@ relExtraDY = 1.2
 
 extraOverCmsTextSize  = 0.8
 
-lumi_13TeV = 'Run 2016'
+lumi_13TeV = 'Run 2017'
 # lumi_13TeV = 'Run2015 B, C, D'
 #lumi_13TeV = "Run2015B"
 #lumi_13TeV = "Run2015C"
@@ -96,7 +96,7 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
     latex = rt.TLatex()
     latex.SetNDC()
     latex.SetTextAngle(0)
-    latex.SetTextColor(rt.kBlack)    
+    latex.SetTextColor(1)    
     
     extraTextSize = extraOverCmsTextSize*cmsTextSize
     
