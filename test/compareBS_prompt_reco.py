@@ -9,7 +9,7 @@ from RecoVertex.BeamSpotProducer.BeamspotTools.utils.compareLists  import compar
 from RecoVertex.BeamSpotProducer.BeamspotTools.utils.fillRunDict   import labelByTime, labelByFill, splitByMagneticField
 
 ROOT.gROOT.SetBatch(True)
-ROOT.gROOT.Reset()
+# ROOT.gROOT.Reset()
 ROOT.gROOT.SetStyle('Plain')
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPadLeftMargin(0.1)
@@ -52,25 +52,56 @@ def _doSaveHistos( histolist, outfilename ):
 
 # # Plot fit results from txt file
 variables = [
-  'X'         ,
-  'Y'         ,
-  'Z'         ,
-  'sigmaZ'    ,
-  'dxdz'      ,
-  'dydz'      ,
-  'beamWidthX',
-  'beamWidthY'
+    ('X'         , 'beam spot x [cm]'         ,  0.08  , 0.092  ),
+    ('Y'         , 'beam spot y [cm]'         , -0.04   , -0.031  ),
+    ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.    ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.2E-3 , 4E-3 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.2E-3 , 4E-3 ),
+    ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
+    ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
+### for 2017C
+#     ('X'         , 'beam spot x [cm]'         ,  0.05  , 0.12  ),
+#     ('Y'         , 'beam spot y [cm]'         , -0.065 ,-0.005  ),
+#     ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
+#     ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.5    ),
+#     ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.2E-3 , 9E-3 ),
+#     ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.2E-3 , 9E-3 ),
+#     ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
+#     ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
 ]
 
-runstring = '2016Bv2' 
+# variables = [
+#   'X'         ,
+#   'Y'         ,
+#   'Z'         ,
+#   'sigmaZ'    ,
+#   'dxdz'      ,
+#   'dydz'      ,
+#   'beamWidthX',
+#   'beamWidthY'
+# ]
+
+runstring = '2017B' 
 if doFromScratch:
-#   r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/LegacyRepro2016/crab_jobs/crab_BS_LegacyRepro2016_Run2016G_v2/*'  , prependPath=True)
-  r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/LegacyRepro2016/crab_jobs/Run2016B_v2_NONmerged/*'  , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/m/manzoni/public/september2016rereco/perLS/Run2016G_topup/*'  , prependPath=True)
+  r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1/*'           , prependPath=True)
+  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_missingLumis/*'           , prependPath=True)
+  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2/*'           , prependPath=True)
+  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_missingLumis/*'           , prependPath=True)
+  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_SpecialRuns/*'           , prependPath=True)
+
+#   r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1/*'           , prependPath=True)
+#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1_missingLumis/*'           , prependPath=True)
+#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2/*'           , prependPath=True)
+#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_missingLumis/*'           , prependPath=True)
+#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_SpecialRuns/*'           , prependPath=True)
   
-  p_files  = get_files('/afs/cern.ch/work/m/manzoni/public/september2016rereco/perLS/Run2016Bv2/*'        , prependPath=True)
-#   p_files += get_files('/afs/cern.ch/work/m/manzoni/public/september2016rereco/perLS/Run2016G_topup/*'  , prependPath=True)
-#   p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/LegacyRepro2016/crab_jobs/Run2016B_v2_NONmerged/*'  , prependPath=True)
+  p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_Prompt/*'        , prependPath=True)
+  p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_Prompt/*'        , prependPath=True)
+  p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_Prompt_SpecialRuns/*'        , prependPath=True)
+#   p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1_Prompt/*'        , prependPath=True)
+#   p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_Prompt/*'        , prependPath=True)
+#   p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_Prompt_SpecialRuns/*'        , prependPath=True)
  
   print 'start loading payloads ...'
   promptPayload = Payload(p_files)
@@ -103,8 +134,11 @@ if doFromScratch:
   # remove from reco collection the LSs not in prompt file 
 #     import pdb; pdb.set_trace()
     for ls in LSinRecoNotInPrompt:
-      if recoBS[irun][ls]:
-        del recoBS[irun][ls]
+      try:
+        if recoBS[irun][ls]:
+          del recoBS[irun][ls]
+      except:
+        print irun, ls    
   
   # remove from prompt collection the LSs not in reco file 
     for ls in LSinPromptNotInReco:
@@ -151,8 +185,8 @@ if doFromScratch:
   r_histos = []
   
   for ivar in variables: 
-      p_histos.append(merged_payload_p.plot(ivar , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
-      r_histos.append(merged_payload_r.plot(ivar , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
+      p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
+      r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
   
   _doSaveHistos( p_histos, 'histos_prompt' + runstring + '.root' )
   _doSaveHistos( r_histos, 'histos_reco' + runstring + '.root'   )
@@ -168,11 +202,11 @@ for ivar in variables:
   can = ROOT.TCanvas('can','can')
   can.cd()
 
-  h_p = histo_file_p.Get(ivar)
+  h_p = histo_file_p.Get(ivar[0])
 
   h_p.SetMarkerSize(0.2)
-  h_p.SetMarkerColor(ROOT.kBlack)
-  h_p.SetLineColor(ROOT.kBlack)
+  h_p.SetMarkerColor(1)
+  h_p.SetLineColor(1)
 
   h_p.SetTitle('')
   h_p.SetTitleFont(42, 'XY')
@@ -187,21 +221,23 @@ for ivar in variables:
 
   h_p.Draw('')
 
-  h_r = histo_file_r.Get(ivar)
+  h_p.GetYaxis().SetRangeUser(ivar[2], ivar[3])
+
+  h_r = histo_file_r.Get(ivar[0])
   h_r.SetMarkerSize(0.2)
-  h_r.SetMarkerColor(ROOT.kRed)
-  h_r.SetLineColor(ROOT.kRed)
+  h_r.SetMarkerColor(2)
+  h_r.SetLineColor(2)
   h_r.Draw('SAME')
 
   leg = ROOT.TLegend( 0.902, 0.6, 1.0, 0.75 )
-  leg.SetFillColor(ROOT.kWhite)
-  leg.SetLineColor(ROOT.kWhite)
-  leg.AddEntry(h_p   , 'September ReReco'   , 'pel')
-  leg.AddEntry(h_r   , 'Legacy 2016'    , 'pel')
+  leg.SetFillColor(0)
+  leg.SetLineColor(0)
+  leg.AddEntry(h_p   , 'Prompt'   , 'pel')
+  leg.AddEntry(h_r   , 'ReReco Sept2017'    , 'pel')
   leg.SetTextSize(0.03)
   leg.Draw('SAME')
   
   can.Update()
   can.Modified()
-  can.SaveAs('compareLegacy_September/' + runstring + '/'+ivar + '_Legacy_vs_September_' + runstring + '.pdf')
+  can.SaveAs('comparePromptReco_September2017/' + runstring + '/'+ivar[0] + '_Prompt_vs_SeptReco_' + runstring + '.pdf')
 
