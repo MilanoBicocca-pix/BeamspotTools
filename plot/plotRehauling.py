@@ -24,6 +24,13 @@ ROOT.gStyle.SetPadGridY(True)
 # ROOT.gStyle.SetGridWidth(1)
 ROOT.gStyle.SetLegendFont(42)
 
+
+#era_name = 'BC'
+#INdir = '/afs/cern.ch/work/f/fbrivio/beamSpot/ReproSept2017/CMSSW_9_2_10/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/final_results/BS_plots/byIOV/'
+#INdir = '/afs/cern.ch/work/f/fbrivio/beamSpot/ReproSept2017/CMSSW_9_2_10/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/final_results/BS_plots/byLS/'
+#file = ROOT.TFile.Open(INdir+era_name+'/histos_BS_byIOV_Run2017'+era_name+'.root')
+#file = ROOT.TFile.Open(INdir+era_name+'/histos_BS_byLS_Run2017'+era_name+'.root')
+
 file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
 
 file.cd()
@@ -38,8 +45,9 @@ dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
 variables = [
-    (X         , 'beam spot x [cm]'         ,  0.050 , 0.120 ),
-    (Y         , 'beam spot y [cm]'         ,  0.050 , 0.120 ),
+    (X         , 'beam spot x [cm]'         ,  0.075 , 0.095 ),
+    #(Y         , 'beam spot y [cm]'         ,  0.050 , 0.120 ),
+    (Y         , 'beam spot y [cm]'         ,  -0.040 , -0.028 ),
     (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
     (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.0   , 5.    ),
     (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.000 , 0.008 ),
@@ -50,7 +58,8 @@ variables = [
 
 def drawMyStyle(histo, options = '', title = '', byFill = True, byTime = False):
     
-    histo.SetLineColor(ROOT.kGray)
+    #histo.SetLineColor(ROOT.kGray)
+    histo.SetLineColor(920)
     histo.SetLineWidth(1)
 #     histo.SetLineStyle(3)
 
@@ -78,7 +87,9 @@ def drawMyStyle(histo, options = '', title = '', byFill = True, byTime = False):
     histo.GetXaxis().SetNdivisions(10, True)
 
     histo.Draw(options)
-  
+
+    histo.SetMarkerSize(1.3)
+
     ROOT.TGaxis.SetMaxDigits(4)
     ROOT.TGaxis.SetExponentOffset(0.005, -0.05)
     ROOT.gPad.SetTicky()
@@ -91,15 +102,19 @@ def saveHisto(var):
     histo0T, histo3p8T, histo2p8T, histoOther = splitByMagneticField(
         histo, 
         json    = True, 
-        json3p8 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt',
+        json3p8 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/DCSOnly/json_DCSONLY.txt',
+        #json2p8 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/DCSOnly/json_DCSONLY_SpecialRun.txt',
         json2p8 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/DCSOnly/json_DCSONLY_2.8T.txt', # dummy
-        json0   = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY_noBField.txt',
+        json0 = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY_noBField.txt',
     )
     
-    histo0T   .SetMarkerColor(ROOT.kRed   + 1)
-    histo3p8T .SetMarkerColor(ROOT.kBlack    )
-    histo2p8T .SetMarkerColor(ROOT.kGreen + 1)
-
+    #histo0T   .SetMarkerColor(ROOT.kRed   + 1)
+    #histo3p8T .SetMarkerColor(ROOT.kBlack    )
+    #histo2p8T .SetMarkerColor(ROOT.kGreen + 1)
+    histo0T   .SetMarkerColor(633)
+    histo3p8T .SetMarkerColor(1  )
+    histo2p8T .SetMarkerColor(417)
+    
     cloneHisto0T    = histo0T   .Clone()
     cloneHisto3p8T  = histo3p8T .Clone()
     cloneHisto2p8T  = histo2p8T .Clone()
@@ -108,10 +123,13 @@ def saveHisto(var):
     cloneHisto3p8T .SetMarkerSize(3.)
     cloneHisto2p8T .SetMarkerSize(3.)
   
-    cloneHisto0T   .SetLineColor(ROOT.kGray + 2)
-    cloneHisto3p8T .SetLineColor(ROOT.kGray + 2)
-    cloneHisto2p8T .SetLineColor(ROOT.kGray + 2)
-    
+    #cloneHisto0T   .SetLineColor(ROOT.kGray + 2)
+    #cloneHisto3p8T .SetLineColor(ROOT.kGray + 2)
+    #cloneHisto2p8T .SetLineColor(ROOT.kGray + 2)
+    cloneHisto0T   .SetLineColor(922)
+    cloneHisto3p8T .SetLineColor(922)
+    cloneHisto2p8T .SetLineColor(922)
+
     byFill = True
     byTime = False
 
@@ -139,15 +157,20 @@ def saveHisto(var):
     ROOT.gPad.Update()
     
     leg = ROOT.TLegend( 0.902, 0.5, 1.0, 0.75 )
-    leg.SetFillColor(ROOT.kWhite)
-    leg.SetLineColor(ROOT.kWhite)
+    #leg.SetFillColor(ROOT.kWhite)
+    #leg.SetLineColor(ROOT.kWhite)
+    leg.SetFillColor(0)
+    leg.SetLineColor(0)
     if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
     if histo0T   .GetEntries()>0: leg.AddEntry(cloneHisto0T   , 'B = 0 T'   , 'EP')
     if histo2p8T .GetEntries()>0: leg.AddEntry(cloneHisto2p8T , 'B = 2.8 T' , 'EP')
+    #if histo2p8T .GetEntries()>0: leg.AddEntry(cloneHisto2p8T , 'SpecialRuns' , 'EP')
     if histoOther.GetEntries()>0: leg.AddEntry(histoOther     , 'magnet ramping', 'F')
     leg.Draw('SAME')
 
     ROOT.gPad.Print('BS_plot_full_by_fill_run2016B_%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print(INdir+era_name+'/NEW_BS_plot_byFill_byIOV_run2017'+era_name+'_%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print(INdir+era_name+'/BS_plot_byFill_byLS_run2017'+era_name+'_%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('', '', 3000, 1000)
 for var in variables:
