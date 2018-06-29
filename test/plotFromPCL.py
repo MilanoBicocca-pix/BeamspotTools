@@ -45,19 +45,22 @@ def drawMyStyle(histo, var, options = '', title = '', byFill = True, byTime = Fa
    
 # file obtained by running the CondTools/BeamSpot package:
 # file_DB  = '/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_2_0/src/CondTools/BeamSpot/test/reference_prompt_BeamSpotObjects_PCL_byLumi_v0_prompt_2017B.txt'
-file_DB  = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_2_0/src/CondTools/BeamSpot/test/reference_prompt_BeamSpotObjects_PCL_byLumi_v0_prompt_2017B.txt'             , prependPath=True)
-file_DB += get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_2_0/src/CondTools/BeamSpot/test/reference_prompt_BeamSpotObjects_PCL_byLumi_v0_prompt_2017B_from298653.txt'  , prependPath=True)
+file_DB  = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/CondTools/BeamSpot/test/reference_BeamSpotObjects_PCL_byRun_checkMatrix.txt'             , prependPath=True)
+# file_DB  = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/CondTools/BeamSpot/test/reference_BeamSpotObjects_PCL_byLumi_v0_prompt_2018A.txt'  , prependPath=True)
+# file_DB += get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/CondTools/BeamSpot/test/reference_BeamSpotObjects_PCL_byLumi_v0_prompt_2018B.txt'  , prependPath=True)
 
+irun = 315252 ##317080
+erun = 999999
 
 variables = [
-    ('X'         , 'beam spot x [cm]'         ,  0.078 , 0.094 ),
-    ('Y'         , 'beam spot y [cm]'         , -0.046 ,-0.030 ),
-    ('Z'         , 'beam spot z [cm]'         , -3.    , 2.5    ),
-    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5   , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.000 , 0.007 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.000 , 0.007 ),
-    ('dxdz'      , 'beam spot dx/dz [rad]'    ,  0.000 , 4.e-4 ),
-    ('dydz'      , 'beam spot dy/dz [rad]'    , -2.e-4 , 2.e-4 ),
+    ('X'         , 'beam spot x [cm]'         ,  0.09 , 0.104 ),
+    ('Y'         , 'beam spot y [cm]'         , -0.07  ,-0.056  ),
+    ('Z'         , 'beam spot z [cm]'         , -3.    , 3     ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.    , 5.    ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.000 , 0.0025 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.000 , 0.0025 ),
+    ('dxdz'      , 'beam spot dx/dz [rad]'    , -1.e-4 , 3.e-4 ),
+    ('dydz'      , 'beam spot dy/dz [rad]'    , -1.e-4 , 3.e-4 ),
 ]
 
 myPL_DB  = Payload(file_DB)    
@@ -65,7 +68,7 @@ myPL_DB  = Payload(file_DB)
 histosDB  = []
 
 for var in variables:
-  histosDB .append(myPL_DB .plot(var[0]         , 297620, 999999, dilated = 5, returnHisto = True))
+  histosDB .append(myPL_DB .plot(var[0]         , irun, erun, dilated = 8, returnHisto = True))
 
 ROOT.gROOT.SetBatch(True)
 c1 = ROOT.TCanvas('', '', 3000, 1000)
@@ -85,5 +88,5 @@ for i, histos in enumerate(zip(histosDB)):
 #     leg.Draw('same')
     
     ROOT.gPad.Update()
-    ROOT.gPad.Print('PCL_2017B/afterTS/BS_PCL_' + histos[0].GetName() + '.pdf')
+    ROOT.gPad.Print('PCL_2018B/BS_PCL_' + histos[0].GetName() + '_2018AB_June29_checkMatrixChange.pdf')
 

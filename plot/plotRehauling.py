@@ -5,8 +5,7 @@ from PlotStyle import PlotStyle
 from CMSStyle import CMS_lumi
 from utils.fillRunDict import labelByTime, labelByFill, splitByMagneticField
  
-ROOT.gROOT.SetBatch(False)
-ROOT.gROOT.Reset()
+ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle('Plain')
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptFit(1111)
@@ -27,7 +26,8 @@ ROOT.gStyle.SetPadGridY(True)
 ROOT.gStyle.SetLegendFont(42)
 
 # file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
-file = ROOT.TFile.Open('/Users/manzoni/Desktop/BeamspotTools/test/histos_reco.root')
+# file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/atlas_fills/histos_2018A_6638_byLS.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/forMCproduction/histos_2018A_from6688.root')
 
 file.cd()
 
@@ -41,14 +41,15 @@ dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
 variables = [
-    (X         , 'beam spot x [cm]'         ,  0.050 , 0.120 ),
-    (Y         , 'beam spot y [cm]'         ,  0.050 , 0.120 ),
-    (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
-    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.0   , 5.    ),
-    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.000 , 0.008 ),
-    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.000 , 0.008 ),
-    (dxdz      , 'beam spot dx/dz [rad]'    , -4.e-4 , 4.e-4 ),
-    (dydz      , 'beam spot dy/dz [rad]'    , -4.e-4 , 4.e-4 ),
+    (X         , 'beam spot x [cm]'         ,  0.078 , 0.110  ),
+    (Y         , 'beam spot y [cm]'         , -0.075  ,-0.055 ),
+#     (Z         , 'beam spot z [cm]'         , -1.5    , 0.5      ),
+    (Z         , 'beam spot z [cm]'         , -5.    , 5      ),
+    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.    , 5.     ),
+    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.000 , 0.002  ),
+    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.000 , 0.002  ),
+    (dxdz      , 'beam spot dx/dz [rad]'    ,  0.000 , 4.e-4  ),
+    (dydz      , 'beam spot dy/dz [rad]'    , -2.e-4 , 2.e-4  ),
 ]
 
 def drawMyStyle(histo, options = '', title = '', byFill = True, byTime = False):
@@ -67,7 +68,7 @@ def drawMyStyle(histo, options = '', title = '', byFill = True, byTime = False):
     
     if byTime:
         labelByFill(histo)
-        labelByTime(histo)
+        labelByTime(histo, granularity = 4)
 
     histo.SetTitle('')
     histo.GetXaxis().SetTickLength(0.03)
@@ -91,41 +92,30 @@ def saveHisto(var):
 
     histo = var[0]
 
-    histo0T, histo3p8T, histo2p8T, histoOther = splitByMagneticField(
-        histo, 
-        json    = True, 
-        json3p8 = 'json_DCSONLY.txt',
-        json2p8 = 'json_DCSONLY_2.8T.txt', # dummy
-        json0   = 'json_DCSONLY_noBField.txt',
-    )
-        
-    histo0T   .SetMarkerColor(ROOT.kRed   + 1)
-    histo3p8T .SetMarkerColor(ROOT.kBlack    )
-    histo2p8T .SetMarkerColor(ROOT.kGreen + 1)
+    histo3p8T = histo.Clone()    
+    histo3p8T = histo.Clone()    
+    print 'n entries', histo3p8T.GetEntries()
+    histo3p8T .SetMarkerColor(1)
+    histo3p8T .SetMarkerStyle(20)
+    histo3p8T .SetMarkerSize(1.5)
 
-    cloneHisto0T    = histo0T   .Clone()
     cloneHisto3p8T  = histo3p8T .Clone()
-    cloneHisto2p8T  = histo2p8T .Clone()
-
-    cloneHisto0T   .SetMarkerSize(3.)
-    cloneHisto3p8T .SetMarkerSize(3.)
-    cloneHisto2p8T .SetMarkerSize(3.)
-  
-    cloneHisto0T   .SetLineColor(ROOT.kGray + 2)
-    cloneHisto3p8T .SetLineColor(ROOT.kGray + 2)
-    cloneHisto2p8T .SetLineColor(ROOT.kGray + 2)
     
     byFill = True
     byTime = False
 
-    toplot = [hist for hist in [histo0T, histo3p8T, histo2p8T] if hist.GetEntries() > 0]
+    print 'plotting...'
+    for hist in [histo3p8T]:  print hist.GetEntries() 
+    toplot = [hist for hist in [histo3p8T] if hist.GetEntries() > 0]
+#     toplot = [hist for hist in [histo0T, histo3p8T, histo2p8T] if hist.GetEntries() > 0]
         
     for j, hist in enumerate(toplot):
         drawMyStyle(hist, options = 'SAME'*(j!=0), byFill = byFill, byTime = byTime)
 
-    for hist in [histo0T, histo3p8T, histo2p8T, histoOther]:
+#     for hist in [histo0T, histo3p8T, histo2p8T, histoOther]:
+    for hist in [histo3p8T]:
         hist.SetTickLength(0, 'X')
-        
+    
     ROOT.gPad.Update()
     
     # SetNdivisions() does not work when bin labels are changed
@@ -137,20 +127,18 @@ def saveHisto(var):
                          'f1', 520)
     labels.SetLabelSize(0)
     labels.Draw()
+
     
-    CMS_lumi(ROOT.gPad, 4, 0)
+    CMS_lumi(ROOT.gPad, 5, 0)
     ROOT.gPad.Update()
     
     leg = ROOT.TLegend( 0.902, 0.5, 1.0, 0.75 )
-    leg.SetFillColor(ROOT.kWhite)
-    leg.SetLineColor(ROOT.kWhite)
+    leg.SetFillColor(10)
+    leg.SetLineColor(10)
     if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
-    if histo0T   .GetEntries()>0: leg.AddEntry(cloneHisto0T   , 'B = 0 T'   , 'EP')
-    if histo2p8T .GetEntries()>0: leg.AddEntry(cloneHisto2p8T , 'B = 2.8 T' , 'EP')
-    if histoOther.GetEntries()>0: leg.AddEntry(histoOther     , 'magnet ramping', 'F')
-    leg.Draw('SAME')
 
-    ROOT.gPad.Print('BS_plot_full_by_fill_run2016B_%s.pdf' %histo.GetName())
+
+    ROOT.gPad.Print('BS_plot_full_by_time_run2018A_from6688_%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
