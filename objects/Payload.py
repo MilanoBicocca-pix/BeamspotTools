@@ -323,16 +323,161 @@ class Payload(object):
         if returnHisto:
             return histo
 
+
+
+
+    def plotByTime(self, variable, iRun, fRun, itime = -1, ftime = 1e12, 
+                   savePdf = False, returnHisto = False, dilated = 0, byFill = False, 
+                   ):
+        '''
+        Plot a BS parameter as a function of LS.
+        Allows multiple LS bins.
+        Can run over different runs or over a single run different LS
+        '''
+        afterFirst = lambda x : (x.RunFirst >= iRun and x.since >= itime)
+        beforeLast = lambda x : (x.RunLast  <= fRun and x.till  <= ftime)
+        
+        # get the list of BS objects
+        myBS = OrderedDict({k:v for k, v in self.fromTextToBS(iov=True).iteritems()
+                            if afterFirst(k) and beforeLast(k)})
+        
+
+        runs = list(set(v.Run for v in myBS.values()))
+        
+        byrun = False
+
+        if len(runs) == len(myBS):
+            byrun = True
+        
+        lastBin = 0.
+        binLabels = {}
+        points = []
+        bins = []
+        
+        for run in sorted(runs):
+
+            nowBS = {k:v for k, v in myBS.items() if v.Run == run}
+            binLabels[lastBin] = str(run)
+            
+            semiSum  = lambda k : (0.5 * (k.till - k.since + (k.till == k.since)) * (k.till > 0)) + k.since
+            semiDiff = lambda k :  0.5 * (k.till - k.since + (k.till == k.since))
+
+            for k, v in nowBS.items():
+                point = (
+                    semiSum(k)                  , # x  
+                    getattr(v, variable)        , # y
+                    semiDiff(k)                 , # xe
+                    getattr(v, variable + 'err'), # ye
+                )
+                points.append(point)
+                bins.append(point[0]-point[2])
+                bins.append(point[0]+point[2])
+            
+            points.sort(key=lambda x: x[0])
+            lastBin = max(bins)
+
+        points.sort(key=lambda x: x[0])
+
+        bins = sorted(list(set(bins)))       
+        abins = array('d', bins)
+
+        histo = ROOT.TH1F(variable, '', len(abins) - 1, abins)
+        
+        for i, item in enumerate(points):
+            index = histo.FindBin(points[i][0]) 
+            histo.SetBinContent(index, item[1])
+            histo.SetBinError  (index, item[3])
+            print 'x', points[i][0], 'ibin', index, 'content', item[1]
+                                
+        iRun = max(iRun, sorted(runs)[0])
+        fRun = min(fRun, sorted(runs)[-1])
+        
+        histo.SetTitle('Run %d - %d'  %(iRun, fRun))
+        histo.GetXaxis().SetTitle('Run')
+
+        if iRun == fRun:
+            itime = max(itime, min([v.IOVBeginTime for v in nowBS.values()]))
+            ftime = min(ftime, max([v.IOVEndTime   for v in nowBS.values()]))
+            if not dilated:
+                histo.SetTitle('Run %d Lumi %d - %d'  %(iRun, itime, ftime))
+                histo.GetXaxis().SetTitle('time')
+        
+        else:
+            for index, label in binLabels.items():
+                binIndex = histo.GetXaxis().FindBin(index)
+                histo.GetXaxis().SetBinLabel(max(1, binIndex), label)
+            
+        offset  = 0
+        
+        for j, bin in enumerate([point[0] for point in points]): 
+            for k in sorted(binLabels.keys(), reverse = True):
+                if bin > k:
+                    offset = k
+                    break
+            binIndex = histo.GetXaxis().FindBin(bin)
+            i = points[j][0] - points[j][2] - offset
+            f = points[j][0] + points[j][2] - (points[j][2] == 0.5) - offset            
+            
+            label = histo.GetXaxis().GetBinLabel(binIndex)
+            if not dilated:
+                histo.GetXaxis().SetBinLabel(binIndex, 
+                                             label + (not byrun) * 
+                                             (' time %d-%d' %(i, f)))            
+            
+        histo.GetXaxis().LabelsOption('v')
+        histo.GetXaxis().SetTitleOffset(2.8)
+            
+        histo.GetYaxis().SetTitle('BeamSpot %s %s' 
+                                  %(variable, '[cm]'*(not 'dz' in variable)))
+
+        funcmax = max([point[1] for point in points])
+        funcmin = min([point[1] for point in points])
+        ave     = 0.5 * (funcmax + funcmin)
+        
+        mymax = (1.03*funcmax) 
+        mymin = (0.97*funcmin)
+#         mymax = max(1.05 * ave, funcmax) 
+#         mymin = min(0.95 * ave, funcmin)
+
+        histo.SetMarkerStyle(8)
+        histo.SetMarkerSize(0.3)
+        histo.SetLineColor(ROOT.kRed)
+        histo.SetMarkerColor(ROOT.kBlack)
+        histo.GetYaxis().SetTitleOffset(1.5 - 0.2 * dilated)
+        histo.GetYaxis().SetRangeUser(mymin, mymax)
+        histo.SetTitleSize(0.04, 'XY')
+        histo.SetLabelSize(0.03, 'XY')
+        
+        c1 = ROOT.TCanvas('c1', 'c1', 1400 + 600 * dilated, 800)
+        ROOT.gPad.SetGridx()
+        ROOT.gPad.SetGridy()
+        gridLineWidth = int(max(1, ROOT.gStyle.GetGridWidth() / max(1., dilated)))
+        ROOT.gStyle.SetGridWidth(gridLineWidth)
+        ROOT.gStyle.SetOptStat(False)
+        ROOT.gPad.SetBottomMargin(0.27)
+        if byFill:
+            labelByFill(histo)
+            histo.GetXaxis().SetTitle('Fill')
+        histo.Draw()
+        ROOT.gPad.Update()
+        if savePdf: 
+            c1.SaveAs('BS_plot_%d_%d_%s.pdf' %(iRun, fRun, variable))
+
+        if returnHisto:
+            return histo
+
+
+
+
+
+
+
 if __name__ == '__main__':
 
     #file = '/afs/cern.ch/user/f/fiorendi/public/beamSpot/'\
     #       'beamspot_firstData_run247324_byLumi_all_lumi98_107.txt'
     
     #file = '/afs/cern.ch/user/f/fiorendi/public/beamSpot/bs_weighted_results_246908.txt'
-   
-   
-   
-   
    
    
    
