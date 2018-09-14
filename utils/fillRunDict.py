@@ -302,6 +302,63 @@ def splitByMagneticField(histo, json = False, json3p8 = None,
     return histo0T, histo3p8T, histo2p8T, histoOther    
 
 
+# def splitOne(histo, json, irun = -1, frun = 1E6):
+# 
+#     runs  = sorted([i for i in json.keys() if i >= irun and i <= frun])
+#     
+
+def splitByJson(histo, jsonlist, irun = -1, frun = 1E6):
+    '''
+    Gets a histogram with fills on the X axis and returns different histograms, 
+    based on the json list. 
+    '''
+ 
+    from utils.readJson import readJson
+
+    myjsonlist = []
+    for ijson in jsonlist:
+        myjsonlist.append( readJson(fileName = ijson) )    
+
+    runslist   = []
+    for ijson in myjsonlist:
+        theseRuns = sorted([i for i in ijson.keys() if i >= irun and i <= frun])
+        runslist.append(theseRuns)
+        
+    runsOther = []
+    
+    histolist = []
+    for i in range(len(jsonlist)):
+#     for i in range(len(jsonlist)+1):
+        histo_tmp = histo.Clone()
+        if i < len(jsonlist):
+            histo_tmp.SetName(histo.GetName() + '_' + str(jsonlist[i]))
+        else: 
+            histo_tmp.SetName(histo.GetName() + '_Other')
+        histolist.append(histo_tmp)  
+
+    mydict = zip(histolist,runslist)
+
+    for k, v in mydict:
+        k.Reset()
+        add = False
+        for ibin in range(k.GetNbinsX()):
+            irun  = k.GetXaxis().GetBinLabel(ibin+1)
+            binc  = histo.GetBinContent(ibin+1)
+            bine  = histo.GetBinError  (ibin+1)
+            if not irun:
+                if add:
+                    k.SetBinContent(ibin+1, binc)
+                    k.SetBinError  (ibin+1, bine)
+            elif int(irun) in v:
+                k.SetBinContent(ibin+1, binc)
+                k.SetBinError  (ibin+1, bine)
+                add = True
+            else:
+                add = False
+                    
+    return histolist    
+
+
 
         
 
