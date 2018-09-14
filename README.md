@@ -22,7 +22,7 @@ Standalone package to handle beam spot stuff
   source set_environment.[c]sh   # this adds the base BeamspotTools directory to your PYTHONPATH variable 
 ```
 
-## Istallation of python package 'uncertainties'  
+## Installation of python package 'uncertainties'  
 
 This is used in BeamSpot class to correctly propagate the uncertainties when computing the proper beam spot width from projections and tilts.  
 
