@@ -3,7 +3,7 @@ sys.path.append('..')
 import ROOT
 from PlotStyle import PlotStyle
 from CMSStyle import CMS_lumi
-from utils.fillRunDict import labelByTime, labelByFill, splitByMagneticField
+from utils.fillRunDict import labelByTime, labelByFill, splitByMagneticField, splitByJson
  
 ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle('Plain')
@@ -27,7 +27,7 @@ ROOT.gStyle.SetLegendFont(42)
 
 # file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
 # file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/atlas_fills/histos_2018A_6638_byLS.root')
-file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos_VdM_319176_merge20.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_2_0/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/results_SeptReReco_final/histos_2018B_SeptReReco_Specials.root')
 
 file.cd()
 
@@ -41,14 +41,15 @@ dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
 variables = [
-    (X         , 'beam spot x [cm]'         ,  0.09 , 0.104 ),
+    (X         , 'beam spot x [cm]'         ,  0.078 , 0.110  ),
+    (Y         , 'beam spot y [cm]'         , -0.075  ,0.15 ),
+#     (Y         , 'beam spot y [cm]'         , -0.075  ,-0.055 ),
 #     (X         , 'beam spot x [cm]'         ,  0.06 , 0.130  ),
-    (Y         , 'beam spot y [cm]'         , -0.095  ,-0.025  ),
 #     (Z         , 'beam spot z [cm]'         , -1.5    , 0.5      ),
     (Z         , 'beam spot z [cm]'         , -3.    , 3      ),
-    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  3.    , 6.5     ),
-    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.000 , 0.01  ),
-    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.000 , 0.01  ),
+    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.    , 7     ),
+    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.000 , 0.018  ),
+    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.000 , 0.018 ),
     (dxdz      , 'beam spot dx/dz [rad]'    ,  0.000 , 4.e-4  ),
     (dydz      , 'beam spot dy/dz [rad]'    , -2.e-4 , 2.e-4  ),
 ]
@@ -93,54 +94,61 @@ def saveHisto(var):
 
     histo = var[0]
 
-    histo3p8T, histoVdM, histo90m, histoAli, histoNb, histoOther = splitByMagneticField(
+    histoList = splitByJson(
         histo, 
-        json    = True, 
-        json3p8 = 'json_DCSONLY.txt',
-        jsonVdM = 'json_DCSONLY_VdM.txt',
-        json90m = 'json_DCSONLY_90m.txt', 
-        jsonAli = 'json_DCSONLY_VdmAlice.txt',
-        jsonNb  = 'json_DCSONLY_SpecialNBunches.txt',
+        ['json_DCSONLY.txt',
+         'json_DCSONLY_VdM.txt',
+         'json_DCSONLY_90m.txt', 
+         'json_DCSONLY_VdmAlice.txt',
+         'json_DCSONLY_SpecialNBunches.txt'
+        ]
     )
-    
+
+    histo3p8T = histoList[0]
+    histoVdM  = histoList[1]
+    histo90m  = histoList[2]
+    histoAli  = histoList[3]
+    histoNb   = histoList[4]
+
     histoVdM   .SetMarkerColor(ROOT.kRed   + 1)
-    histo3p8T .SetMarkerColor(ROOT.kBlack    )
-    histo90m .SetMarkerColor(ROOT.kGreen + 1)
+    histo3p8T  .SetMarkerColor(ROOT.kBlack    )
+    histo90m   .SetMarkerColor(ROOT.kGreen + 1)
+    histoAli   .SetMarkerColor(ROOT.kBlue  + 1)
+    histoNb    .SetMarkerColor(ROOT.kOrange+ 1)
 
-    cloneHistoVdM    = histoVdM   .Clone()
+    cloneHistoVdM   = histoVdM  .Clone()
     cloneHisto3p8T  = histo3p8T .Clone()
-    cloneHisto90m  = histo90m .Clone()
+    cloneHisto90m   = histo90m  .Clone()
+    cloneHistoAli   = histoAli  .Clone()
+    cloneHistoNb    = histoNb   .Clone()
 
-    cloneHistoVdM   .SetMarkerSize(3.)
-    cloneHisto3p8T .SetMarkerSize(3.)
-    cloneHisto90m .SetMarkerSize(3.)
+    cloneHistoVdM  .SetMarkerSize(0.7) ; cloneHistoVdM  .SetMarkerStyle(20)
+    cloneHisto3p8T .SetMarkerSize(0.7) ; cloneHisto3p8T .SetMarkerStyle(20)
+    cloneHisto90m  .SetMarkerSize(0.7) ; cloneHisto90m  .SetMarkerStyle(20)
+    cloneHistoAli  .SetMarkerSize(0.7) ; cloneHistoAli  .SetMarkerStyle(20)
+    cloneHistoNb   .SetMarkerSize(0.7) ; cloneHistoNb   .SetMarkerStyle(20)
   
     cloneHistoVdM .SetLineColor(ROOT.kGray + 2)
     cloneHisto3p8T.SetLineColor(ROOT.kGray + 2)
     cloneHisto90m .SetLineColor(ROOT.kGray + 2)
-    
+    cloneHistoAli .SetLineColor(ROOT.kGray + 2)
+    cloneHistoNb  .SetLineColor(ROOT.kGray + 2)
 
-    histo3p8T .SetMarkerColor(1)
-    histo3p8T .SetMarkerStyle(20)
-    histo3p8T .SetMarkerSize(1.5)
-
-    cloneHisto3p8T  = histo3p8T .Clone()
     
     byFill = True
     byTime = False
 
     print 'plotting...'
-#     for hist in [histo3p8T]:  print hist.GetEntries() 
-#     toplot = [hist for hist in [histo3p8T] if hist.GetEntries() > 0]
-    toplot = [hist for hist in [histoVdM, histo3p8T, histo90m] if hist.GetEntries() > 0]
+#     toplot = [hist for hist in [cloneHistoVdM, cloneHisto3p8T] if hist.GetEntries() > 0]
+    toplot = [hist for hist in [cloneHistoVdM, cloneHisto3p8T, cloneHisto90m, cloneHistoAli, cloneHistoNb] if hist.GetEntries() > 0]
         
     for j, hist in enumerate(toplot):
         drawMyStyle(hist, options = 'SAME'*(j!=0), byFill = byFill, byTime = byTime)
 
-    for hist in [histoVdM, histo3p8T, histo90m, histoOther]:
-#     for hist in [histo3p8T]:
+#     for hist in [cloneHistoVdM, cloneHisto3p8T]:
+    for hist in [cloneHistoVdM, cloneHisto3p8T, cloneHisto90m, cloneHistoAli, cloneHistoNb]:
         hist.SetTickLength(0, 'X')
-        hist.GetXaxis().SetTitle('LS')
+        hist.GetXaxis().SetTitle('Fill')
     
     ROOT.gPad.Update()
     
@@ -161,13 +169,19 @@ def saveHisto(var):
     leg = ROOT.TLegend( 0.902, 0.5, 1.0, 0.75 )
     leg.SetFillColor(10)
     leg.SetLineColor(10)
-    if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
+    leg.SetTextSize(0.027)
 
+    if cloneHisto3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'Standard'               , 'EP')
+#     if cloneHistoVdM  .GetEntries()>0: leg.AddEntry(cloneHistoVdM  , 'ZeroBias'               , 'EP')
+    if cloneHistoVdM  .GetEntries()>0: leg.AddEntry(cloneHistoVdM  , 'VdM scan CMS'           , 'EP')
+    if cloneHisto90m  .GetEntries()>0: leg.AddEntry(cloneHisto90m  , '90m #beta*'             , 'EP')
+    if cloneHistoAli  .GetEntries()>0: leg.AddEntry(cloneHistoAli  , 'VdM ALICE/LHCb'         , 'EP')
+    if cloneHistoNb   .GetEntries()>0: leg.AddEntry(cloneHistoNb   , 'Special # bunches'      , 'EP')
+    leg.Draw()
 
-    ROOT.gPad.Print('BS_plot_specials_%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('BS_Run2018B_SeptReReco_Specials_%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
     saveHisto(var)
-
 
