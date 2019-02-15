@@ -7,6 +7,7 @@ import numpy as np
 import uncertainties as unc
 import xml.etree.ElementTree as et
 from IOV import IOV
+import itertools
 
 class BeamSpot(object):
     '''
@@ -29,6 +30,8 @@ class BeamSpot(object):
         self.dxdzerr       =  0.
         self.dydz          =  0.
         self.dydzerr       =  0.
+        self.dxdy          =  0.
+        self.dxdyerr       =  0.
         self.beamWidthX    =  0.
         self.beamWidthXerr =  0.
         self.beamWidthY    =  0.
@@ -49,6 +52,13 @@ class BeamSpot(object):
         self.sigmaYtrue    =  0.        
         self.sigmaXtrueerr =  0.
         self.sigmaYtrueerr =  0.
+
+        self.XPV           =  0.
+        self.YPV           =  0.
+        self.dxdzPV        =  0.
+        self.dydzPV        =  0.
+        self.PVcov         = np.zeros((9,9),dtype=np.double)        
+        
 
     def _computeProperWidths(self, full=False):
         '''
@@ -265,32 +275,41 @@ class BeamSpot(object):
     
             self.beamWidthX    = float( payload[11].split()[1] )
             self.beamWidthY    = float( payload[12].split()[1] )
+
+            self.dxdy          = float( payload[13].split()[1] )
             
             # covariance matrix defined here
             # https://github.com/MilanoBicocca-pix/cmssw/blob/CMSSW_7_5_X_beamspot_workflow_riccardo/RecoVertex/BeamSpotProducer/src/PVFitter.cc#L306
             # diagonal terms 
-            self.Xerr          = sqrt( float(payload[13].split()[1]) )
-            self.Yerr          = sqrt( float(payload[14].split()[2]) )
-            self.Zerr          = sqrt( float(payload[15].split()[3]) )
-            self.sigmaZerr     = sqrt( float(payload[16].split()[4]) )
-            self.dxdzerr       = sqrt( float(payload[17].split()[5]) )
-            self.dydzerr       = sqrt( float(payload[18].split()[6]) )
-            self.beamWidthXerr = sqrt( float(payload[19].split()[7]) )
-            # self.beamWidthYerr = float( payload[16].split()[1] ) # not in cov matrix!
-            # RIC: we should save it in the covariance matrix!
-            #      workaround, for now
-            self.beamWidthYerr = self.beamWidthXerr
+            self.Xerr          = sqrt( float(payload[14].split()[1]) )
+            self.Yerr          = sqrt( float(payload[15].split()[2]) )
+            self.Zerr          = sqrt( float(payload[16].split()[3]) )
+            self.sigmaZerr     = sqrt( float(payload[17].split()[4]) )
+            self.dxdzerr       = sqrt( float(payload[18].split()[5]) )
+            self.dydzerr       = sqrt( float(payload[19].split()[6]) )
+            self.beamWidthXerr = sqrt( float(payload[20].split()[7]) )
+            self.beamWidthYerr = sqrt( float(payload[21].split()[8]) )
+            self.dxdyerr       = sqrt( float(payload[22].split()[9]) )
             
             # off diagonal terms
-            self.XYerr         = float( payload[13].split()[2] )
-            self.YXerr         = float( payload[14].split()[1] )
-            self.dxdzdydzerr   = float( payload[17].split()[6] )
-            self.dydzdxdzerr   = float( payload[18].split()[5] )
+            self.XYerr         = float( payload[14].split()[2] )
+            self.YXerr         = float( payload[15].split()[1] )
+            self.dxdzdydzerr   = float( payload[18].split()[6] )
+            self.dydzdxdzerr   = float( payload[19].split()[5] )
+
+            # values from PV fit    
+            self.XPV           = float( payload[23].split()[1] )
+            self.YPV           = float( payload[24].split()[1] )
+            self.dxdzPV        = float( payload[25].split()[1] )
+            self.dydzPV        = float( payload[26].split()[1] )
+            
+            for icov in range(9):
+                self.PVcov[icov]  = np.array(payload[27+icov].split()[1:10])
+
+            self.EmittanceX    = float( payload[36].split()[1] )
+            self.EmittanceY    = float( payload[37].split()[1] )
     
-            self.EmittanceX    = float( payload[20].split()[1] )
-            self.EmittanceY    = float( payload[21].split()[1] )
-    
-            self.betastar      = float( payload[22].split()[1] )    
+            self.betastar      = float( payload[38].split()[1] )    
     
         if any(['Beam Spot Data' in i for i in  payload]):
             
@@ -311,6 +330,8 @@ class BeamSpot(object):
                
             self.beamWidthX    = float( payload[11].split('=')[1].split('+/-')[0]            )
             self.beamWidthY    = float( payload[12].split('=')[1].split('+/-')[0]            )
+
+            self.dxdy          = float( payload[13].split('=')[1].split('+/-')[0]            )
             
             self.Xerr          = float( payload[ 5].split('=')[1].split('+/-')[1].split()[0] )
             self.Yerr          = float( payload[ 6].split('=')[1].split('+/-')[1].split()[0] )
@@ -322,6 +343,8 @@ class BeamSpot(object):
             
             self.beamWidthXerr = float( payload[11].split('=')[1].split('+/-')[1].split()[0] )
             self.beamWidthYerr = float( payload[12].split('=')[1].split('+/-')[1].split()[0] )
+
+            self.dxdyerr       = float( payload[13].split('=')[1].split('+/-')[1].split()[0] )
                 
             self.EmittanceX    = float( payload[13].split('=')[1].split()[0]                 )
             self.EmittanceY    = float( payload[14].split('=')[1].split()[0]                 )
@@ -366,16 +389,16 @@ class BeamSpot(object):
                   'dydz {DYDZ}\n'                               \
                   'BeamWidthX {BWX}\n'                          \
                   'BeamWidthY {BWY}\n'                          \
-                  'Cov(0,j) {M00} {M01} 0 0 0 0 0\n'            \
-                  'Cov(1,j) {M10} {M11} 0 0 0 0 0\n'            \
-                  'Cov(2,j) 0 0 {M22} 0 0 0 0\n'                \
-                  'Cov(3,j) 0 0 0 {M33} 0 0 0\n'                \
-                  'Cov(4,j) 0 0 0 0 {M44} {M45} 0\n'            \
-                  'Cov(5,j) 0 0 0 0 {M54} {M55} 0\n'            \
-                  'Cov(6,j) 0 0 0 0 0 0 {M66}\n'                \
-                  'EmittanceX {EMX}\n'                          \
-                  'EmittanceY {EMY}\n'                          \
-                  'BetaStar {BSTAR}\n'                          \
+                  'dxdy {DXDY}\n'                               \
+                  'Cov(0,j) {M00} {M01} 0 0 0 0 0 0 0\n'            \
+                  'Cov(1,j) {M10} {M11} 0 0 0 0 0 0 0\n'            \
+                  'Cov(2,j) 0 0 {M22} 0 0 0 0 0 0\n'                \
+                  'Cov(3,j) 0 0 0 {M33} 0 0 0 0 0\n'                \
+                  'Cov(4,j) 0 0 0 0 {M44} {M45} 0 0 0\n'            \
+                  'Cov(5,j) 0 0 0 0 {M54} {M55} 0 0 0\n'            \
+                  'Cov(6,j) 0 0 0 0 0 0 {M66} 0 0\n'                \
+                  'Cov(7,j) 0 0 0 0 0 0 0 {M77} 0\n'                \
+                  'Cov(8,j) 0 0 0 0 0 0 0 0 {M88}\n'                \
                   ''.format(RUN       = str(self.Run          ),
                             DATESTART = str(str_date_start    ),
                             TIMESTART = str(self.IOVBeginTime ),
@@ -390,6 +413,7 @@ class BeamSpot(object):
                             SZ0       = str(self.sigmaZ       ),
                             DXDZ      = str(self.dxdz         ),
                             DYDZ      = str(self.dydz         ),
+                            DXDY      = str(self.dxdy         ),
                             BWX       = str(self.beamWidthX   ),
                             BWY       = str(self.beamWidthY   ),
                             # diagonal
@@ -400,17 +424,154 @@ class BeamSpot(object):
                             M44       = str(pow(self.dxdzerr      , 2)),
                             M55       = str(pow(self.dydzerr      , 2)),
                             M66       = str(pow(self.beamWidthXerr, 2)),
-                            # off diagonal
+                            M77       = str(pow(self.beamWidthYerr, 2)),
+                            M88       = str(pow(self.dxdyerr      , 2)),
+                            #  off diagonal
                             M01       = str(self.XYerr        ),
                             M10       = str(self.YXerr        ),
                             M45       = str(self.dxdzdydzerr  ),
                             M54       = str(self.dydzdxdzerr  ),
+                            )
+        
+        for i in range(9):
+            towrite = towrite + 'PVCov(' + str(i) + ',j)'
+            for j in range(9):
+                towrite = towrite + ' {COVI}'.format(COVI = str(self.PVcov[i][j]))
+            towrite = towrite + '\n'
+
+        towrite = towrite + \
+                  'xPV {XPV}\n'                          \
+                  'yPV {YPV}\n'                          \
+                  'dxdzPV {DXDZPV}\n'                    \
+                  'dydzPV {DYDZPV}\n'                    \
+                  'EmittanceX {EMX}\n'                   \
+                  'EmittanceY {EMY}\n'                   \
+                  'BetaStar {BSTAR}\n'                   \
+                  ''.format(
+                            XPV       = str(self.XPV          ),
+                            YPV       = str(self.YPV          ),
+                            DXDZPV    = str(self.dxdzPV       ),
+                            DYDZPV    = str(self.dydzPV       ),
                             EMX       = str(self.EmittanceX   ),
                             EMY       = str(self.EmittanceY   ),
                             BSTAR     = str(self.betastar     ),
                             )
+        f.write(towrite)
+
+
+
+
+    def DumpCSV(self, file, mode = 'a'):
+        '''
+        Dumps a Beam Spot objects into a csv file.
+        Default file open mode is append 'a', so that it can be serialised.
+        '''
+        
+        f = open(file, mode)
+     
+        towrite = '{RUN} \t'                          \
+                  '{TIMESTART} \t'                    \
+                  '{TIMEEND} \t'                      \
+                  '{TYPE} \t'                         \
+                  '{X0} \t'                           \
+                  '{X0Err} \t'                        \
+                  '{Y0} \t'                           \
+                  '{Y0Err} \t'                        \
+                  '{Z0} \t'                           \
+                  '{Z0Err} \t'                        \
+                  '{SZ0} \t'                          \
+                  '{SZ0Err} \t'                       \
+                  '{DXDZ} \t'                         \
+                  '{DXDZErr} \t'                      \
+                  '{DYDZ} \t'                         \
+                  '{DYDZErr} \t'                      \
+                  '{DXDY} \t'                         \
+                  '{DXDYErr} \t'                      \
+                  '{BWX} \t'                          \
+                  '{BWXErr} \t'                       \
+                  '{BWY} \t'                          \
+                  '{BWYErr} \t'                       \
+                  '{TWX} \t'                          \
+                  '{TWXErr} \t'                       \
+                  '{TWY} \t'                          \
+                  '{TWYErr} \t\n'      	              \
+                  ''.format(RUN       = str(self.Run          ),
+                            TIMESTART = str(self.IOVBeginTime ),
+                            TIMEEND   = str(self.IOVEndTime   ),
+                            TYPE      = str(self.Type         ),
+                            X0        = str(self.X            ),
+                            X0Err     = str(self.Xerr         ),
+                            Y0        = str(self.Y            ),
+                            Y0Err     = str(self.Yerr         ),
+                            Z0        = str(self.Z            ),
+                            Z0Err     = str(self.Zerr         ),
+                            SZ0       = str(self.sigmaZ       ),
+                            SZ0Err    = str(self.sigmaZerr    ),
+                            DXDZ      = str(self.dxdz         ),
+                            DXDZErr   = str(self.dxdzerr      ),
+                            DYDZ      = str(self.dydz         ),
+                            DYDZErr   = str(self.dydzerr      ),
+                            DXDY      = str(self.dxdy         ),
+                            DXDYErr   = str(self.dxdyerr      ),
+                            BWX       = str(self.beamWidthX   ),
+                            BWXErr    = str(self.beamWidthXerr),
+                            BWY       = str(self.beamWidthY   ),
+                            BWYErr    = str(self.beamWidthYerr),
+                            TWX       = str(self.sigmaXtrue   ),
+                            TWXErr    = str(self.sigmaXtrueerr),
+                            TWY       = str(self.sigmaYtrue   ),
+                            TWYErr    = str(self.sigmaYtrueerr),
+                            )
         
         f.write(towrite)
+
+
+    def DumpCSVFromPVFit(self, file, mode = 'a'):
+        '''
+        Dumps a Beam Spot objects into a csv file.
+        Takes all values from the result of the PV fit.
+        Prints central measurement and covariance matrix.
+        '''
+        
+        f = open(file, mode)
+     
+        towrite = '{RUN} \t'                          \
+                  '{TIMESTART} \t'                    \
+                  '{TIMEEND} \t'                      \
+                  '{TYPE} \t'                         \
+                  '{X0} \t'                           \
+                  '{Y0} \t'                           \
+                  '{Z0} \t'                           \
+                  '{SZ0} \t'                          \
+                  '{DXDZ} \t'                         \
+                  '{DYDZ} \t'                         \
+                  '{DXDY} \t'                         \
+                  '{BWX} \t'                          \
+                  '{BWY} \t'                          \
+                  ''.format(RUN       = str(self.Run          ),
+                            TIMESTART = str(self.IOVBeginTime ),
+                            TIMEEND   = str(self.IOVEndTime   ),
+                            TYPE      = str(self.Type         ),
+                            X0        = str(self.XPV          ),
+                            Y0        = str(self.YPV          ),
+                            Z0        = str(self.Z            ),
+                            SZ0       = str(self.sigmaZ       ),
+                            DXDZ      = str(self.dxdzPV       ),
+                            DYDZ      = str(self.dydzPV       ),
+                            DXDY      = str(self.dxdy         ),
+                            BWX       = str(self.beamWidthX   ),
+                            BWY       = str(self.beamWidthY   ),
+#                             TWX       = str(self.sigmaXtrue   ),
+#                             TWXErr    = str(self.sigmaXtrueerr),
+#                             TWY       = str(self.sigmaYtrue   ),
+#                             TWYErr    = str(self.sigmaYtrueerr),
+                            )
+        for j,k in itertools.product(range(9),range(9)):
+            towrite = towrite + '{COVI} \t'.format(COVI = str(self.PVcov[j][k]))
+        towrite = towrite + '\n'
+        
+        f.write(towrite)
+
 
     def __str__(self):
         '''

@@ -50,12 +50,12 @@ class Payload(object):
             # the format of the Payload file 
             if 'LumiRange' in line:
                 singleFits.append([self.lines[j].rstrip() \
-                                   for j in range(i-3, i+20)])
+                                   for j in range(i-3, i+36)])## was 20 (sara)
         
             # make it read .dat files as dumped from the database as well
             if 'Beam Spot Data' in line:
                 singleFits.append([self.lines[j].rstrip() \
-                                   for j in range(i-2, i+13)])
+                                   for j in range(i-2, i+14)]) ## was 13 (sara)
 
         return singleFits    
 
@@ -328,6 +328,7 @@ class Payload(object):
 
     def plotByTime(self, variable, iRun, fRun, itime = -1, ftime = 1e12, 
                    savePdf = False, returnHisto = False, dilated = 0, byFill = False, 
+                   additionalString = ''
                    ):
         '''
         Plot a BS parameter as a function of LS.
@@ -461,7 +462,7 @@ class Payload(object):
         histo.Draw()
         ROOT.gPad.Update()
         if savePdf: 
-            c1.SaveAs('BS_plot_%d_%d_%s.pdf' %(iRun, fRun, variable))
+            c1.SaveAs('BS_plot_%d_%d_%s%s.pdf' %(iRun, fRun, additionalString, variable ))
 
         if returnHisto:
             return histo
