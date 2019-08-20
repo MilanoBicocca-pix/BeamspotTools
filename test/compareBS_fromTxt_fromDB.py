@@ -1,12 +1,8 @@
 import os
 import ROOT
-from objects.Payload   import Payload
-from objects.BeamSpot  import *
-from utils.fillRunDict import labelByTime, labelByFill
-from utils.getFileList   import get_files
-   
-ROOT.gROOT.SetBatch(True)
-
+from RecoVertex.BeamSpotProducer.BeamspotTools.objects.Payload   import Payload
+from RecoVertex.BeamSpotProducer.BeamspotTools.objects.BeamSpot  import *
+from RecoVertex.BeamSpotProducer.BeamspotTools.utils.fillRunDict import labelByTime, labelByFill
    
 def drawMyStyle(histo, var, options = '', title = '', byFill = True, byTime = False):
     
@@ -43,19 +39,19 @@ def drawMyStyle(histo, var, options = '', title = '', byFill = True, byTime = Fa
     return histo
    
    
-file_TXT = ['/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/IOVforPayloads/2017F/bs_ZB_2017_%d.txt' %i for i in range(1601)]
+file_TXT = ['/afs/cern.ch/work/m/manzoni/public/september2016rereco/perIoV/2016Bv2/total_bs_2016Bv2_%d.txt' %i for i in range(1279)]
 # file obtained by running the CondTools/BeamSpot package:
-file_DB  = '/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/CondTools/BeamSpot/test/2017F_ReRecoNov.txt'
+file_DB  = '/afs/cern.ch/user/f/fiorendi/public/reference_prompt_BeamSpotObjects_2016_LumiBased_v0_offline.txt'
 
 variables = [
-    ('X'         , 'beam spot x [cm]'         ,  0.075  , 0.095  ),
-    ('Y'         , 'beam spot y [cm]'         , -0.04   , -0.02  ),
+    ('X'         , 'beam spot x [cm]'         ,  0.050 , 0.080 ),
+    ('Y'         , 'beam spot y [cm]'         ,  0.080 , 0.110 ),
     ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
-    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.E-3 , 4E-3 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.E-3 , 4E-3 ),
-    ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
-    ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5   , 5.    ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.000 , 0.008 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.000 , 0.008 ),
+    ('dxdz'      , 'beam spot dx/dz [rad]'    ,  0.000 , 4.e-4 ),
+    ('dydz'      , 'beam spot dy/dz [rad]'    , -2.e-4 , 2.e-4 ),
 ]
 
 myPL_TXT = Payload(file_TXT)
@@ -78,13 +74,13 @@ for i, histos in enumerate(zip(histosTXT, histosDB)):
     histo1.Draw('')
     histo2.Draw('same')
     
-    leg = ROOT.TLegend( 0.902, 0.5, 1.0, 0.7 )
+    leg = ROOT.TLegend( 0.902, 0.5, 1.0, 0.75 )
     leg.SetFillColor(ROOT.kWhite)
     leg.SetLineColor(ROOT.kWhite)
-    if histo1 .GetEntries()>0: leg.AddEntry(histo1 , 'from txt' , 'pel')
-    if histo2 .GetEntries()>0: leg.AddEntry(histo2 , 'from DB'  , 'pel')
+    if histo1 .GetEntries()>0: leg.AddEntry(histo1 , 'from txt' , 'EPL')
+    if histo2 .GetEntries()>0: leg.AddEntry(histo2 , 'from DB'  , 'EPL')
     leg.Draw('same')
     
     ROOT.gPad.Update()
-    ROOT.gPad.Print('BS_comparison_plot_' + histos[0].GetName() + '_2017F.pdf')
+    ROOT.gPad.Print('BS_comparison_plot_' + histos[0].GetName() + '.pdf')
 

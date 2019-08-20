@@ -28,18 +28,21 @@ ROOT.gStyle.SetLegendFont(42)
 ROOT.gStyle.SetCanvasDefH(1500) #Height of canvas
 ROOT.gStyle.SetCanvasDefW(6000) #Width of canvas
 
-specialRuns = [300019,300029,300043,300050]
+# specialRuns = [300019,300029,300043,300050]
+specialRuns = [319018,319019,318984]
 
 verbosePrinting = True
 doFromScratch   = True
+
+cleanForSigmaZ_ = True
 
 
 def _doMerge( bscollection, outfilename ):
   for irun, ibs in bscollection.iteritems():
     if irun not in specialRuns:
-      pairs = splitByDrift(ibs, slopes = True)    
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 20, cleanForSigmaZ = cleanForSigmaZ_)    
     else:
-      pairs = splitByDrift(ibs, slopes = True, maxLumi = 1)    
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 1, cleanForSigmaZ = cleanForSigmaZ_)    
     for p in pairs:
       myrange = set(range(p[0], p[1] + 1)) & set(ibs.keys())
       bs_list = [ibs[i] for i in sorted(list(myrange))]
@@ -56,12 +59,12 @@ def _doSaveHistos( histolist, outfilename ):
 
 # # Plot fit results from txt file
 variables = [
-    ('X'         , 'beam spot x [cm]'         ,  0.076  , 0.088  ),
-    ('Y'         , 'beam spot y [cm]'         , -0.036  , -0.024  ),
+    ('X'         , 'beam spot x [cm]'         ,  0.078 , 0.110 ),
+    ('Y'         , 'beam spot y [cm]'         , -0.075  ,-0.055 ),
     ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
     ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.E-3 , 4E-3 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.E-3 , 4E-3 ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.E-3 , 2E-3 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.E-3 , 2E-3 ),
     ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
     ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
 ### for 2017C
@@ -77,90 +80,61 @@ variables = [
 
 variables = list(variables)
 
-
-# variables = [
-#   'X'         ,
-#   'Y'         ,
-#   'Z'         ,
-#   'sigmaZ'    ,
-#   'dxdz'      ,
-#   'dydz'      ,
-#   'beamWidthX',
-#   'beamWidthY'
-# ]
-
-runstring = '2017H' 
+runstring = '2018B_Specials' 
 
 
 if doFromScratch:
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v1_es0p9/171114_165107/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v2_es0p9/171113_141403/0000/*'           , prependPath=True)
+### 2018A
+#   r_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018A_HP_crab_106X_dataRun2_newTkAl_v18/190812_114423/0000/*.txt'         , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018A_HP_crab_106X_dataRun2_newTkAl_v18/190812_114423/0001/*.txt'         , prependPath=True)
+# #   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018A/180913_145518/0000/*.txt'                , prependPath=True)
+# ###sept rereco
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018A_315322/180913_134631/0000/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018A_315322/180913_134631/0001/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018A_315357/180913_134658/0000/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018A_fix/180912_140720/0000/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018A_fix/180912_140720/0001/*.txt'         , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v1_es0p9/171114_174952/0000//*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v2_es0p9/171114_175018/0000//*txt'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v3_es0p9/171114_175048/0000//*'           , prependPath=True)
-#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias1/crab_BS_ReRecoNov17_VdM_Run2017C_es0p9/171115_085917/0000/*'           , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017D_es0p9/171114_175116/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias8b4e1/crab_BS_ReRecoNov17_HighPU_Run2017D_es0p9/171115_085845/0000/*'           , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_es0p9/171114_175143/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_es0p9/171114_175143/0001/*'           , prependPath=True)
+### 2018B
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018B_upToFill6842/180913_145719/0000/*.txt'                              , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpress/crab_BS_SeptReReco_ExpressAlignment_2018B_Fill6768_6778_fix2/180912_151520/0000/*.txt'                             , prependPath=True)
+#   r_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018B_HP_NoFill6768_6778_NoSpecialRuns_crab_106X_dataRun2_newTkAl_v18/190812_114430/0000/*.txt'      , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpress/BS_UL2018B_Fill6768_6778_Legacy_crab_106X_dataRun2_newTkAl_v18//190809_131128/0000/*.txt'                          , prependPath=True)
+# ### septrereco
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018B_fix/180912_140800/0000/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018B_fix/180912_140800/0001/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpress/crab_BS_SeptReReco_ExpressAlignment_2018B_Fill6768_6778_fix2/180912_151520/0000/*.txt'   , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpress/crab_BS_SeptReReco_ExpressAlignment_2018B_Fill6768_6778_fix2/180912_151520/317696/*.txt'   , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017F_es0p9_GTv2/171129_144416/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017F_es0p9_GTv2/171129_144416/0001/*'           , prependPath=True)
+ #### B specials
+## compare UL & UL
+  r_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018B_SpecialRuns_Legacy_crab_106X_dataRun2_newTkAl_v18/190809_131138/0000/*.txt'         , prependPath=True)
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018B_Specials/180913_150951/0000/*.txt'             , prependPath=True)
+### this was sept rereco
+  p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018B_Specials/180913_091416/0000/*.txt'         , prependPath=True)
 
-#   r_files = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/es1p1/JetHT/crab_BS_JetHT_ReRecoNov_Run2017F_es1p1/180112_112626/0000/*.txt'           , prependPath=True)
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017D_es0p9/171114_175116/0000/*'           , prependPath=True)
+  #### 2018C
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018C_fromFill6939/180913_095442/0000/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018C_upToFill6939/180913_144951/0000/*.txt'         , prependPath=True)
+#   r_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018C_HP_crab_106X_dataRun2_newTkAl_v18/190812_114410/0000/*.txt'                   , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018C_HP_crab_106X_dataRun2_newTkAl_v18/190812_114410/0001/*.txt'                   , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018C_Legacy_LowPU_crab_106X_dataRun2_newTkAl_v18/190812_114437/0000/*.txt'                   , prependPath=True)
+# ### this was sept rereco
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018C_fix/180912_140830/0000/*.txt'         , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v1_es1p1/171110_150426/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v2_es1p1/171110_185941/0000/*'           , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v1_es1p1/171110_215538/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v2_es1p1/171110_215641/0000/*.txt'       , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v3_es1p1/171110_215747/0000/*'           , prependPath=True)
 
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017D_v1_es1p1/171110_215814/0000/*'           , prependPath=True)
-
-#   r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_v1_es1p1/171110_215859/0000/*'           , prependPath=True)
-#   r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_v1_es1p1/171110_215859/0001/*'           , prependPath=True)
-
-#   r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_missingLumis/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_missingLumis/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_SpecialRuns/*'           , prependPath=True)
-
-#   r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1_missingLumis/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_missingLumis/*'           , prependPath=True)
-#   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_SpecialRuns/*'           , prependPath=True)
-  
-  r_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_96perc/*.txt'         , prependPath=True)
-  
-  
-#   p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_Prompt/*'        , prependPath=True)
-#   p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_Prompt/*'        , prependPath=True)
-#   p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_Prompt_SpecialRuns/*'        , prependPath=True)
-
-#   p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1_Prompt/*'        , prependPath=True)
-#   p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_Prompt/*'        , prependPath=True)
-#   p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_Prompt_SpecialRuns/*'        , prependPath=True)
-#   p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017C_v3/171112_165810/0000/*'        , prependPath=True)
-
-#   p_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017D/171112_165728/0000/*'        , prependPath=True)
-#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias8b4e1/crab_BS_PromptNov17_HighPU_Run2017D_es1p1/171112_165429/0000/*'        , prependPath=True)
-
-#   p_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017E/171112_165645/0000/*'        , prependPath=True)
-#   p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017E/171112_165645/0001/*'        , prependPath=True)
-
-#   p_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_Prompt_Run2017F/171129_224109/0000/*'        , prependPath=True)
-#   p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_Prompt_Run2017F/171129_224109/0001/*'        , prependPath=True)
-
-#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/es1p1/JetHT/crab_BS_JetHT_Prompt_Run2017F_es1p1/171205_220828/0000/*.txt'         , prependPath=True)
-  p_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_prompt_96perc/*.txt'         , prependPath=True)
+  #### 2018D
+#   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018D_All/181211_155053/0000/*.txt'         , prependPath=True)
+#   p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_Prompt_ExpressAlignment_2018D_All/181211_155053/0001/*.txt'         , prependPath=True)
+#   r_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018D_HP_crab_106X_dataRun2_newTkAl_v18/190812_114357/0000/*.txt'      , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018D_HP_crab_106X_dataRun2_newTkAl_v18/190812_114357/0001/*.txt'      , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018D_HP_crab_106X_dataRun2_newTkAl_v18/190812_114357/0002/*.txt'      , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018D_HP_crab_106X_dataRun2_newTkAl_v18/190812_114357/0003/*.txt'      , prependPath=True)
+#   r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/BS_UL2018D_HP_crab_106X_dataRun2_newTkAl_v18/190812_114357/0004/*.txt'      , prependPath=True)
 
  
   print 'start loading payloads ...'
@@ -216,13 +190,13 @@ if doFromScratch:
   print '--- Job Report ---'
   for irun, ivalues in newPromptBS.iteritems():
       n_all_fits_prompt = len(newPromptBS[irun])
-      newPromptBS[irun] = cleanAndSort(ivalues)
+      newPromptBS[irun] = cleanAndSort(ivalues, cleanForSigmaZ = cleanForSigmaZ_)
       n_ok_fits_prompt = float (len(newPromptBS[irun]))
       print 'fit failures in prompt for run', irun, ':',  1. - n_ok_fits_prompt/n_all_fits_prompt  
       
   for irun, ivalues in newRecoBS.iteritems():
       n_all_fits_reco   = len(newRecoBS[irun])
-      newRecoBS[irun] = cleanAndSort(ivalues)
+      newRecoBS[irun] = cleanAndSort(ivalues, cleanForSigmaZ = cleanForSigmaZ_)
       n_ok_fits_reco   = float (len(newRecoBS[irun]))
       print 'fit failures in reco for run', irun, ':',   1. - n_ok_fits_reco/n_all_fits_reco  
 
@@ -260,8 +234,8 @@ if doFromScratch:
   r_histos = []
   
   for ivar in variables: 
-      p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
-      r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
+      p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
+      r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = True, returnHisto = True))
   
   _doSaveHistos( p_histos, 'histos_prompt' + runstring + '.root' )
   _doSaveHistos( r_histos, 'histos_reco' + runstring + '.root'   )
@@ -299,8 +273,14 @@ for ivar in variables:
 
   h_p.GetYaxis().SetRangeUser(ivar[2], ivar[3])
   
-  if runstring == '2017C' and 'Width' in ivar[0]:
-    h_p.GetYaxis().SetRangeUser(ivar[2], 9E-3)
+#   if runstring == '2017C' and 'Width' in ivar[0]:
+#     h_p.GetYaxis().SetRangeUser(ivar[2], 9E-3)
+  if '2018B_Specials' in runstring and 'Y' in ivar[0]:
+    h_p.GetYaxis().SetRangeUser(ivar[2], 0.15)
+  if '2018B_Specials' in runstring and 'Width' in ivar[0]:
+    h_p.GetYaxis().SetRangeUser(ivar[2], 0.018)
+  if '2018B_Specials' in runstring and 'sigmaZ' in ivar[0]:
+    h_p.GetYaxis().SetRangeUser(ivar[2], 6)
 
 
   h_r = histo_file_r.Get(ivar[0])
@@ -312,12 +292,12 @@ for ivar in variables:
   leg = ROOT.TLegend( 0.902, 0.6, 1.0, 0.75 )
   leg.SetFillColor(0)
   leg.SetLineColor(0)
-  leg.AddEntry(h_p   , 'Prompt'   , 'pel')
-  leg.AddEntry(h_r   , 'ReReco'    , 'pel')
+  leg.AddEntry(h_p   , 'SeptReReco'   , 'pel')
+  leg.AddEntry(h_r   , 'UL'       , 'pel')
   leg.SetTextSize(0.03)
   leg.Draw('SAME')
   
   can.Update()
   can.Modified()
-  can.SaveAs('comparePromptReco_ZB_RunH/' + runstring + '/'+ivar[0] + '_Prompt_vs_NovReco_' + runstring + '.pdf')
+  can.SaveAs('compareULReReco/' + runstring + '/'+ivar[0] + '_SeptReReco_vs_UL_' + runstring + '.pdf')
 

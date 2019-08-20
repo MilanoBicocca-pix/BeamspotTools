@@ -8,14 +8,27 @@ import sys
 sys.path.append('..')
 from objects.BeamSpot import BeamSpot
 
-def cleanAndSort(fullList, cleanBadFits = True):
+def cleanAndSort(fullList, cleanBadFits = True, cleanForSigmaZ = True, cleanForUncertainties = False):
     '''
     Sorts the lumi:BS dictionary and cleans it up
     from the not properly converged fits.
     '''
     # clean from badly converged
-    cleaned =  {k:v for k, v in fullList.items() if v.Type > 0 and cleanBadFits}
-
+    ## I don't think it's the right way to write this, it should be 
+    ## if cleanBadFits:
+    ##     cleaned =  {k:v for k, v in fullList.items() if (v.Type > 0) }
+    ## else:
+    ##     cleaned =  {k:v for k, v in fullList.items()}
+    ## even though the second part is redundant. I suggest to remove cleanBadFits parameter
+    
+    ## in the PCL we have the check on sigmaZ > 1
+    if cleanForSigmaZ:
+        cleaned =  {k:v for k, v in fullList.items() if (v.Type > 0 and cleanBadFits) and v.sigmaZ > 1}
+    elif cleanForUncertainties:
+        cleaned =  {k:v for k, v in fullList.items() if (v.Type > 0 and cleanBadFits) and v.beamWidthXerr < 0.01 }
+    else:
+        cleaned =  {k:v for k, v in fullList.items() if (v.Type > 0 and cleanBadFits)}
+        
     # sort by LS
     ordered = OrderedDict(sorted(cleaned.items(), key = lambda t: t[0]))
                                          
@@ -39,7 +52,8 @@ def delta(x, xe, y, ye):
     return delta, deltaErr, significance
 
 def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1, 
-                 slopes = False, relaxedCriteria = False):
+                 slopes = False, relaxedCriteria = False, 
+                 cleanForSigmaZ = True, cleanForUncertainties = False):
     '''
     Group lumi sections where the Beam Spot position does not 
     drift beyond the parameters specified by the user.
@@ -62,7 +76,7 @@ def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1,
         file = ROOT.TFile.Open('splitInfo.root', 'update')
     
     # Clean up badly converged fits and sort the dictionary
-    fullList = cleanAndSort(fullList)
+    fullList = cleanAndSort(fullList, cleanForSigmaZ = cleanForSigmaZ, cleanForUncertainties = cleanForUncertainties)
     
     # breaking points. 
     # First LS is the first starting point by definition

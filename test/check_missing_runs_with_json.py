@@ -8,76 +8,67 @@ from utils.beamSpotMerge import splitByDrift
 from utils.beamSpotMerge import averageBeamSpot
 from utils.readJson      import readJson
 from utils.compareLists  import compareLists
-from utils.getFiles      import get_files
+from utils.getFileList   import get_files
 
 # input parameters
 runNumber = 247324
 initlumi  = 1  
 endlumi   = 100000  
 
+dict_runs = {}
+dict_runs['2018A'] = 	[315252,316995]
+dict_runs['2018C'] = 	[319337,320065]
+dict_runs['2018D'] = 	[320673,325175]
+dict_runs['2018B'] = 	[317080,319310]
 
-firstRun_2015A = 246865 
-lastRun_2015A  = 250932
-firstRun_2015B = 250985 
-lastRun_2015B  = 253620 # split in B&C, however not in json, so no problem
-firstRun_2015C = 253620 
-lastRun_2015C  = 255621
-firstRun_2015D = 256584
-lastRun_2015D  = 258158
-
+		
+# B		317080	318621
+# B legacy	317591	317696
+# B special	318622	319310
 
 # copy result files from eos to local area
 # for file in get_files('/store/group/phys_tracking/beamspot/ZeroBias/crab_Run2015D-v3_6Oct15_74X_dataRun2_Candidate_2015_10_06_09_25_21/151006_162657/0000','.txt'):
 #   os.system('cmsStage ' + file + ' copy_of_crab_Run2015D_6Oct15_74X_dataRun2_Candidate_2015_10_06_09_25_21/')
 # exit()
 
+# files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018B_fix/180912_140800/0000/*.txt' , prependPath=True)
+# files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018B_fix/180912_140800/0001/*.txt' , prependPath=True)
+# files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/crab_BS_SeptReReco_ExpressAlignment_2018B_Specials/180913_091416/0000/*.txt'               , prependPath=True)
+# files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpress/crab_BS_SeptReReco_ExpressAlignment_2018B_Fill6768_6778_fix2/180912_151520/0000/*.txt'                      , prependPath=True)
 
+files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/_106X_dataRun2_newTkAl_v18_BS_UL2018B_HP_NoFill6768_6778_NoSpecialRuns/190806_092559/0000/*.txt' , prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpressAlignment/_106X_dataRun2_newTkAl_v18_BS_UL2018B_SpecialRuns_Legacy/190806_092608/0000/*.txt'               , prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2018/StreamExpress/_106X_dataRun2_newTkAl_v18_BS_UL2018B_Fill6768_6778_Legacy/190806_092534/0000/*.txt'                      , prependPath=True)
 
-# myPayload = Payload(['copy_of_crab_Run2015A_6Oct15_74X_dataRun2_Candidate_2015_10_06_09_25_21/BeamFit_LumiBased_NewAlignWorkflow_alcareco_%d.txt' % i for i in range(1,532) ])
-# myPayload = Payload(['copy_of_crab_Run2015B_6Oct15_74X_dataRun2_Candidate_2015_10_06_09_25_21/BeamFit_LumiBased_NewAlignWorkflow_alcareco_%d.txt' % i for i in range(1,542) ])
-myPayload = Payload(['copy_of_crab_Run2015C_6Oct15_74X_dataRun2_Candidate_2015_10_06_09_25_21/BeamFit_LumiBased_NewAlignWorkflow_alcareco_%d.txt' % i for i in range(1,1028) ])
-# myPayload = Payload(['copy_of_crab_Run2015D-v3_6Oct15_74X_dataRun2_Candidate_2015_10_06_09_25_21/BeamFit_LumiBased_NewAlignWorkflow_alcareco_%d.txt' % i for i in range(1,582) ])
+print 'start loading payloads ...'
+myPayload = Payload(files)
 
-
-# Plot fit results from txt file
-# variables = [
-#   'X'         ,
-#   'Y'         ,
-#   'Z'         ,
-#   'sigmaZ'    ,
-#   'dxdz'      ,
-#   'dydz'      ,
-#   'beamWidthX',
-#   'beamWidthY'
-# ]
-# 
-# for ivar in variables: 
-#   myPayload.plot(ivar , runNumber, runNumber, savePdf = True)
 
 # convert results into a dictionary  { Run : {Lumi Range: BeamSpot Fit Object} }
-allBS            = myPayload.fromTextToBS() 
-for irun,ivalues in allBS.items():
-  allBS[irun] = cleanAndSort(allBS[irun])
+# allBS            = myPayload.fromTextToBS() 
+# for irun,ivalues in allBS.items():
+#   allBS[irun] = cleanAndSort(allBS[irun],cleanBadFits = False)
 
 # check if any run is missing
-theJson   = "../../../test/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON_MuonPhys.txt"
-# theJson   = "../../../test/total_DCS_json_upTo256869.txt"
+theJson   = "../../../test/merged_json_2018UL.json"
+# theJson   = "../../../test/json_2018b_existingLSInDatasetAndJson.json"
 
 # this returns a dictionary of runs and LS in the txt file, like {195660 : [1,2,3,...]}
 runsLumisCrab = myPayload.getProcessedLumiSections() 
 runsCrab      = runsLumisCrab.keys()
 
 # this returns a dictionary of runs and LS in the json file
-runsLumisJson = readJson(firstRun_2015C, lastRun_2015C, theJson, False)
+runsLumisJson = readJson(dict_runs['2018B'][0], dict_runs['2018B'][1], theJson, False)
 runsJson      = runsLumisJson.keys()
 
 # filter for json file 
 runsCommon      = set(runsCrab) & set(runsJson)
 inCrabNotInJson = set(runsCrab) - set(runsJson)
 inJsonNotInCrab = set(runsJson) - set(runsCrab)
-print 'missing runs:'
+print 'completely missing runs:'
 print inJsonNotInCrab
 
+print 'missing LSs from runs:'
 for irun in runsCommon:
   inJsonNotCrab, inCrabNotJson = compareLists(runsLumisCrab[irun], runsLumisJson[irun], 100, 'crab', 'json' )
   if len(inJsonNotCrab) > 0:
