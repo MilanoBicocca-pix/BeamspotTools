@@ -17,7 +17,7 @@ Standalone package to handle beam spot stuff
 
 ## Installation as standalone
 ```shell
-  git clone git clone https://github.com/MilanoBicocca-pix/BeamspotTools.git
+  git clone https://github.com/MilanoBicocca-pix/BeamspotTools.git
   cd BeamspotTools
   source set_environment.[c]sh   # this adds the base BeamspotTools directory to your PYTHONPATH variable 
 ```
