@@ -50,21 +50,6 @@ allBS = myPayload.fromTextToBS()
 for irun, ivalues in allBS.iteritems():
     allBS[irun] = cleanAndSort(ivalues, cleanForSigmaZ = True)
 
-# check if output file exists
-# fname = 'total_bs_JetHT_HLT_all2016C_massi.txt'
-# if os.path.isfile(fname):
-#     print 'File %s exists. Recreate? (10 sec before defaults to True)' %fname
-#     i, o, e = select.select( [sys.stdin], [], [], 10 )
-#     if i:
-#         answer = sys.stdin.readline().strip()
-#         print 'you answered %s' %answer
-#         if answer in ('1', 'y', 'yes', 'true', 'True'):
-#             os.remove(fname)
-#         else:
-#             pass        
-#     else:
-#         os.remove(fname)
-
 # check drifts and create IOV
 for irun, ibs in allBS.iteritems():
     fname = 'txtForMassi_UL2018/BeamFitResults_Run' + str(irun) + '.txt'
@@ -80,31 +65,6 @@ for irun, ibs in allBS.iteritems():
 
 
 exit()
-merged_payload = Payload(fname)
-histos = []
-
-# Plot fit results from txt file
-variables = [
-  'X'         ,
-  'Y'         ,
-  'Z'         ,
-  'sigmaZ'    ,
-  'dxdz'      ,
-  'dydz'      ,
-  'beamWidthX',
-  'beamWidthY'
-]
-
-for ivar in variables: 
-    histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 3, byFill = False, returnHisto = True))
-
-histo_file = ROOT.TFile.Open('histos_2017BCDEF_JetHT_HLT_forMassi_January.root', 'recreate')
-histo_file.cd()
-for histo in histos:
-    histo.Write()
-
-histo_file.Close()
-
 
 
 
