@@ -15,15 +15,18 @@ ROOT.gROOT.SetBatch(True)
 specialRuns = [300019,300029,300043,300050]
 XeXeRuns = [304899,304906]
 
-bxId = 3380
+fillId = 4954
+runId  = 274100
+bxId = 2063
 
-files  = get_files('../../../test/scans_results_from_condor/scan1_X1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId     , prependPath=True)
-files += get_files('../../../test/scans_results_from_condor/scan2_Y1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId     , prependPath=True)
-files += get_files('../../../test/scans_results_from_condor/scan3_offX1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId  , prependPath=True)
-files += get_files('../../../test/scans_results_from_condor/scan4_offY1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId  , prependPath=True)
-files += get_files('../../../test/scans_results_from_condor/scan17_X4_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId    , prependPath=True)
-files += get_files('../../../test/scans_results_from_condor/scan18_Y4_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId    , prependPath=True)
+#files  = get_files('../../../test/scans_results_from_condor/scan1_X1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId     , prependPath=True)
+#files += get_files('../../../test/scans_results_from_condor/scan2_Y1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId     , prependPath=True)
+#files += get_files('../../../test/scans_results_from_condor/scan3_offX1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId  , prependPath=True)
+#files += get_files('../../../test/scans_results_from_condor/scan4_offY1_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId  , prependPath=True)
+#files += get_files('../../../test/scans_results_from_condor/scan17_X4_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId    , prependPath=True)
+#files += get_files('../../../test/scans_results_from_condor/scan18_Y4_bx%s_prompt_ZB1_8_Final/BeamFit_LumiBased_alcareco_*.txt'%bxId    , prependPath=True)
 
+files = get_files('../../../test/FinalBSfit/BSfit_Fill{FILL}_Run{RUN}_bx{BX}/BeamFit_LumiBased_alcareco_*.txt'.format(FILL=str(fillId),RUN=str(runId),BX=str(bxId)) , prependPath=True)
 
 
 def DumpCSVTitle(file, mode = 'a'):
@@ -73,6 +76,7 @@ def DumpCSVFromPVFitTitle(file, mode = 'a'):
 
     for j,k in itertools.product(range(9),range(9)):
         title = title + 'COV{I} \t'.format(I = str(j)+','+str(k))
+    title = title + 'nPVs \t FuncValue'
     title = title + '\n'
     f.write(title)
 

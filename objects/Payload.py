@@ -50,8 +50,9 @@ class Payload(object):
             # the format of the Payload file 
             if 'LumiRange' in line:
                 singleFits.append([self.lines[j].rstrip() \
-                                   for j in range(i-3, i+36)])## was 20 (sara)
-        
+                                   #for j in range(i-3, i+36)])## was 20 (sara)
+                                   for j in range(i-3, i+38)])## was 36 (francesco)
+
             # make it read .dat files as dumped from the database as well
             if 'Beam Spot Data' in line:
                 singleFits.append([self.lines[j].rstrip() \

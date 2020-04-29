@@ -58,7 +58,9 @@ class BeamSpot(object):
         self.dxdzPV        =  0.
         self.dydzPV        =  0.
         self.PVcov         = np.zeros((9,9),dtype=np.double)        
-        
+
+        self.nPVs          =  0.
+        self.FuncValue     =  0.
 
     def _computeProperWidths(self, full=False):
         '''
@@ -310,7 +312,10 @@ class BeamSpot(object):
             self.EmittanceY    = float( payload[37].split()[1] )
     
             self.betastar      = float( payload[38].split()[1] )    
-    
+
+            self.nPVs          = float( payload[39].split()[1] )
+            self.FuncValue     = float( payload[40].split()[1] )
+
         if any(['Beam Spot Data' in i for i in  payload]):
             
             # FIXME! format changed!
@@ -447,6 +452,8 @@ class BeamSpot(object):
                   'EmittanceX {EMX}\n'                   \
                   'EmittanceY {EMY}\n'                   \
                   'BetaStar {BSTAR}\n'                   \
+                  'nPvs {NPVS}\n'                        \
+                  'FuncValue {FUNCVALUE}\n'              \
                   ''.format(
                             XPV       = str(self.XPV          ),
                             YPV       = str(self.YPV          ),
@@ -455,6 +462,8 @@ class BeamSpot(object):
                             EMX       = str(self.EmittanceX   ),
                             EMY       = str(self.EmittanceY   ),
                             BSTAR     = str(self.betastar     ),
+                            NPVS      = str(self.nPVs         ),
+                            FUNCVALUE = str(self.FuncValue    ),
                             )
         f.write(towrite)
 
@@ -568,6 +577,7 @@ class BeamSpot(object):
                             )
         for j,k in itertools.product(range(9),range(9)):
             towrite = towrite + '{COVI} \t'.format(COVI = str(self.PVcov[j][k]))
+        towrite = towrite + '{NPVS} \t {FUNCVALUE}'.format(NPVS = str(self.nPVs), FUNCVALUE = str(self.FuncValue))
         towrite = towrite + '\n'
         
         f.write(towrite)
