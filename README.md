@@ -10,7 +10,7 @@ Standalone package to handle beam spot stuff
   git-cms-addpkg RecoVertex/BeamSpotProducer
   cd RecoVertex/BeamSpotProducer/python
   git clone git@github.com:MilanoBicocca-pix/BeamspotTools.git
-  git checkout bsInTimeRange
+  git checkout bsByTime
   cd $CMSSW_BASE/src
   scram b -r -j8
 ```
