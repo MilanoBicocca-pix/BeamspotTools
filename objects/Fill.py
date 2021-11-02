@@ -156,10 +156,10 @@ if __name__ == '__main__':
     Fills2p8T .sort()
     FillsOther.sort()
 
-    print ('\n\nFills 3.8 T\n'), Fills3p8T 
-    print ('\n\nFills   0 T\n'), Fills0T   
-    print ('\n\nFills 2.8 T\n'), Fills2p8T 
-    print ('\n\nOther Fills\n'), FillsOther
+    print ('\n\nFills 3.8 T\n', Fills3p8T )
+    print ('\n\nFills   0 T\n', Fills0T   )
+    print ('\n\nFills 2.8 T\n', Fills2p8T )
+    print ('\n\nOther Fills\n', FillsOther)
 
 
 
