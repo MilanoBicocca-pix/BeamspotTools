@@ -18,7 +18,7 @@ def ranges(i):
     Unpacks a list of ranges into a fully extended list, e.g.:
     [ [1,3], [6,10] ] ==> [1, 2, 3, 6, 7, 8, 9, 10] 
     '''
-    for a, b in itertools.groupby(enumerate(i), lambda (x, y): y - x):
+    for a, b in itertools.groupby(enumerate(i), lambda x, y: y - x):
         b = list(b)
         yield b[0][1], b[-1][1]
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
 #     runsAndLumis = getListOfRunsAndLumiFromDBS(api, dataSet, lastRun)
     runsAndLumis = getListOfRunsAndLumiFromDBS(api, dataSet, lastRun)
     
-    print runsAndLumis[195660]
+    print (runsAndLumis[195660])
     
 #     pp = pprint.PrettyPrinter(indent = 4)
 #     pp.pprint(runsAndLumis)

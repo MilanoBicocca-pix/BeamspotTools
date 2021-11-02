@@ -71,5 +71,5 @@ if __name__ == '__main__':
     #line = 'paisjdouhas doiha woh 3f5387a9753863bbceef933372581332413b18d1  BeamSpotObjects'
     myDBEntry = DBEntry(line)
     myDBEntry = DBEntry(line = line)
-    print vars(myDBEntry)
+    print (vars(myDBEntry))
 

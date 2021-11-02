@@ -42,4 +42,4 @@ if __name__ == '__main__':
     myjson = readJson(194000, 9999999,
                       '../cfg/beamspot_payload_2012BONLY_merged_JSON_all.txt')
     myjson = readJson(fileName = 'json_DCSONLY.txt')                  
-    print myjson                  
+    print (myjson)                  

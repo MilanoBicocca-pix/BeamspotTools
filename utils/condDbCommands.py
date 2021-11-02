@@ -59,10 +59,10 @@ def getListOfUploadedIOV(databaseTag, firstIOV = None,
     out, err = conddb_query.communicate()
 
     if verbose:
-        print 'OUT =================='
-        print out
-        print 'ERR =================='
-        print err
+        print ('OUT ==================')
+        print (out)
+        print ('ERR ==================')
+        print (err)
 
     # do not consider bla bla lines
     toSkip = ['Since', '-----', '','  Run']
@@ -165,10 +165,10 @@ if __name__ == '__main__':
     bslist = []
 
     dbtag = getDBtagFromGT('GR_E_V48')
-    print dbtag
+    print (dbtag)
     listOfIOVs = getListOfUploadedIOV(dbtag, 246809, 999999, verbose = True)
     for dbe in listOfIOVs:
-        print vars(dbe) 
+        print (vars(dbe)) 
         myxml = dumpXMLPayloadByHash(dbe.hash)
         bs = BeamSpot()
         bs.ReadXML(myxml)

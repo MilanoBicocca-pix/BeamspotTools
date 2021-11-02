@@ -450,4 +450,4 @@ if __name__ == '__main__':
     mybs = BeamSpot()
     mybs.ReadXML('/afs/cern.ch/work/m/manzoni/beamspot/CMSSW_7_5_0_pre4/src/RecoVertex/BeamSpotProducer/python/workflow/utils/payload_hash.xml')
     mybs.Dump('bs_dump_from_xml.txt', 'w+')
-    print mybs
+    print (mybs)

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     packed   = {194116: [[2,5], [15,18]]}
     unpacked = unpackList(packed)
     
-    print 'Before'
-    print packed
-    print 'After'
-    print unpacked 
+    print ('Before')
+    print (packed)
+    print ('After')
+    print (unpacked) 

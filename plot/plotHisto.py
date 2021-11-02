@@ -75,7 +75,7 @@ elif 'track' in options.kind:
 ]
 
 else:
-  print 'no category selected'
+  print ('no category selected')
   exit()    
 
 
@@ -116,7 +116,7 @@ for var in variables:
     c.Update()
     c.Modified()
     stats = gPad.GetPrimitive('stats')
-    print 'stats', stats
+    print ('stats', stats)
     stats.SetBorderSize(0)
     stats.SetY1NDC(0.65)
     stats.SetY2NDC(0.77)
