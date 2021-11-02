@@ -226,7 +226,7 @@ ewidth_y  = []
 
 for i in results:
     if i.uncX() > 0.1 or i.uncY() > 0.1:  
-        print 'will discard Fill', i.fill
+        print ('will discard Fill', i.fill)
         continue
     ratio.append(i.ratio())
     fills.append(i.fill)

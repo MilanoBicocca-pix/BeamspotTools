@@ -23,7 +23,7 @@ allbs = []
 
 for ils in ls:
 
-    print 'running on LS %d' %ils
+    print ('running on LS %d' %ils)
     
     # find entries with a given lumi
     mask = myarray['lumi']==ils

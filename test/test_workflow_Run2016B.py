@@ -56,9 +56,9 @@ XeXeRuns = [304899,304906]
 ###Run2017G  HighEGJet
 files = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/es0p9/HighEGJet/crab_BS_JetHT_Prompt_Run2017G_es0p9/180220_211350/0000/*.txt'         , prependPath=True)
 
-print 'start loading payloads ...'
+print ('start loading payloads ...')
 myPayload = Payload(files)
-print '... payloads loaded'
+print ('... payloads loaded')
 
 # convert results into a dictionary  { Run : {Lumi Range: BeamSpot Fit Object} }
 allBS = myPayload.fromTextToBS() 
@@ -70,7 +70,7 @@ for irun, ivalues in allBS.iteritems():
     allBS[irun] = cleanAndSort(ivalues)
     n_ok_fits = len(allBS[irun])
     if n_ok_fits/n_all_fits < 0.9:
-        print "WARNING: more than 10% of the fits failed for run", irun
+        print ("WARNING: more than 10% of the fits failed for run", irun)
 
 # check if output file exists
 fname = 'beamspot_2017G_HighEGJet_January.txt'

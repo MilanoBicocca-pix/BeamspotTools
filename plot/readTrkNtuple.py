@@ -81,7 +81,7 @@ def fillHistos(tree    ,
 
   for i, ev in enumerate(tree):
     if i % 10000 == 0:
-      print i
+      print (i)
     if i > 100000: break
     try:
       lumi_ntrks[ev.lumi]
@@ -126,10 +126,10 @@ tree_base = file_base.Get('mytree')
 try:
   tree_base.GetEntries()
 except:
-  print 'track tree not found'
+  print ('track tree not found')
   exit()
 
-print 'output filename:' + options.output
+print ('output filename:' + options.output)
   
 
 list_base  = []
@@ -166,7 +166,7 @@ hd0_base  .GetXaxis().SetTitle('d0'           )
 hz0_base  .GetXaxis().SetTitle('z0'           )
 heta_base .GetXaxis().SetTitle('#eta'         )
 
-print 'filling...'
+print ('filling...')
 
 fillHistos(tree_base        , 
            hlumi_base       , 
@@ -190,7 +190,7 @@ fillHistos(tree_base        ,
            hphi_d0_g_base   ,
            )
 
-print 'filled '
+print ('filled ')
 
 list_base.extend ((    hpixL_base,       htotL_base,       hchi2_base,       hpt_base,       hd0_base,       hz0_base,       heta_base ))
 list_base.extend((hpixL_good_base,  htotL_good_base,  hchi2_good_base,  hpt_good_base,  hd0_good_base,  hz0_good_base,  heta_good_base ))

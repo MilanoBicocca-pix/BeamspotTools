@@ -62,7 +62,7 @@ for k, v in unpackedmyjson.items():
     lumilist = ['%d:%d-%d:%d' %(k, p[0], k, p[1]) for p in lumiPairs]
     lumilists[k] = lumilist
 
-print lumilists[246908]
+print (lumilists[246908])
 
 # lumilist_246908 = [
 # '246908:0-246908:10',

@@ -314,9 +314,9 @@ def averageBeamSpot(bslist, doNotCheck = []):
             continue
         for i, bs in enumerate(bslist):
             if getattr(bs, attr) != getattr(firstBS, attr):
-                print 'ERROR: "%s" for the %d element of the '    \
+                print ('ERROR: "%s" for the %d element of the '    \
                       'Beam Spot collection varies from the first'\
-                      %(attr, i)
+                      %(attr, i))
                 exit()
         
         setattr(averageBS, attr, getattr(firstBS, attr))
@@ -324,5 +324,5 @@ def averageBeamSpot(bslist, doNotCheck = []):
     return averageBS
 
 if __name__ == '__main__':
-    print 'not yet implemented. Put here your tests'
+    print ('not yet implemented. Put here your tests')
 

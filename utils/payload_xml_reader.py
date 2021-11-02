@@ -24,7 +24,7 @@ plFile      = 'all_iov_24_june_2015_by_run.txt'#'dummy_bs.txt'
 dbentries = getListOfUploadedIOV(databaseTag, firstIOV, lastIOV)
 
 for i, entry in enumerate(dbentries):
-    print 'entry %d/%d' %(i+1, len(dbentries))
+    print ('entry %d/%d' %(i+1, len(dbentries)))
     try:
         nextEntry = dbentries[i+1]
     except:
@@ -35,9 +35,9 @@ for i, entry in enumerate(dbentries):
         mybs = BeamSpot()
         mybs.ReadXML(myxml)
     except:
-        print 'corrupted'
-        print vars(entry)
-        print 'skipping'
+        print ('corrupted')
+        print (vars(entry))
+        print ('skipping')
         import pdb ; pdb.set_trace()
         continue
     

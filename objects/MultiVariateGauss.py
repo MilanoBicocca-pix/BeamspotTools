@@ -60,22 +60,22 @@ class MultivariateGaussianFitterNLL(object):
         '''
         
         if self.verbose:
-            print '\n=========='
-            print 'x      :\t', x      , '[cm]'
-            print 'y      :\t', y      , '[cm]'
-            print 'z      :\t', z      , '[cm]'
-            print 'theta_x:\t', theta_x, '[rad]'
-            print 'theta_y:\t', theta_y, '[rad]'
-            print 'theta_z:\t', theta_z, '[rad]'
-            print 'sigma x:\t', sigma_x, '[cm]'
-            print 'sigma y:\t', sigma_y, '[cm]'
-            print 'sigma z:\t', sigma_z, '[cm]'
+            print ('\n==========')
+            print ('x      :\t', x      , '[cm]')
+            print ('y      :\t', y      , '[cm]')
+            print ('z      :\t', z      , '[cm]')
+            print ('theta_x:\t', theta_x, '[rad]')
+            print ('theta_y:\t', theta_y, '[rad]')
+            print ('theta_z:\t', theta_z, '[rad]')
+            print ('sigma x:\t', sigma_x, '[cm]')
+            print ('sigma y:\t', sigma_y, '[cm]')
+            print ('sigma z:\t', sigma_z, '[cm]')
 
         cov = self._compute_covariance_matrix(theta_x, theta_y, theta_z, sigma_x, sigma_y, sigma_z)
         
         if self.verbose:
-            print 'covariance matrix', cov
-            print 'determinant: ', np.linalg.det(cov) 
+            print ('covariance matrix', cov)
+            print ('determinant: ', np.linalg.det(cov)) 
         
         # check singularity / inveritbility
         if np.linalg.det(cov) > 0.:
@@ -83,11 +83,11 @@ class MultivariateGaussianFitterNLL(object):
                                               mean=np.array([x, y, z]),
                                               cov=cov).sum()
         else:
-            print 'WARNING! Singular covariance matrix, cannot invert!'
-            return float('nan')
+            print ('WARNING! Singular covariance matrix, cannot invert!')
+            return (float('nan'))
 
         if self.verbose:
-            print 'nLL: ', nll
+            print ('nLL: ', nll)
         
         return nll
     
@@ -131,7 +131,7 @@ class MultivariateGaussianFitterNLL(object):
                                               allow_singular=True) # this was needed because?
             
             if self.verbose and i%20==0:
-                print '\t====> evaluated %d/%d vertex, nll = %f, sum nll = %f' %(i, self.nevents, nll, nlls.sum())
+                print ('\t====> evaluated %d/%d vertex, nll = %f, sum nll = %f' %(i, self.nevents, nll, nlls.sum()))
 
             nlls = np.append(nlls, nll)
                         
@@ -167,22 +167,22 @@ class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
         https://github.com/cms-sw/cmssw/blob/master/RecoVertex/BeamSpotProducer/src/FcnBeamSpotFitPV.cc#L59
         '''
         if self.verbose:
-            print '\n=========='
-            print 'x                :\t', x          , '[cm]'
-            print 'y                :\t', y          , '[cm]'
-            print 'z                :\t', z          , '[cm]'
-            print 'corrxy           :\t', corrxy
-            print 'effective sigma x:\t', sigma_x_eff, '[cm]'
-            print 'effective sigma y:\t', sigma_y_eff, '[cm]'
-            print 'effective sigma z:\t', sigma_z_eff, '[cm]'
-            print 'dx/dz            :\t', dxdz
-            print 'dy/dz            :\t', dydz
+            print ('\n==========')
+            print ('x                :\t', x          , '[cm]')
+            print ('y                :\t', y          , '[cm]')
+            print ('z                :\t', z          , '[cm]')
+            print ('corrxy           :\t', corrxy)
+            print ('effective sigma x:\t', sigma_x_eff, '[cm]')
+            print ('effective sigma y:\t', sigma_y_eff, '[cm]')
+            print ('effective sigma z:\t', sigma_z_eff, '[cm]')
+            print ('dx/dz            :\t', dxdz)
+            print ('dy/dz            :\t', dydz)
         
         cov = self._compute_covariance_matrix(corrxy, sigma_x_eff, sigma_y_eff, sigma_z_eff, dxdz, dydz)
         
         if self.verbose:
-            print 'covariance matrix', cov
-            print 'determinant: ', np.linalg.det(cov) 
+            print ('covariance matrix', cov)
+            print ('determinant: ', np.linalg.det(cov)) 
         
         # check singularity / inveritbility
         if np.linalg.det(cov) > 0.:
@@ -190,11 +190,11 @@ class AltMultivariateGaussianFitterNLL(MultivariateGaussianFitterNLL):
                                               mean=np.array([x, y, z]),
                                               cov=cov).sum()
         else:
-            print 'WARNING! Singular covariance matrix, cannot invert!'
-            return float('nan')
+            print ('WARNING! Singular covariance matrix, cannot invert!')
+            return (float('nan'))
 
         if self.verbose:
-            print 'nLL: ', nll
+            print ('nLL: ', nll)
         
         return nll
 

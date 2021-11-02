@@ -63,10 +63,10 @@ tree_base = file_base.Get('PrimaryVertices')
 try:
   tree_base.GetEntries()
 except:
-  print 'pv tree not found'
+  print ('pv tree not found')
   exit()
 
-print 'output filename:' + options.output
+print ('output filename:' + options.output)
 
 list_base  = []
 nbins      = int(options.endlumi) - int(options.startlumi)
@@ -83,7 +83,7 @@ hpvx_base.GetXaxis().SetTitle('PV x [cm]')
 hpvy_base.GetXaxis().SetTitle('PV y [cm]')
 hpvz_base.GetXaxis().SetTitle('PV z [cm]')
 
-print 'filling...'
+print ('filling...')
 
 fillHistos(tree_base    , 
            hlumi_base   , 
@@ -93,7 +93,7 @@ fillHistos(tree_base    ,
            hpvz_base    
            )
 
-print 'filled '
+print ('filled ')
 
 list_base.extend (( hpvx_base,  hpvy_base,  hpvz_base ))
 

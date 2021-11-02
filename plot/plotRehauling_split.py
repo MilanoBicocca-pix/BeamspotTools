@@ -138,7 +138,7 @@ def saveHisto(var):
     byFill = True
     byTime = False
 
-    print 'plotting...'
+    print ('plotting...')
 #     toplot = [hist for hist in [cloneHistoVdM, cloneHisto3p8T] if hist.GetEntries() > 0]
     toplot = [hist for hist in [cloneHistoVdM, cloneHisto3p8T, cloneHisto90m, cloneHistoAli, cloneHistoNb] if hist.GetEntries() > 0]
         
