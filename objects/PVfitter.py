@@ -4,7 +4,7 @@ import iminuit
 import numpy as np
 from scipy.stats import multivariate_normal
 from time import time
-from MultiVariateGauss import MultivariateGaussianFitterNLL
+from .MultiVariateGauss import MultivariateGaussianFitterNLL
 
 
 class PVfitter(MultivariateGaussianFitterNLL):

@@ -23,13 +23,13 @@ print ('... payloads loaded')
 # convert results into a dictionary  { Run : {Lumi Range: BeamSpot Fit Object} }
 allBS = myPayload.fromTextToBS() 
 
-for irun, ivalues in allBS.iteritems():
+for irun, ivalues in allBS.items():
     allBS[irun] = cleanAndSort(ivalues)
 
 bs_by_run = []
 
 # check drifts and create IOV
-for irun, ibs in allBS.iteritems():
+for irun, ibs in allBS.items():
     aveBeamSpot = averageBeamSpot(ibs.values())
     bs_by_run.append(aveBeamSpot)
 
