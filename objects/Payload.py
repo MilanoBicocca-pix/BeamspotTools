@@ -31,14 +31,14 @@ class Payload(object):
         Reads the Payload files.
         '''
         lines = []
-        
+
         for f in files:
             with open(f, 'r') as file:
                 for line in file:
-                    lines.append(line) 
+                    lines.append(line)
         
         self.lines = lines
-        
+
     def splitBySingleFit(self):
         '''
         Parses the ASCII files and slices them into a chunk for each fit.
@@ -57,7 +57,6 @@ class Payload(object):
             if 'Beam Spot Data' in line:
                 singleFits.append([self.lines[j].rstrip() \
                                    for j in range(i-2, i+13)])
-
         return singleFits    
 
     def fromTextToBS(self, iov = False, fromDB = False):
@@ -67,7 +66,6 @@ class Payload(object):
         
         Parses the files passed when the Payload is instantiated.
         '''
-        
         singleFits = self.splitBySingleFit()
         
         beamspots = {}
@@ -85,16 +83,16 @@ class Payload(object):
                     lsrange = bs.IOVfirst
                 else:
                     lsrange = '%d-%d' %(bs.IOVfirst, bs.IOVlast)
-                
+
                 try:   
                     beamspots[bs.Run][lsrange] = bs
                 except:
                     toadd = OrderedDict({ bs.Run : OrderedDict({lsrange : bs}) })
                     beamspots.update( toadd )
-        
-        sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(beamspots.keys()))
-        
-        # import pdb ; pdb.set_trace()
+        if not iov:
+            sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(list(beamspots)))
+        else:
+            sortedbeamspots = beamspots
         
         if fromDB:
             for run, bss in sortedbeamspots.items():
@@ -380,11 +378,3 @@ if __name__ == '__main__':
         h1.Draw()
         h2.Draw('SAME')
         ROOT.gPad.SaveAs(h1.GetName() + '.pdf')
-
-
-
-
-
-
-
-
