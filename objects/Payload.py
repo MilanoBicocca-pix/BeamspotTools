@@ -302,8 +302,8 @@ class Payload(object):
         histo.SetMarkerColor(ROOT.kBlack)
         histo.GetYaxis().SetTitleOffset(1.5 - 0.2 * dilated)
         histo.GetYaxis().SetRangeUser(mymin, mymax)
-        histo.SetTitleSize(0.04, 'XY')
-        histo.SetLabelSize(0.03, 'XY')
+        histo.SetTitleSize(0.05, 'XY') #0.04
+        histo.SetLabelSize(0.075, 'XY') #0.03
         
         c1 = ROOT.TCanvas('c1', 'c1', 1400 + 600 * dilated, 800)
         ROOT.gPad.SetGridx()
