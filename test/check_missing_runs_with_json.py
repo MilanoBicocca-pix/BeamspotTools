@@ -75,15 +75,15 @@ runsJson      = runsLumisJson.keys()
 runsCommon      = set(runsCrab) & set(runsJson)
 inCrabNotInJson = set(runsCrab) - set(runsJson)
 inJsonNotInCrab = set(runsJson) - set(runsCrab)
-print 'missing runs:'
-print inJsonNotInCrab
+print ('missing runs:')
+print (inJsonNotInCrab)
 
 for irun in runsCommon:
   inJsonNotCrab, inCrabNotJson = compareLists(runsLumisCrab[irun], runsLumisJson[irun], 100, 'crab', 'json' )
   if len(inJsonNotCrab) > 0:
-    print 'run ' + str(irun) 
+    print ('run ' + str(irun)) 
     for ls in inJsonNotCrab:
-      print str(ls) 
+      print (str(ls)) 
 
 # remove LS not in json file 
 #   for ls in inCrabNotJson:

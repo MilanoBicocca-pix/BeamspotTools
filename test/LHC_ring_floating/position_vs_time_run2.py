@@ -36,21 +36,22 @@ files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2
 ## 2018
 files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2018/ReRecoSept/txt_files_as_sqlite/*.txt', prependPath=True)
 
-print 'start loading payloads ...'
+print ('start loading payloads ...')
+
 myPayload = Payload(files)
-print '... payloads loaded'
+print ('... payloads loaded')
 
 # convert results into a dictionary  { Run : {Lumi Range: BeamSpot Fit Object} }
 allBS = myPayload.fromTextToBS() 
 
-for irun, ivalues in allBS.iteritems():
+for irun, ivalues in allBS.items():
     allBS[irun] = cleanAndSort(ivalues)
 
 
 bs_by_run = []
 
 # check drifts and create IOV
-for irun, ibs in allBS.iteritems():
+for irun, ibs in allBS.items():
     aveBeamSpot = averageBeamSpot(ibs.values())
     bs_by_run.append(aveBeamSpot)
 
@@ -78,7 +79,7 @@ for ibs in bs_by_run:
     date   = datetime.utcfromtimestamp(ibs.IOVBeginTime) 
     imonth = date.month
     if (imonth != month and month > 0) or ibs == bs_by_run[-1]:
-        print 'processing run %d year %d month %d' %(ibs.Run, date.year, imonth)
+        print ('processing run %d year %d month %d' %(ibs.Run, date.year, imonth))
         aveBeamSpot = averageBeamSpot(tomerge, doNotCheck=['Run'])
         aveBeamSpot.Dump('beamspot_run2_bymonth_redo.txt', 'a+')
         newbs.append(aveBeamSpot)
@@ -92,12 +93,12 @@ print >> outfile, 'year,month,x,xerr,y,yerr'
 
 for ibs in newbs:
     date_start = datetime.utcfromtimestamp(ibs.IOVBeginTime)
-    print 'year {}, month {}\t'\
+    print ('year {}, month {}\t'\
           'X = {:3.6f} +/- {:3.4E} [cm]\t' \
           'Y = {:3.6f} +/- {:3.4E} [cm]' \
           .format(date_start.year, date_start.month,
                   ibs.X          , ibs.Xerr        ,
-                  ibs.Y          , ibs.Yerr        ,)
+                  ibs.Y          , ibs.Yerr        ,))
     print >> outfile, ','.join([str(date_start.year), 
                                 str(date_start.month), 
                                 str(ibs.X), 

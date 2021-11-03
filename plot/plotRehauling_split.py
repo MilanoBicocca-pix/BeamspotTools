@@ -138,7 +138,7 @@ def saveHisto(var):
     byFill = True
     byTime = False
 
-    print 'plotting...'
+    print ('plotting...')
 #     toplot = [hist for hist in [cloneHistoVdM, cloneHisto3p8T] if hist.GetEntries() > 0]
     toplot = [hist for hist in [cloneHistoVdM, cloneHisto3p8T, cloneHisto90m, cloneHistoAli, cloneHistoNb] if hist.GetEntries() > 0]
         
@@ -184,5 +184,4 @@ def saveHisto(var):
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
     saveHisto(var)
-
 

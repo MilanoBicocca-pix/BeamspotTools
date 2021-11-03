@@ -4,7 +4,7 @@ import iminuit
 import numpy as np
 from scipy.stats import multivariate_normal
 from time import time
-from MultiVariateGauss import MultivariateGaussianFitterNLL, AltMultivariateGaussianFitterNLL
+from .MultiVariateGauss import MultivariateGaussianFitterNLL, AltMultivariateGaussianFitterNLL
 
 
 class PVfitterCMS(AltMultivariateGaussianFitterNLL):
@@ -49,7 +49,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             self.positions[1] = minimizer.values['y']
             self.positions[2] = minimizer.values['z']
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
 
@@ -82,7 +82,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             self.widths[1] = minimizer.values['sigma_y_eff']
             self.widths[2] = minimizer.values['sigma_z_eff']
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
 
@@ -114,7 +114,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             self.widths[1] = minimizer.values['sigma_y_eff']
             self.widths[2] = minimizer.values['sigma_z_eff']
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer    
     
@@ -147,7 +147,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             minimizer.migrad()
             self.corrxy = minimizer.values['corrxy']
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
     
@@ -181,7 +181,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             self.tilts[1] = minimizer.values['dxdz']
             self.tilts[2] = minimizer.values['dydz']        
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
     
@@ -227,7 +227,7 @@ class PVfitterCMS(AltMultivariateGaussianFitterNLL):
             self.tilts[2] = minimizer.values['dydz']        
        
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
 
@@ -266,7 +266,7 @@ if __name__ == '__main__':
     # generate multivariate normal
     mvg = rng.multivariate_normal(pos, cov, ntoys)
     
-    print 'generated %d toys' %ntoys
+    print ('generated %d toys' %ntoys)
     
     # create PVfitter object
     beamspot = PVfitterCMS(mvg, verbose=False)
@@ -280,13 +280,13 @@ if __name__ == '__main__':
     results = beamspot.fit()
     
     status = results.get_fmin()
-    print '\n========== FIT VALIDITY ============'
-    print 'for info http://iminuit.readthedocs.io/en/latest/api.html#return-value-struct'
-    for k, v in vars(status).iteritems(): print k, v
+    print ('\n========== FIT VALIDITY ============')
+    print ('for info http://iminuit.readthedocs.io/en/latest/api.html#return-value-struct')
+    for k, v in vars(status).items(): print (k, v)
     
     # print results
-    print '\n========== FIT RESULTS ============'
+    print ('\n========== FIT RESULTS ============')
     for k in ['x', 'y', 'z', 'corrxy', 'dxdz', 'dydz', 
               'sigma_x_eff', 'sigma_y_eff', 'sigma_z_eff']:
-        print '%s:\t %.10f +/- %.12f [cm]' %(k, results.values[k], results.errors[k])
+        print ('%s:\t %.10f +/- %.12f [cm]' %(k, results.values[k], results.errors[k]))
     

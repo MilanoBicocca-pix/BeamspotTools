@@ -42,9 +42,9 @@ fillTimeDict = {k : v.BeginTime  for k, v in fillDict.items()}
 
 import time, datetime, calendar
 
-print 'start loading payloads ...'
+print ('start loading payloads ...')
 myPayload = Payload(files)
-print '... payloads loaded'
+print ('... payloads loaded')
 
 
 # convert results into a dictionary  { Run : {Lumi Range: BeamSpot Fit Object} }
@@ -54,7 +54,7 @@ allBS = myPayload.fromTextToBS()
 allBS_byFill_byTime = {}
 
 
-for irun, ivalues in allBS.iteritems():
+for irun, ivalues in allBS.items():
     allBS[irun] = cleanAndSort(ivalues)
     
     for k, v in fillRunDict.items():
@@ -81,7 +81,7 @@ vars = ['X', 'Y']
 
 for ifill, var in product( fills, vars):
     
-    print 'Fill: ', ifill
+    print ('Fill: ', ifill)
     times = list(set(v for v in allBS_byFill_byTime[ifill].keys()))
 
     lastBin = 0.

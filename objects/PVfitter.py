@@ -4,7 +4,7 @@ import iminuit
 import numpy as np
 from scipy.stats import multivariate_normal
 from time import time
-from MultiVariateGauss import MultivariateGaussianFitterNLL
+from .MultiVariateGauss import MultivariateGaussianFitterNLL
 
 
 class PVfitter(MultivariateGaussianFitterNLL):
@@ -55,7 +55,7 @@ class PVfitter(MultivariateGaussianFitterNLL):
             self.positions[1] = minimizer.values['y']
             self.positions[2] = minimizer.values['z']
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
 
@@ -88,7 +88,7 @@ class PVfitter(MultivariateGaussianFitterNLL):
             self.widths[1] = minimizer.values['sigma_y']
             self.widths[2] = minimizer.values['sigma_z']
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
 
@@ -122,7 +122,7 @@ class PVfitter(MultivariateGaussianFitterNLL):
             self.thetas[1] = minimizer.values['theta_y']
             self.thetas[2] = minimizer.values['theta_z']        
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
     
@@ -161,7 +161,7 @@ class PVfitter(MultivariateGaussianFitterNLL):
             self.thetas[2] = minimizer.values['theta_z']
        
         except:
-            print 'ERROR! NLL Minimization failed'
+            print ('ERROR! NLL Minimization failed')
         
         return minimizer
 
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     # generate multivariate normal
     mvg = rng.multivariate_normal(pos, cov, ntoys)
     
-    print 'generated %d toys' %ntoys
+    print ('generated %d toys' %ntoys)
     
     # create PVfitter object
     beamspot = PVfitter(mvg)
@@ -211,8 +211,8 @@ if __name__ == '__main__':
     results = beamspot.fit()
     
     # print results
-    print '\n========== FIT RESULTS ============'
+    print ('\n========== FIT RESULTS ============')
     for k in ['x', 'y', 'z', 'theta_x', 'theta_y', 'theta_z', 
               'sigma_x', 'sigma_y', 'sigma_z']:
-        print '%s:\t %.5f +/- %.6f [cm]' %(k, results.values[k], results.errors[k])
+        print ('%s:\t %.5f +/- %.6f [cm]' %(k, results.values[k], results.errors[k]))
     

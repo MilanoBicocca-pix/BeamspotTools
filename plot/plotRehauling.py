@@ -94,7 +94,7 @@ def saveHisto(var):
 
     histo3p8T = histo.Clone()    
     histo3p8T = histo.Clone()    
-    print 'n entries', histo3p8T.GetEntries()
+    print ('n entries', histo3p8T.GetEntries())
     histo3p8T .SetMarkerColor(1)
     histo3p8T .SetMarkerStyle(20)
     histo3p8T .SetMarkerSize(1.5)
@@ -104,8 +104,8 @@ def saveHisto(var):
     byFill = True
     byTime = False
 
-    print 'plotting...'
-    for hist in [histo3p8T]:  print hist.GetEntries() 
+    print ('plotting...')
+    for hist in [histo3p8T]:  print (hist.GetEntries()) 
     toplot = [hist for hist in [histo3p8T] if hist.GetEntries() > 0]
 #     toplot = [hist for hist in [histo0T, histo3p8T, histo2p8T] if hist.GetEntries() > 0]
         

@@ -52,12 +52,12 @@ from CommonMethods import *
 try:
     import ROOT
 except:
-    print "\nCannot load PYROOT, make sure you have setup ROOT in the path"
-    print "and pyroot library is also defined in the variable PYTHONPATH, try:\n"
+    print ("\nCannot load PYROOT, make sure you have setup ROOT in the path")
+    print ("and pyroot library is also defined in the variable PYTHONPATH, try:\n")
     if (os.getenv("PYTHONPATH")):
-        print " setenv PYTHONPATH ${PYTHONPATH}:$ROOTSYS/lib\n"
+        print (" setenv PYTHONPATH ${PYTHONPATH}:$ROOTSYS/lib\n")
     else:
-        print " setenv PYTHONPATH $ROOTSYS/lib\n"
+        print (" setenv PYTHONPATH $ROOTSYS/lib\n")
         sys.exit()
 
 from ROOT import TFile, TGraphErrors, TGaxis, TDatime
@@ -141,10 +141,10 @@ if __name__ == '__main__':
     
     tag = ''
     if not option.tag and not option.data: 
-	print " need to provide DB tag name or beam spot data file"
-	exit()
+        print (" need to provide DB tag name or beam spot data file")
+        exit()
     else:
-	tag = option.tag
+        tag = option.tag
 
     if option.batch:
         ROOT.gROOT.SetBatch()
@@ -160,15 +160,15 @@ if __name__ == '__main__':
     IOVbase = 'runbase'
     if option.IOVbase:
         if option.IOVbase != "runbase" and option.IOVbase != "lumibase" and option.IOVbase != "timebase":
-            print "\n\n unknown iov base option: "+ option.IOVbase +" \n\n\n"
+            print ("\n\n unknown iov base option: "+ option.IOVbase +" \n\n\n")
             exit()
-	IOVbase = option.IOVbase
+        IOVbase = option.IOVbase
     
     firstRun = "0"
     lastRun  = "4999999999"
     if IOVbase == "lumibase":
-	firstRun = "0:0"
-	lastRun = "4999999999:4999999999"
+        firstRun = "0:0"
+        lastRun = "4999999999:4999999999"
     
     if option.initial:
         firstRun = option.initial
@@ -180,10 +180,10 @@ if __name__ == '__main__':
 
     if getDBdata:
 
-        print " read DB to get list of IOVs for the given tag, limited to latest 20000 results"
+        print (" read DB to get list of IOVs for the given tag, limited to latest 20000 results")
         acommand = 'conddb --nocolors list  '+ tag+' -L 20000 '  
         if option.destDB:
-		mydestdb = option.destDB
+                mydestdb = option.destDB
                 acommand = 'conddb --nocolors list -c '+mydestdb+' '+ tag+' -L 20000 '
         tmpstatus = commands.getstatusoutput( acommand )
         tmplistiov = tmpstatus[1].split('\n')
@@ -221,7 +221,7 @@ if __name__ == '__main__':
                     mysince = pack(int(linedata[0]),int(linedata[2]))
                     iline += 1
     
-        print " total number of IOVs = " + str(len(iovlist))
+        print (" total number of IOVs = " + str(len(iovlist)))
 
 
         #  GET DATA
@@ -233,7 +233,7 @@ if __name__ == '__main__':
             if option.auth:
                 otherArgs = otherArgs + " -a "+ option.auth
         
-        print " get beam spot data from DB for IOVs. This can take a few minutes ..."
+        print (" get beam spot data from DB for IOVs. This can take a few minutes ...")
 
         tmpfile = open(datafilename,'w')
 
@@ -253,7 +253,7 @@ if __name__ == '__main__':
             #print "since = " + str(iIOV.since) + " till = "+ str(iIOV.till)
 
             if iIOV.since >= int(tmprunfirst) and int(tmprunlast) < 0 and iIOV.since <= int(tmprunfirst):
-                print " IOV: " + str(iIOV.since)
+                print (" IOV: " + str(iIOV.since))
                 passiov = True
             if iIOV.since >= int(tmprunfirst) and int(tmprunlast) > 0 and iIOV.till <= int(tmprunlast):
                 #print " a IOV: " + str(iIOV.since) + " to " + str(iIOV.till)
@@ -267,11 +267,11 @@ if __name__ == '__main__':
                     tmprun = unpack(iIOV.since)[0]
                     tmplumi = unpack(iIOV.since)[1]
                     acommand = 'getBeamSpotDB.py -t '+ tag + " -r " + str(tmprun) +" -l "+str(tmplumi) +otherArgs
-		    print acommand
+                    print (acommand)
                 status = commands.getstatusoutput( acommand )
                 tmpfile.write(status[1])
     
-        print " beam spot data collected and stored in file " + datafilename
+        print (" beam spot data collected and stored in file " + datafilename)
     
         tmpfile.close()
 
@@ -291,12 +291,12 @@ if __name__ == '__main__':
                 input = open(option.data +"/"+f)
                 output.writelines(input.readlines())
             output.close()
-            print " data files have been collected in "+datafilename
+            print (" data files have been collected in "+datafilename)
             
         elif os.path.exists(option.data):
             datafilename = option.data
         else:
-            print " input beam spot data DOES NOT exist, file " + option.data
+            print (" input beam spot data DOES NOT exist, file " + option.data)
             exit()
 
     listbeam = []
@@ -304,8 +304,8 @@ if __name__ == '__main__':
     if option.xcrossing:
         listmap = readBeamSpotFile(datafilename,listbeam,IOVbase,firstRun,lastRun)
         # bx
-        print "List of bunch crossings in the file:"
-        print listmap.keys()
+        print ("List of bunch crossings in the file:")
+        print (listmap.keys())
         listbeam = listmap[option.Xrossing]
     else:
         readBeamSpotFile(datafilename,listbeam,IOVbase,firstRun,lastRun)
@@ -318,7 +318,7 @@ if __name__ == '__main__':
             weighted = False
         createWeightedPayloads(option.payload,listbeam,weighted)
     if option.noplot:
-        print " no plots requested, exit now."
+        print (" no plots requested, exit now.")
         sys.exit()
     # MAKE PLOTS
     ###################################    
@@ -342,53 +342,53 @@ if __name__ == '__main__':
     cvlist = []
 
     for ig in range(0,8):
-	cvlist.append( TCanvas(graphnamelist[ig],graphtitlelist[ig], 1200, 600) )
-	if option.graph:
-	    graphlist.append( TGraphErrors( len(listbeam) ) )
+        cvlist.append( TCanvas(graphnamelist[ig],graphtitlelist[ig], 1200, 600) )
+        if option.graph:
+            graphlist.append( TGraphErrors( len(listbeam) ) )
         else:
-	    graphlist.append( TH1F("name","title",len(listbeam),0,len(listbeam)) )
+            graphlist.append( TH1F("name","title",len(listbeam),0,len(listbeam)) )
         
-	graphlist[ig].SetName(graphnamelist[ig])
+        graphlist[ig].SetName(graphnamelist[ig])
         graphlist[ig].SetTitle(graphtitlelist[ig])
-	ipoint = 0
-	for ii in range(0,len(listbeam)):
+        ipoint = 0
+        for ii in range(0,len(listbeam)):
 	    
-	    ibeam = listbeam[ii]
-	    datax = dataxerr = 0.
-	    datay = datayerr = 0.
-	    if graphnamelist[ig] == 'X':
-		datay = ibeam.X
-		datayerr = ibeam.Xerr
-	    if graphnamelist[ig] == 'Y':
-		datay = ibeam.Y
-		datayerr = ibeam.Yerr
-	    if graphnamelist[ig] == 'Z':
-		datay = ibeam.Z
-		datayerr = ibeam.Zerr
-	    if graphnamelist[ig] == 'SigmaZ':
-		datay = ibeam.sigmaZ
-		datayerr = ibeam.sigmaZerr
-	    if graphnamelist[ig] == 'dxdz':
-		datay = ibeam.dxdz
-		datayerr = ibeam.dxdzerr
-	    if graphnamelist[ig] == 'dydz':
-		datay = ibeam.dydz
-		datayerr = ibeam.dydzerr
-	    if graphnamelist[ig] == 'beamWidthX':
-		datay = ibeam.beamWidthX
-		datayerr = ibeam.beamWidthXerr
-	    if graphnamelist[ig] == 'beamWidthY':
-		datay = ibeam.beamWidthY
-		datayerr = ibeam.beamWidthYerr
+            ibeam = listbeam[ii]
+            datax = dataxerr = 0.
+            datay = datayerr = 0.
+            if graphnamelist[ig] == 'X':
+                datay = ibeam.X
+                datayerr = ibeam.Xerr
+            if graphnamelist[ig] == 'Y':
+                datay = ibeam.Y
+                datayerr = ibeam.Yerr
+            if graphnamelist[ig] == 'Z':
+                datay = ibeam.Z
+                datayerr = ibeam.Zerr
+            if graphnamelist[ig] == 'SigmaZ':
+                datay = ibeam.sigmaZ
+                datayerr = ibeam.sigmaZerr
+            if graphnamelist[ig] == 'dxdz':
+                datay = ibeam.dxdz
+                datayerr = ibeam.dxdzerr
+            if graphnamelist[ig] == 'dydz':
+                datay = ibeam.dydz
+                datayerr = ibeam.dydzerr
+            if graphnamelist[ig] == 'beamWidthX':
+                datay = ibeam.beamWidthX
+                datayerr = ibeam.beamWidthXerr
+            if graphnamelist[ig] == 'beamWidthY':
+                datay = ibeam.beamWidthY
+                datayerr = ibeam.beamWidthYerr
 
             datax = ibeam.IOVfirst
-	    if IOVbase=="lumibase":
-		datax = str(ibeam.Run) + ":" + str(ibeam.IOVfirst)
-		if ibeam.IOVfirst != ibeam.IOVlast:
-		    datax = str(ibeam.Run) + ":" + str(ibeam.IOVfirst)+"-"+str(ibeam.IOVlast)
+            if IOVbase=="lumibase":
+                datax = str(ibeam.Run) + ":" + str(ibeam.IOVfirst)
+                if ibeam.IOVfirst != ibeam.IOVlast:
+                    datax = str(ibeam.Run) + ":" + str(ibeam.IOVfirst)+"-"+str(ibeam.IOVlast)
             #print datax
-	    if option.graph:
-		if IOVbase=="lumibase":
+            if option.graph:
+                if IOVbase=="lumibase":
                     #first = int( pack( int(ibeam.Run) , int(ibeam.IOVfirst) ) )
                     #last = int( pack( int(ibeam.Run) , int(ibeam.IOVlast) ) )
                     first = ibeam.IOVfirst
@@ -404,7 +404,7 @@ if __name__ == '__main__':
                             ## print local time
                             da_first.Print()
                             ## print gmt time
-                            print "GMT = " + str(time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(first - time.timezone)))
+                            print ("GMT = " + str(time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(first - time.timezone))))
                             reftime = first
                             ptm = time.localtime(reftime)
                             da = TDatime(time.strftime('%Y-%m-%d %H:%M:%S',ptm))
@@ -418,35 +418,35 @@ if __name__ == '__main__':
                         datax += offset_daylight
                     ##################################
                     
-		    dataxerr =  (float(last) - float(first))/2
-		graphlist[ig].SetPoint(ipoint, float(datax), float(datay) )
-		graphlist[ig].SetPointError(ipoint, float(dataxerr), float(datayerr) )
-	    else:
-		graphlist[ig].GetXaxis().SetBinLabel(ipoint +1 , str(datax) )
-		graphlist[ig].SetBinContent(ipoint +1, float(datay) )
-		graphlist[ig].SetBinError(ipoint +1, float(datayerr) )
+                    dataxerr =  (float(last) - float(first))/2
+                graphlist[ig].SetPoint(ipoint, float(datax), float(datay) )
+                graphlist[ig].SetPointError(ipoint, float(dataxerr), float(datayerr) )
+            else:
+                graphlist[ig].GetXaxis().SetBinLabel(ipoint +1 , str(datax) )
+                graphlist[ig].SetBinContent(ipoint +1, float(datay) )
+                graphlist[ig].SetBinError(ipoint +1, float(datayerr) )
 
             ipoint += 1
-	if option.Time:
+        if option.Time:
             ## print local time
             da_last.Print()
-            print "GMT = " + str(time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(last - time.timezone)))
+            print ("GMT = " + str(time.strftime('%Y-%m-%d %H:%M:%S',time.gmtime(last - time.timezone))))
             graphlist[ig].GetXaxis().SetTimeDisplay(1);
             graphlist[ig].GetXaxis().SetTimeFormat("#splitline{%Y/%m/%d}{%H:%M}")           
-	if option.graph:
-	    graphlist[ig].Draw('AP')
+        if option.graph:
+            graphlist[ig].Draw('AP')
         else:
-	    graphlist[ig].Draw('P E1 X0')
-	    graphlist[ig].GetXaxis().SetTitle(graphXaxis)
-	    graphlist[ig].GetYaxis().SetTitle(graphYaxis[ig])
+            graphlist[ig].Draw('P E1 X0')
+            graphlist[ig].GetXaxis().SetTitle(graphXaxis)
+            graphlist[ig].GetYaxis().SetTitle(graphYaxis[ig])
             #graphlist[ig].Fit('pol1')
-	cvlist[ig].Update()
+        cvlist[ig].Update()
         cvlist[ig].SetGrid()
         if option.Print:
             suffix = ''
             if option.suffix:
                 suffix = option.suffix
-	    cvlist[ig].Print(graphnamelist[ig]+"_"+suffix+".png")
+            cvlist[ig].Print(graphnamelist[ig]+"_"+suffix+".png")
         if option.wait:
             raw_input( 'Press ENTER to continue\n ' )
         #graphlist[0].Print('all')
@@ -457,7 +457,7 @@ if __name__ == '__main__':
             ig.Write()
 
         outroot.Close()
-        print " plots have been written to "+option.output
+        print (" plots have been written to "+option.output)
         
     
 

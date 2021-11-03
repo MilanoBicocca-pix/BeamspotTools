@@ -65,11 +65,11 @@ if __name__ == '__main__':
     listA = [1,2,3,4,5,7]
     listB = [1,3,4,5,6,7]
     
-    print 'listA', listA
-    print 'listB', listB
+    print ('listA', listA)
+    print ('listB', listB)
     
     in_B_not_in_A, in_A_not_in_B = compareLists(listA, listB)
      
-    print 'in_B_not_in_A', in_B_not_in_A
-    print 'in_A_not_in_B', in_A_not_in_B
+    print ('in_B_not_in_A', in_B_not_in_A)
+    print ('in_A_not_in_B', in_A_not_in_B)
     

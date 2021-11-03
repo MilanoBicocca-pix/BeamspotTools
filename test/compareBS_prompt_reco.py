@@ -35,7 +35,7 @@ doFromScratch   = True
 
 
 def _doMerge( bscollection, outfilename ):
-  for irun, ibs in bscollection.iteritems():
+  for irun, ibs in bscollection.items():
     if irun not in specialRuns:
       pairs = splitByDrift(ibs, slopes = True)    
     else:
@@ -163,10 +163,10 @@ if doFromScratch:
   p_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_prompt_96perc/*.txt'         , prependPath=True)
 
  
-  print 'start loading payloads ...'
+  print ('start loading payloads ...')
   promptPayload = Payload(p_files)
   recoPayload   = Payload(r_files)
-  print '... payloads loaded'
+  print ('... payloads loaded')
   
   # convert results into a dictionary  { Run : {Lumi Range: BeamSpot Fit Object} }
   promptBS = promptPayload.fromTextToBS() 
@@ -189,7 +189,7 @@ if doFromScratch:
       s = ''
       for ls in LSinRecoNotInPrompt:
         s += str(ls) + ', '
-      print 'Run ' + str(irun) + ': ' + s
+      print ('Run ' + str(irun) + ': ' + s)
   
   # remove from reco collection the LSs not in prompt file 
     for ls in LSinRecoNotInPrompt:
@@ -197,34 +197,34 @@ if doFromScratch:
         if recoBS[irun][ls]:
           del recoBS[irun][ls]
       except:
-        print irun, ls    
+        print (irun, ls)    
   
   # remove from prompt collection the LSs not in reco file 
-    if len(LSinPromptNotInReco) > 0:  print 'missing in Rereco:'
+    if len(LSinPromptNotInReco) > 0:  print ('missing in Rereco:')
     for ls in LSinPromptNotInReco:
       if promptBS[irun][ls]:
-        print irun, ls        
+        print (irun, ls)        
         del promptBS[irun][ls]
   
   
-  newPromptBS = {k:v for k, v in promptBS.iteritems() if k in runsCommon}
-  newRecoBS   = {k:v for k, v in recoBS.iteritems()   if k in runsCommon}
+  newPromptBS = {k:v for k, v in promptBS.items() if k in runsCommon}
+  newRecoBS   = {k:v for k, v in recoBS.items()   if k in runsCommon}
   
   n_all_fits_prompt = len(newPromptBS)
   
   # remove not-converged fits and sort
-  print '--- Job Report ---'
-  for irun, ivalues in newPromptBS.iteritems():
+  print ('--- Job Report ---')
+  for irun, ivalues in newPromptBS.items():
       n_all_fits_prompt = len(newPromptBS[irun])
       newPromptBS[irun] = cleanAndSort(ivalues)
       n_ok_fits_prompt = float (len(newPromptBS[irun]))
-      print 'fit failures in prompt for run', irun, ':',  1. - n_ok_fits_prompt/n_all_fits_prompt  
+      print ('fit failures in prompt for run', irun, ':',  1. - n_ok_fits_prompt/n_all_fits_prompt)  
       
-  for irun, ivalues in newRecoBS.iteritems():
+  for irun, ivalues in newRecoBS.items():
       n_all_fits_reco   = len(newRecoBS[irun])
       newRecoBS[irun] = cleanAndSort(ivalues)
       n_ok_fits_reco   = float (len(newRecoBS[irun]))
-      print 'fit failures in reco for run', irun, ':',   1. - n_ok_fits_reco/n_all_fits_reco  
+      print ('fit failures in reco for run', irun, ':',   1. - n_ok_fits_reco/n_all_fits_reco)  
 
 #   print '--- Job Report ---'
 #   print 'fit failures in prompt:', 1. - n_ok_fits_prompt/n_all_fits_prompt  
@@ -273,7 +273,7 @@ histo_file_r = ROOT.TFile.Open('histos_reco' + runstring + '.root'  , 'read')
 
 
 for ivar in variables: 
-  print ivar
+  print (ivar)
 
   can = ROOT.TCanvas('can','can')
   can.cd()

@@ -49,17 +49,17 @@ allbs = []
 
 for igls, ibx in product(lsgroups, bxs):
 
-    print 'running on LSs', igls, 'and BX', ibx
+    print ('running on LSs', igls, 'and BX', ibx)
     
     # find entries with a given lumi (not very pythonic, sorry...)
     mask = myarray['lumi']==igls[0]
     for ils in igls[1:]:
         masky = myarray['lumi']==ils
         mask = mask | masky
-        print 'ils', ils, 'any(mask==True)', any(mask==True), 'passing entries = ', len(mask[np.where(mask)])
+        print ('ils', ils, 'any(mask==True)', any(mask==True), 'passing entries = ', len(mask[np.where(mask)]))
     masky = myarray['bunchCrossing']==ibx
     mask = mask & masky
-    print 'ibx', ibx, 'any(mask==True)', any(mask==True), 'passing entries = ', len(mask[np.where(mask)])
+    print ('ibx', ibx, 'any(mask==True)', any(mask==True), 'passing entries = ', len(mask[np.where(mask)]))
         
     # slice down the positons of these entries
     positions = myarray[mask]['pvData_position']
