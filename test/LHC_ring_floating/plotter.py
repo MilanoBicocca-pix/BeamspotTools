@@ -56,6 +56,8 @@ times = [
     'year 2018, month 9',
     'year 2018, month 10',
     'year 2018, month 11',
+    'year 2021, month 10',
+    'year 2021, month 11',
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m") for time in times ]
@@ -111,6 +113,8 @@ X = np.array([
     0.096190,
     0.096331,#10
     0.094505,#10
+    0.171753,
+    0.173006,
 ])
 Y = np.array([
     0.000908, 
@@ -163,6 +167,8 @@ Y = np.array([
     -0.062271, #9
     -0.061833, #10
     -0.063482, #11
+    -0.190651, # 2021
+    -0.192189,
 ])
 
 # convert from cm to micron
@@ -175,8 +181,8 @@ ax.grid()
 
 
 fig.autofmt_xdate()
-plt.plot(Time,X)
-plt.plot(Time,Y)
+plt.plot(Time,X, c='tab:blue')
+plt.plot(Time,Y, c='tab:green')
 plt.scatter(Time,X, c='b', s=40, lw = 0, label='X')
 plt.scatter(Time,Y, c='g', s=40, lw = 0, label='Y')
 # plt.legend((X.all(),Y.all()), ('X','Y'), loc=3)
@@ -190,7 +196,7 @@ plt.title('CMS beamspot in pp collisions')
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
 plt.show(block=False)
-plt.savefig('cms_beamspotXY_vs_time_2018_Dic11.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2021_Nov3.pdf')
 plt.close()
 
 
@@ -234,6 +240,8 @@ plt.close()
 # year 2016, month 9	X = 0.057529 +/- 3.8561E-07 [cm]	Y = 0.105664 +/- 3.8219E-07 [cm]
 # year 2016, month 10	X = 0.055517 +/- 2.9459E-07 [cm]	Y = 0.107506 +/- 2.9170E-07 [cm]
 
+# year 2021, month 10	X = 0.171753 +/- 2.0963E-05 [cm]	Y = -0.190651 +/- 2.0641E-05 [cm]
+# year 2021, month 11	X = 0.173006 +/- 1.7382E-04 [cm]	Y = -0.192189 +/- 1.7061E-04 [cm]
 
 
 
