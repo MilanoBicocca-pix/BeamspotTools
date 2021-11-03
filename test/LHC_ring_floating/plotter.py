@@ -2,6 +2,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 from datetime import datetime
 
+import matplotlib
+matplotlib.use("TkAgg")
+
 times = [
     'year 2010, month 3',
     'year 2010, month 4',
@@ -39,6 +42,20 @@ times = [
     'year 2016, month 8',
     'year 2016, month 9',
     'year 2016, month 10',
+    'year 2017, month 6',
+    'year 2017, month 7',
+    'year 2017, month 8',
+    'year 2017, month 9',
+    'year 2017, month 10',
+    'year 2017, month 11',
+    'year 2018, month 4',
+    'year 2018, month 5',
+    'year 2018, month 6',
+    'year 2018, month 7',
+    'year 2018, month 8',
+    'year 2018, month 9',
+    'year 2018, month 10',
+    'year 2018, month 11',
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m") for time in times ]
@@ -80,6 +97,20 @@ X = np.array([
     0.058380, 
     0.057529, 
     0.055517, 
+    0.085308,
+    0.084399,
+    0.084372,
+    0.083874,
+    0.084294,
+    0.082513,
+    0.096250,
+    0.096432,
+    0.097094,
+    0.095590,
+    0.096508,#8
+    0.096190,
+    0.096331,#10
+    0.094505,#10
 ])
 Y = np.array([
     0.000908, 
@@ -118,6 +149,20 @@ Y = np.array([
     0.101729, 
     0.105664, 
     0.107506, 
+    -0.034577,
+    -0.033694,
+    -0.032571,
+    -0.031999,
+    -0.029872,
+    -0.028903,
+    -0.069063,
+    -0.066068,
+    -0.064077,
+    -0.064396,
+    -0.060965, #8
+    -0.062271, #9
+    -0.061833, #10
+    -0.063482, #11
 ])
 
 # convert from cm to micron
@@ -132,18 +177,22 @@ ax.grid()
 fig.autofmt_xdate()
 plt.plot(Time,X)
 plt.plot(Time,Y)
-plt.scatter(Time,X, c='b', label='X')
-plt.scatter(Time,Y, c='g', label='Y')
-# plt.legend()
+plt.scatter(Time,X, c='b', s=40, lw = 0, label='X')
+plt.scatter(Time,Y, c='g', s=40, lw = 0, label='Y')
+# plt.legend((X.all(),Y.all()), ('X','Y'), loc=3)
 # plt.legend(bbox_to_anchor=(0.8, 1.02, 1., .102), loc=3,
-plt.legend(loc=4)
+plt.legend(loc=3, scatterpoints=1)
 plt.xlabel('Date')
 plt.ylabel('position [micron]')
 plt.title('CMS beamspot in pp collisions')
 # fit with np.polyfit
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
-plt.show()
+# plt.show()
+plt.show(block=False)
+plt.savefig('cms_beamspotXY_vs_time_2018_Dic11.pdf')
+plt.close()
+
 
 
 
