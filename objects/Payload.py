@@ -3,10 +3,11 @@
 import ROOT
 from array import array
 from collections import OrderedDict
-from BeamSpot import BeamSpot
-from IOV import IOV
 import sys
 sys.path.append('..')
+
+from .BeamSpot import BeamSpot
+from .IOV import IOV
 from utils.fillRunDict import labelByFill
 
 class Payload(object):
@@ -96,7 +97,7 @@ class Payload(object):
         # import pdb ; pdb.set_trace()
         
         if fromDB:
-            for run, bss in sortedbeamspots.iteritems():
+            for run, bss in sortedbeamspots.items():
                 for i, bs in enumerate(bss.values()[:-1]):
                     next_bs = bss.values()[i+1]
                     bs.IOVlast = next_bs.IOVfirst - 1
@@ -195,7 +196,7 @@ class Payload(object):
         beforeLast = lambda x : (x.RunLast  <= fRun and x.LumiLast  <= fLS)
         
         # get the list of BS objects
-        myBS = OrderedDict({k:v for k, v in self.fromTextToBS(iov=True).iteritems()
+        myBS = OrderedDict({k:v for k, v in self.fromTextToBS(iov=True).items()
                             if afterFirst(k) and beforeLast(k)})
         
         # for the comparison to DB objects, need to put IOV first = last by hand

@@ -201,7 +201,7 @@ def _splitByMagneticFieldJson(histo, json3p8, json2p8, json0, irun, frun):
         histoOther: runsOther,
     }
     
-    for k, v in mydict.iteritems():
+    for k, v in mydict.items():
         k.Reset()
         add = False
         for ibin in range(k.GetNbinsX()):

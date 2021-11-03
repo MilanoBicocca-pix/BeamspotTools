@@ -4,7 +4,7 @@ import iminuit
 import numpy as np
 from scipy.stats import multivariate_normal
 from time import time
-from MultiVariateGauss import MultivariateGaussianFitterNLL, AltMultivariateGaussianFitterNLL
+from .MultiVariateGauss import MultivariateGaussianFitterNLL, AltMultivariateGaussianFitterNLL
 
 
 class PVfitterCMS(AltMultivariateGaussianFitterNLL):
@@ -282,7 +282,7 @@ if __name__ == '__main__':
     status = results.get_fmin()
     print ('\n========== FIT VALIDITY ============')
     print ('for info http://iminuit.readthedocs.io/en/latest/api.html#return-value-struct')
-    for k, v in vars(status).iteritems(): print (k, v)
+    for k, v in vars(status).items(): print (k, v)
     
     # print results
     print ('\n========== FIT RESULTS ============')

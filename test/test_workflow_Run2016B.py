@@ -29,8 +29,12 @@ XeXeRuns = [304899,304906]
 #files = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/es0p9/HighEGJet/crab_BS_JetHT_Prompt_Run2017G_es0p9/180220_211350/0000/*.txt' , prependPath=True)
 
 ###Run2021 PilotBeam Express
+<<<<<<< HEAD
 #files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill7517.txt' , prependPath=True)
 files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/*.txt' , prependPath=True)
+=======
+files = get_files('/gwpool/users/brivio/beamSpot/2021/PilotBeamTest2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BSfitsPilotBeam/*.txt' , prependPath=True)
+>>>>>>> origin/master
 
 
 print ('start loading payloads ...')
