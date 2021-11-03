@@ -6,7 +6,7 @@ from math import pow, sqrt
 import numpy as np
 import uncertainties as unc
 import xml.etree.ElementTree as et
-from IOV import IOV
+from .IOV import IOV
 
 class BeamSpot(object):
     '''

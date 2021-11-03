@@ -54,7 +54,7 @@ allBS = myPayload.fromTextToBS()
 allBS_byFill_byTime = {}
 
 
-for irun, ivalues in allBS.iteritems():
+for irun, ivalues in allBS.items():
     allBS[irun] = cleanAndSort(ivalues)
     
     for k, v in fillRunDict.items():

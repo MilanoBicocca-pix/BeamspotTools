@@ -35,7 +35,7 @@ doFromScratch   = True
 
 
 def _doMerge( bscollection, outfilename ):
-  for irun, ibs in bscollection.iteritems():
+  for irun, ibs in bscollection.items():
     if irun not in specialRuns:
       pairs = splitByDrift(ibs, slopes = True)    
     else:
@@ -207,20 +207,20 @@ if doFromScratch:
         del promptBS[irun][ls]
   
   
-  newPromptBS = {k:v for k, v in promptBS.iteritems() if k in runsCommon}
-  newRecoBS   = {k:v for k, v in recoBS.iteritems()   if k in runsCommon}
+  newPromptBS = {k:v for k, v in promptBS.items() if k in runsCommon}
+  newRecoBS   = {k:v for k, v in recoBS.items()   if k in runsCommon}
   
   n_all_fits_prompt = len(newPromptBS)
   
   # remove not-converged fits and sort
   print ('--- Job Report ---')
-  for irun, ivalues in newPromptBS.iteritems():
+  for irun, ivalues in newPromptBS.items():
       n_all_fits_prompt = len(newPromptBS[irun])
       newPromptBS[irun] = cleanAndSort(ivalues)
       n_ok_fits_prompt = float (len(newPromptBS[irun]))
       print ('fit failures in prompt for run', irun, ':',  1. - n_ok_fits_prompt/n_all_fits_prompt)  
       
-  for irun, ivalues in newRecoBS.iteritems():
+  for irun, ivalues in newRecoBS.items():
       n_all_fits_reco   = len(newRecoBS[irun])
       newRecoBS[irun] = cleanAndSort(ivalues)
       n_ok_fits_reco   = float (len(newRecoBS[irun]))
