@@ -195,9 +195,9 @@ class BeamSpot(object):
         '''
         Reads the Payload-like fragment (portion of text file, from Run 
         to BetaStar) and sets its attributes accordingly.
-        
+
         E.g.:
-        
+
         Runnumber 195660
         BeginTimeOfFit 2012.06.07 07:22:30 GMT 1339053750
         EndTimeOfFit 2012.06.07 07:22:52 GMT 1339053772
@@ -221,13 +221,12 @@ class BeamSpot(object):
         EmittanceX 0.0
         EmittanceY 0.0
         BetaStar 0.0
-        
-        
+
+
         or -alternatively- it reads this format, which is what you get
         from what's dumped from the database
-        
-        
-         for runs: 272760 - 272760
+
+         for runs: 272760 - 1
         -----------------------------------------------------
                       Beam Spot Data
         
@@ -293,36 +292,65 @@ class BeamSpot(object):
             self.betastar      = float( payload[22].split()[1] )    
     
         if any(['Beam Spot Data' in i for i in  payload]):
-            
-            # FIXME! format changed!
             self.Run           = int  ( payload[ 0].split()[2]                               )
-#             self.IOVfirst      = int  ( payload[ 0].split('LumiSection')[1].split()[0]       )
             self.IOVfirst      = int  ( payload[ 0].split('-')[-1]                           )
             self.IOVlast       = self.IOVfirst
             self.Type          = int  ( payload[ 4].split('=')[1]                            )
-    
+
             self.X             = float( payload[ 5].split('=')[1].split('+/-')[0]            )
             self.Y             = float( payload[ 6].split('=')[1].split('+/-')[0]            )
             self.Z             = float( payload[ 7].split('=')[1].split('+/-')[0]            )
-               
+
             self.sigmaZ        = float( payload[ 8].split('=')[1].split('+/-')[0]            )
             self.dxdz          = float( payload[ 9].split('=')[1].split('+/-')[0]            )
             self.dydz          = float( payload[10].split('=')[1].split('+/-')[0]            )
-               
+
             self.beamWidthX    = float( payload[11].split('=')[1].split('+/-')[0]            )
             self.beamWidthY    = float( payload[12].split('=')[1].split('+/-')[0]            )
-            
+
             self.Xerr          = float( payload[ 5].split('=')[1].split('+/-')[1].split()[0] )
             self.Yerr          = float( payload[ 6].split('=')[1].split('+/-')[1].split()[0] )
             self.Zerr          = float( payload[ 7].split('=')[1].split('+/-')[1].split()[0] )
             self.sigmaZerr     = float( payload[ 8].split('=')[1].split('+/-')[1].split()[0] )
-            
+
             self.dxdzerr       = float( payload[ 9].split('=')[1].split('+/-')[1].split()[0] )
             self.dydzerr       = float( payload[10].split('=')[1].split('+/-')[1].split()[0] )
-            
+
             self.beamWidthXerr = float( payload[11].split('=')[1].split('+/-')[1].split()[0] )
             self.beamWidthYerr = float( payload[12].split('=')[1].split('+/-')[1].split()[0] )
-                
+
+            self.EmittanceX    = float( payload[13].split('=')[1].split()[0]                 )
+            self.EmittanceY    = float( payload[14].split('=')[1].split()[0]                 )
+
+        # Online BeamSpot has a slightly different printout when dumped from the DB
+        if any(['BeamSpotOnline Data' in i for i in payload]):
+            self.Run           = int  ( payload[ 0].split()[2]                               )
+            self.IOVfirst      = int  ( payload[ 0].split('-')[-1]                           )
+            self.IOVlast       = self.IOVfirst
+            self.Type          = int  ( payload[ 4].split('=')[1]                            )
+
+            self.X             = float( payload[ 5].split('=')[1].split('+/-')[0]            )
+            self.Y             = float( payload[ 6].split('=')[1].split('+/-')[0]            )
+            self.Z             = float( payload[ 7].split('=')[1].split('+/-')[0]            )
+
+            self.sigmaZ        = float( payload[ 8].split('=')[1].split('+/-')[0]            )
+            self.dxdz          = float( payload[ 9].split('=')[1].split('+/-')[0]            )
+            self.dydz          = float( payload[10].split('=')[1].split('+/-')[0]            )
+
+            self.beamWidthX    = float( payload[11].split('=')[1].split('+/-')[0]            )
+            self.beamWidthY    = float( payload[12].split('=')[1].split('+/-')[0]            )
+
+            self.Xerr          = float( payload[ 5].split('=')[1].split('+/-')[1].split()[0] )
+            self.Yerr          = float( payload[ 6].split('=')[1].split('+/-')[1].split()[0] )
+            self.Zerr          = float( payload[ 7].split('=')[1].split('+/-')[1].split()[0] )
+            self.sigmaZerr     = float( payload[ 8].split('=')[1].split('+/-')[1].split()[0] )
+
+            self.dxdzerr       = float( payload[ 9].split('=')[1].split('+/-')[1].split()[0] )
+            self.dydzerr       = float( payload[10].split('=')[1].split('+/-')[1].split()[0] )
+
+            self.beamWidthXerr = float( payload[11].split('=')[1].split('+/-')[1].split()[0] )
+            self.beamWidthYerr = float( payload[12].split('=')[1].split('+/-')[1].split()[0] )
+
             self.EmittanceX    = float( payload[13].split('=')[1].split()[0]                 )
             self.EmittanceY    = float( payload[14].split('=')[1].split()[0]                 )
 

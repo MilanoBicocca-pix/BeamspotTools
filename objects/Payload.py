@@ -54,7 +54,14 @@ class Payload(object):
                                    for j in range(i-3, i+20)])
         
             # make it read .dat files as dumped from the database as well
+            # (for the BeamSpotObjects case)
             if 'Beam Spot Data' in line:
+                singleFits.append([self.lines[j].rstrip() \
+                                   for j in range(i-2, i+13)])
+
+            # make it read .dat files as dumped from the database as well
+            # (for the BeamSpotOnlineObjects case)
+            if 'BeamSpotOnline Data' in line:
                 singleFits.append([self.lines[j].rstrip() \
                                    for j in range(i-2, i+13)])
 
@@ -93,9 +100,7 @@ class Payload(object):
                     beamspots.update( toadd )
         
         sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(beamspots.keys()))
-        
-        # import pdb ; pdb.set_trace()
-        
+
         if fromDB:
             for run, bss in sortedbeamspots.items():
                 for i, bs in enumerate(bss.values()[:-1]):
