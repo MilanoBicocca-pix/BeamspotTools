@@ -29,8 +29,7 @@ XeXeRuns = [304899,304906]
 #files = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/es0p9/HighEGJet/crab_BS_JetHT_Prompt_Run2017G_es0p9/180220_211350/0000/*.txt' , prependPath=True)
 
 ###Run2021 PilotBeam Express
-files = get_files('/gwpool/users/brivio/beamSpot/2021/PilotBeamTest2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BSfitsPilotBeam/*.txt' , prependPath=True)
-
+files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt' , prependPath=True)
 
 print ('start loading payloads ...')
 myPayload = Payload(files)
@@ -64,7 +63,7 @@ fname = 'beamspot_Express_PilotBeam2021.txt'
 #         os.remove(fname)
 
 # check drifts and create IOV
-# filename = 'IOVforPayloads/2017G/bs_ZB_2017_.txt'
+#filename = 'BS_result_PiltBeam2021_byIOV/beamspot_Express_PilotBeam2021_.txt'
 count = 0
 for irun, ibs in allBS.items():
     if irun not in specialRuns:
@@ -75,7 +74,7 @@ for irun, ibs in allBS.items():
         myrange = set(range(p[0], p[1] + 1)) & set(ibs.keys())
         bs_list = [ibs[i] for i in sorted(list(myrange))]
         aveBeamSpot = averageBeamSpot(bs_list)
-#         fname = filename.replace('_.txt', '_'+str(count)+'.txt')
+#        fname = filename.replace('_.txt', '_'+str(count)+'.txt')
         aveBeamSpot.Dump(fname, 'a+')
         count = count + 1
 
@@ -96,9 +95,10 @@ variables = [
 ]
 
 for ivar in variables: 
-    histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 8, byFill = False, returnHisto = True))
+    histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 4, byFill = False, returnHisto = True))
 
 histo_file = ROOT.TFile.Open('histos_Express_PilotBeam2021.root', 'recreate')
+#histo_file = ROOT.TFile.Open('BS_result_PiltBeam2021_byIOV/histos_Express_PilotBeam2021.root', 'recreate')
 histo_file.cd()
 for histo in histos:
     histo.Write()

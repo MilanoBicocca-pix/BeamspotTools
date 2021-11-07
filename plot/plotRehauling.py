@@ -27,7 +27,8 @@ ROOT.gStyle.SetLegendFont(42)
 
 # file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
 # file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/atlas_fills/histos_2018A_6638_byLS.root')
-file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/forMCproduction/histos_2018A_from6688.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/forMCproduction/histos_2018A_from6688.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_10_6_29/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BS_result_PiltBeam2021_byRun/histos_Express_PilotBeam2021.root')
 
 file.cd()
 
@@ -41,15 +42,14 @@ dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
 variables = [
-    (X         , 'beam spot x [cm]'         ,  0.078 , 0.110  ),
-    (Y         , 'beam spot y [cm]'         , -0.075  ,-0.055 ),
-#     (Z         , 'beam spot z [cm]'         , -1.5    , 0.5      ),
-    (Z         , 'beam spot z [cm]'         , -5.    , 5      ),
-    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.    , 5.     ),
-    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.000 , 0.002  ),
-    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.000 , 0.002  ),
-    (dxdz      , 'beam spot dx/dz [rad]'    ,  0.000 , 4.e-4  ),
-    (dydz      , 'beam spot dy/dz [rad]'    , -2.e-4 , 2.e-4  ),
+    (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
+    (Y         , 'beam spot y [cm]'         , -0.21  ,-0.175 ),
+    (Z         , 'beam spot z [cm]'         , -3.    , 3     ),
+    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  3.5   , 9.    ),
+    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.00  , 0.025 ),
+    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.00  , 0.025 ),
+    (dxdz      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
+    (dydz      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
 ]
 
 def drawMyStyle(histo, options = '', title = '', byFill = True, byTime = False):
@@ -137,8 +137,7 @@ def saveHisto(var):
     leg.SetLineColor(10)
     if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
 
-
-    ROOT.gPad.Print('BS_plot_full_by_time_run2018A_from6688_%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('BS_plot_full_by_time_PilotBeam2021_%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:

@@ -15,7 +15,29 @@ from utils.readJson      import readJson
 files  = get_files('/Users/manzoni/Documents/beamspot/full2015_byIOV/*.txt', prependPath=True)
 files += get_files('/Users/manzoni/Documents/beamspot/full2016_byIOV/*.txt', prependPath=True)
 
+## 2016
+files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016B/*.txt',   prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016C/*.txt',   prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016D/*.txt',   prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016E/*.txt',   prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016F/*.txt',   prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016G/*.txt',   prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016Hv2/*.txt', prependPath=True)
+files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/txt_files_ReReco/data2016_LegacyReReco/2016Hv3/*.txt', prependPath=True)
+
+## 2017 
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2017/txt_files_as_sqlite/2017B/*.txt', prependPath=True)
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2017/txt_files_as_sqlite/2017C/*.txt', prependPath=True)
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2017/txt_files_as_sqlite/2017D/*.txt', prependPath=True)
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2017/txt_files_as_sqlite/2017E/*.txt', prependPath=True)
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2017/txt_files_as_sqlite/2017F/*.txt', prependPath=True)
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2017/ReRecoNov2017/txt_files_as_sqlite/2017H/*.txt', prependPath=True)
+
+## 2018
+files += get_files('/afs/cern.ch/work/f/fiorendi/public/BeamSpot_2018/ReRecoSept/txt_files_as_sqlite/*.txt', prependPath=True)
+
 print ('start loading payloads ...')
+
 myPayload = Payload(files)
 print ('... payloads loaded')
 
@@ -35,10 +57,13 @@ for irun, ibs in allBS.items():
 
 
 # keep only 3.8T
-json2015 = readJson(fileName = '/Users/manzoni/Desktop/BeamspotTools/data/json2015/json_DCSONLY.txt')
-json2016 = readJson(fileName = '/Users/manzoni/Desktop/BeamspotTools/data/json2016/json_DCSONLY.txt')
+json2015   = readJson(fileName = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/DCSOnly/json_DCSONLY.txt')
+json2016   = readJson(fileName = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt')
+json2017   = readJson(fileName = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/DCSOnly/json_DCSONLY.txt')
+json2018   = readJson(fileName = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/DCSOnly/json_DCSONLY.txt')
+json2018HI = readJson(fileName = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/HI/DCSOnly/json_DCSONLY_HI.txt')
 
-runs3p8T = sorted([i for i in json2015.keys() + json2016.keys()])
+runs3p8T = sorted([i for i in json2015.keys() + json2016.keys() + json2017.keys() + json2018.keys() + json2018HI.keys() ])
 bs_by_run = [ibs for ibs in bs_by_run if ibs.Run in runs3p8T]
 
 # create container for by run bs
@@ -56,14 +81,14 @@ for ibs in bs_by_run:
     if (imonth != month and month > 0) or ibs == bs_by_run[-1]:
         print ('processing run %d year %d month %d' %(ibs.Run, date.year, imonth))
         aveBeamSpot = averageBeamSpot(tomerge, doNotCheck=['Run'])
-        aveBeamSpot.Dump('beamspot_run2_bymonth.txt', 'a+')
+        aveBeamSpot.Dump('beamspot_run2_bymonth_redo.txt', 'a+')
         newbs.append(aveBeamSpot)
         tomerge = []
         run = irun
     tomerge.append(ibs)
     month = imonth
 
-outfile = open('run2_bs_xy_vs_month.csv', 'w+')
+outfile = open('run2_bs_xy_vs_month_redo.csv', 'w+')
 print >> outfile, 'year,month,x,xerr,y,yerr'
 
 for ibs in newbs:

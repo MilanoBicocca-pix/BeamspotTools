@@ -28,6 +28,8 @@ def _createFillList():
 
     if 'BSBASE' in os.environ.keys():
         prepath = os.environ['BSBASE']
+    elif 'LHC_ring' in os.getcwd():
+        prepath = '../..'
     else:
         prepath = '..'
     fname = '/'.join( [prepath    , 
