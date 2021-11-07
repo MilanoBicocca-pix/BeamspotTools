@@ -101,7 +101,7 @@ class Payload(object):
         
         if not iov:
              sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(list(beamspots)))
-         else:
+        else:
              sortedbeamspots = beamspots
 
         if fromDB:
