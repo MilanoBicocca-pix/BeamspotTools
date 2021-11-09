@@ -14,7 +14,7 @@ from utils.getFileList   import get_files
 from utils.readJson      import readJson
 
 ## 2021
-files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_10_6_29/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BS_result_PiltBeam2021_byFill/*.txt', prependPath=True)
+files = get_files('/afs/cern.ch/work/f/fbrivio/public/per_Davide/BS_result_PiltBeam2021_byFill/*.txt', prependPath=True)
 
 print ('start loading payloads ...')
 
@@ -25,7 +25,7 @@ print ('... payloads loaded')
 allBS = myPayload.fromTextToBS() 
 
 for irun, ivalues in allBS.items():
-    allBS[irun] = cleanAndSort(ivalues)
+    allBS[irun] = cleanAndSort(ivalues, cleanBadFits = True, iov = True)
 
 bs_by_run = []
 
@@ -64,7 +64,7 @@ for ibs in bs_by_run:
     month = imonth
 
 outfile = open('run3_bs_xy_vs_month_redo.csv', 'w+')
-print >> outfile, 'year,month,x,xerr,y,yerr'
+print ('year,month,x,xerr,y,yerr', file=outfile)
 
 for ibs in newbs:
     date_start = datetime.utcfromtimestamp(ibs.IOVBeginTime)
@@ -74,12 +74,7 @@ for ibs in newbs:
           .format(date_start.year, date_start.month,
                   ibs.X          , ibs.Xerr        ,
                   ibs.Y          , ibs.Yerr        ,))
-    print >> outfile, ','.join([str(date_start.year), 
-                                str(date_start.month), 
-                                str(ibs.X), 
-                                str(ibs.Xerr), 
-                                str(ibs.Y), 
-                                str(ibs.Yerr)])     
+    print (','.join([str(date_start.year), str(date_start.month), str(ibs.X), str(ibs.Xerr), str(ibs.Y), str(ibs.Yerr)]),file=outfile)
  
 outfile.close()
 

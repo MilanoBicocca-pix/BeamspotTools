@@ -70,15 +70,15 @@ variables = list(variables)
 # Online workflow name
 #  OnlineLegacy  : reference_BeamSpotOnlineLegacy.txt
 #  OnlineHLT     : reference_BeamSpotOnlineHLT.txt
-nameWF = 'HLT'
+nameWF = 'Legacy'
 
 if doFromScratch:
 
   # Reco files
-  r_files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
+  r_files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
 
   # Online files
-  p_files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/CondTools/BeamSpot/test/txts/reference_BeamSpotOnline'+nameWF+'.txt', prependPath=True)
+  p_files = get_files('/afs/cern.ch/work/f/fbrivio/public/per_Davide/PilotBeamBStxt/reference_BeamSpotOnline'+nameWF+'.txt', prependPath=True)
  
   print ('start loading payloads ...')
   onlinePayload  = Payload(p_files)
@@ -154,9 +154,9 @@ if doFromScratch:
     runsLumisOnlineCleaned.append(newOnlineBS[irun].keys())
     runsLumisRecoCleaned  .append(newRecoBS[irun].keys())
 
-    for ilumi in runsLumisRecoCleaned[i]:
+    for ilumi in list(runsLumisRecoCleaned[i]):
       if ilumi not in runsLumisOnlineCleaned[i]:  del newRecoBS[irun][ilumi]
-    for ilumi in runsLumisOnlineCleaned[i]:
+    for ilumi in list(runsLumisOnlineCleaned[i]):
       if ilumi not in runsLumisRecoCleaned[i]:  del newOnlineBS[irun][ilumi]
 
   # dump the list into a txt file, and save histos into root files

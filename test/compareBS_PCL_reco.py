@@ -72,15 +72,15 @@ variables = list(variables)
 #  HPBS_byRun      : reference_PCL_HPBS_byRun.txt       ----> Express and HLT GT
 #  LegacyBS_byLumi : reference_PCL_LegacyBS_byLumi.txt  ----> Legacy
 #  LegacyBS_byRun  : reference_PCL_LegacyBS_byRun.txt   ----> Legacy
-nameWF = 'LegacyBS_byRun'
+nameWF = 'HPBS_byLumi'
 
 if doFromScratch:
 
   # Reco files
-  r_files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
+  r_files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
 
   # PCL files
-  p_files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/CondTools/BeamSpot/test/txts/reference_PCL_'+nameWF+'.txt', prependPath=True)
+  p_files = get_files('/afs/cern.ch/work/f/fbrivio/public/per_Davide/PilotBeamBStxt/reference_PCL_'+nameWF+'.txt', prependPath=True)
  
   print ('start loading payloads ...')
   pclPayload  = Payload(p_files)
@@ -156,9 +156,9 @@ if doFromScratch:
     runsLumisPclCleaned .append(newPclBS[irun].keys())
     runsLumisRecoCleaned.append(newRecoBS[irun].keys())
 
-    for ilumi in runsLumisRecoCleaned[i]:
+    for ilumi in list(runsLumisRecoCleaned[i]):
       if ilumi not in runsLumisPclCleaned[i]:  del newRecoBS[irun][ilumi]
-    for ilumi in runsLumisPclCleaned[i]:
+    for ilumi in list(runsLumisPclCleaned[i]):
       if ilumi not in runsLumisRecoCleaned[i]:  del newPclBS[irun][ilumi]
 
   # dump the list into a txt file, and save histos into root files
