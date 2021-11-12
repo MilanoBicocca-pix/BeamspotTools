@@ -238,9 +238,9 @@ if doFromScratch:
     runsLumisPromptCleaned.append( newPromptBS[irun].keys())
     runsLumisRecoCleaned  .append( newRecoBS[irun].keys())
     
-    for ilumi in runsLumisRecoCleaned[i]:
+    for ilumi in list(runsLumisRecoCleaned[i]):
       if ilumi not in runsLumisPromptCleaned[i]:  del newRecoBS[irun][ilumi]
-    for ilumi in runsLumisPromptCleaned[i]:
+    for ilumi in list(runsLumisPromptCleaned[i]):
       if ilumi not in runsLumisRecoCleaned[i]:  del newPromptBS[irun][ilumi]
   
   
