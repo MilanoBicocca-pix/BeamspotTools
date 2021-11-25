@@ -15,8 +15,8 @@ def cleanAndSort(fullList, cleanBadFits = True, iov = False):
     '''
     # clean from badly converged
     cleaned =  {k:v for k, v in fullList.items() if v.Type > 0 and cleanBadFits}
-    if not iov:
     # sort by LS
+    if not iov:
         ordered = OrderedDict(sorted(cleaned.items(), key = lambda t: t[0]))
     else:
         ordered = cleaned
