@@ -9,7 +9,6 @@ from utils.compareLists  import compareLists
 from utils.fillRunDict   import labelByTime, labelByFill, splitByMagneticField
 
 ROOT.gROOT.SetBatch(True)
-# ROOT.gROOT.Reset()
 ROOT.gROOT.SetStyle('Plain')
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPadLeftMargin(0.1)
@@ -33,11 +32,10 @@ specialRuns = [300019,300029,300043,300050]
 verbosePrinting = True
 doFromScratch   = True
 
-
 def _doMerge( bscollection, outfilename ):
   for irun, ibs in bscollection.items():
     if irun not in specialRuns:
-      pairs = splitByDrift(ibs, slopes = True)    
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 20)    
     else:
       pairs = splitByDrift(ibs, slopes = True, maxLumi = 1)    
     for p in pairs:
@@ -53,17 +51,17 @@ def _doSaveHistos( histolist, outfilename ):
     histo.Write()
   outfile.Close()
 
-
-# # Plot fit results from txt file
+## Plot fit results from txt file
+## Ranges set for 2021 pilot beam test
 variables = [
-    ('X'         , 'beam spot x [cm]'         ,  0.076  , 0.088  ),
-    ('Y'         , 'beam spot y [cm]'         , -0.036  , -0.024  ),
-    ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
-    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.E-3 , 4E-3 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.E-3 , 4E-3 ),
-    ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
-    ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
+    ('X'         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
+    ('Y'         , 'beam spot y [cm]'         , -0.21  ,-0.175 ),
+    ('Z'         , 'beam spot z [cm]'         , -3.    , 3     ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  3.5   , 9.    ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.00  , 0.025 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.00  , 0.025 ),
+#    ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
+#    ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
 ### for 2017C
 #     ('X'         , 'beam spot x [cm]'         ,  0.05  , 0.12  ),
 #     ('Y'         , 'beam spot y [cm]'         , -0.065 ,-0.005  ),
@@ -77,20 +75,7 @@ variables = [
 
 variables = list(variables)
 
-
-# variables = [
-#   'X'         ,
-#   'Y'         ,
-#   'Z'         ,
-#   'sigmaZ'    ,
-#   'dxdz'      ,
-#   'dydz'      ,
-#   'beamWidthX',
-#   'beamWidthY'
-# ]
-
-runstring = '2017H' 
-
+runstring = '2021BeamTest' 
 
 if doFromScratch:
 
@@ -138,7 +123,9 @@ if doFromScratch:
 #   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_missingLumis/*'           , prependPath=True)
 #   r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_SpecialRuns/*'           , prependPath=True)
   
-  r_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_96perc/*.txt'         , prependPath=True)
+#  r_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_96perc/*.txt'         , prependPath=True)
+#  r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/test_2021_LHC_BeamTest_ExpressPhysics_FEVT/crab_FEVT_TkAlignment_postCRAFT_noRefit/211115_182853/0000/BeamFit_LumiBased_BeamTest2021_Refit_generalTracks_FEVT_*.txt', prependPath=True)
+  r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt', prependPath=True)
   
   
 #   p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_Prompt/*'        , prependPath=True)
@@ -160,9 +147,9 @@ if doFromScratch:
 #   p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_Prompt_Run2017F/171129_224109/0001/*'        , prependPath=True)
 
 #   p_files  = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/es1p1/JetHT/crab_BS_JetHT_Prompt_Run2017F_es1p1/171205_220828/0000/*.txt'         , prependPath=True)
-  p_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_prompt_96perc/*.txt'         , prependPath=True)
+#  p_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_prompt_96perc/*.txt'         , prependPath=True)
+  p_files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt'         , prependPath=True)
 
- 
   print ('start loading payloads ...')
   promptPayload = Payload(p_files)
   recoPayload   = Payload(r_files)
@@ -226,10 +213,6 @@ if doFromScratch:
       n_ok_fits_reco   = float (len(newRecoBS[irun]))
       print ('fit failures in reco for run', irun, ':',   1. - n_ok_fits_reco/n_all_fits_reco)  
 
-#   print '--- Job Report ---'
-#   print 'fit failures in prompt:', 1. - n_ok_fits_prompt/n_all_fits_prompt  
-#   print 'fit failures in reco:',   1. - n_ok_fits_reco/n_all_fits_reco  
-      
   # now check if the remaining BSs are there in both collections and delete sinlgetons
   runsLumisPromptCleaned = []
   runsLumisRecoCleaned   = []
@@ -243,15 +226,12 @@ if doFromScratch:
     for ilumi in list(runsLumisPromptCleaned[i]):
       if ilumi not in runsLumisRecoCleaned[i]:  del newPromptBS[irun][ilumi]
   
-  
   # dump the list into a txt file, and save histos into root files
-  promptname = 'prompt_payloads' + runstring + '.txt'
-  reconame   = 'reco_payloads' + runstring + '.txt'
+  promptname = 'BS_comparison_prompt/prompt_payloads' + runstring + '.txt'
+  reconame   = 'BS_comparison_prompt/reco_payloads' + runstring + '.txt'
   
   _doMerge(newPromptBS, promptname)
   _doMerge(newRecoBS  , reconame  )
-  
- 
   
   merged_payload_p = Payload(promptname)
   merged_payload_r = Payload(reconame)
@@ -263,14 +243,11 @@ if doFromScratch:
       p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
       r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
   
-  _doSaveHistos( p_histos, 'histos_prompt' + runstring + '.root' )
-  _doSaveHistos( r_histos, 'histos_reco' + runstring + '.root'   )
-  
-  
+  _doSaveHistos( p_histos, 'BS_comparison_prompt/histos_prompt' + runstring + '.root' )
+  _doSaveHistos( r_histos, 'BS_comparison_prompt/histos_reco' + runstring + '.root'   )
 
-histo_file_p = ROOT.TFile.Open('histos_prompt' + runstring + '.root', 'read')
-histo_file_r = ROOT.TFile.Open('histos_reco' + runstring + '.root'  , 'read')
-
+histo_file_p = ROOT.TFile.Open('BS_comparison_prompt/histos_prompt' + runstring + '.root', 'read')
+histo_file_r = ROOT.TFile.Open('BS_comparison_prompt/histos_reco' + runstring + '.root'  , 'read')
 
 for ivar in variables: 
   print (ivar)
@@ -302,7 +279,6 @@ for ivar in variables:
   if runstring == '2017C' and 'Width' in ivar[0]:
     h_p.GetYaxis().SetRangeUser(ivar[2], 9E-3)
 
-
   h_r = histo_file_r.Get(ivar[0])
   h_r.SetMarkerSize(0.2)
   h_r.SetMarkerColor(2)
@@ -312,12 +288,12 @@ for ivar in variables:
   leg = ROOT.TLegend( 0.902, 0.6, 1.0, 0.75 )
   leg.SetFillColor(0)
   leg.SetLineColor(0)
-  leg.AddEntry(h_p   , 'Prompt'   , 'pel')
-  leg.AddEntry(h_r   , 'ReReco'    , 'pel')
+  leg.AddEntry(h_p, 'v0_StreamExpress_ALCARECO', 'pel')
+  leg.AddEntry(h_r, 'v1_ExpressPhysics_FEVT'   , 'pel')
   leg.SetTextSize(0.03)
   leg.Draw('SAME')
   
   can.Update()
   can.Modified()
-  can.SaveAs('comparePromptReco_ZB_RunH/' + runstring + '/'+ivar[0] + '_Prompt_vs_NovReco_' + runstring + '.pdf')
+  can.SaveAs('BS_comparison_prompt/' + runstring + '_BS_' + ivar[0] + '_v0-StreamExpressALCARECO_vs_v1-ExpressPhysics-FEVT' + '.pdf')
 
