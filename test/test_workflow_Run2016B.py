@@ -69,13 +69,15 @@ fname = 'pilotBeams2021_FEVT_LegacyBS_v1.txt'
 count = 0
 for irun, ibs in allBS.items():
     if irun not in specialRuns:
-      pairs = splitByDrift(ibs, slopes = True, maxLumi = 20)    
-    else:
       pairs = splitByDrift(ibs, slopes = True)    
+    else:
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 1)    
     for p in pairs:
         myrange = set(range(p[0], p[1] + 1)) & set(ibs.keys())
         bs_list = [ibs[i] for i in sorted(list(myrange))]
         aveBeamSpot = averageBeamSpot(bs_list)
+## Create a txt file for each IOV for db object creation
+#        fname = filename.replace('_.txt', '_'+str(count)+'.txt')
         aveBeamSpot.Dump(fname, 'a+')
         count = count + 1
 
