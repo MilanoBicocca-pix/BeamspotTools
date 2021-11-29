@@ -66,6 +66,8 @@ fname = 'pilotBeams2021_FEVT_LegacyBS_v1.txt'
 #         os.remove(fname)
 
 # check drifts and create IOV
+## filename for txt files containing one IOV
+#filename = 'BS_result_PiltBeam2021_byIOV/beamspot_Express_PilotBeam2021_.txt'
 count = 0
 for irun, ibs in allBS.items():
     if irun not in specialRuns:
