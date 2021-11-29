@@ -20,15 +20,15 @@ ROOT.gStyle.SetLabelSize(0.15, 'Y')
 ROOT.gStyle.SetLabelSize(0.35, 'X')
 ROOT.gStyle.SetNdivisions(510, 'YZ')
 ROOT.gStyle.SetNdivisions(10, 'X')
-# ROOT.gStyle.SetPadGridX(True)
 ROOT.gStyle.SetPadGridY(True)
-# ROOT.gStyle.SetGridWidth(1)
 ROOT.gStyle.SetLegendFont(42)
 
-# file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
-# file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/atlas_fills/histos_2018A_6638_byLS.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/m/manzoni/beamspot/2016/CMSSW_8_0_11/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/atlas_fills/histos_2018A_6638_byLS.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/forMCproduction/histos_2018A_from6688.root')
-file = ROOT.TFile.Open('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_10_6_29/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BS_result_PiltBeam2021_byRun/histos_Express_PilotBeam2021.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_10_6_29/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BS_result_PiltBeam2021_byRun/histos_Express_PilotBeam2021.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos_PilotBeam2021_ExpressPhysics_FEVT.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/pilotBeams2021_FEVT_LegacyBS_v1/pilotBeams2021_FEVT_LegacyBS_v1.root')
 
 file.cd()
 
@@ -41,6 +41,7 @@ beamWidthY = file.Get('beamWidthY')
 dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
+## Ranges set for 2021 pilot beam test
 variables = [
     (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
     (Y         , 'beam spot y [cm]'         , -0.21  ,-0.175 ),
@@ -56,7 +57,6 @@ def drawMyStyle(histo, options = '', title = '', byFill = True, byTime = False):
     
     histo.SetLineColor(ROOT.kGray)
     histo.SetLineWidth(1)
-#     histo.SetLineStyle(3)
 
     histo.GetYaxis().SetTitle(var[1])
     histo.GetXaxis().SetTitle('')
@@ -127,7 +127,6 @@ def saveHisto(var):
                          'f1', 520)
     labels.SetLabelSize(0)
     labels.Draw()
-
     
     CMS_lumi(ROOT.gPad, 5, 0)
     ROOT.gPad.Update()
@@ -137,10 +136,8 @@ def saveHisto(var):
     leg.SetLineColor(10)
     if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
 
-    ROOT.gPad.Print('BS_plot_full_by_time_PilotBeam2021_%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('BSFit_pilotBeams2021_FEVT_LegacyBS_v1/%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
     saveHisto(var)
-
-

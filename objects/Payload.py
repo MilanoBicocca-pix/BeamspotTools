@@ -99,7 +99,10 @@ class Payload(object):
                     toadd = OrderedDict({ bs.Run : OrderedDict({lsrange : bs}) })
                     beamspots.update( toadd )
         
-        sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(beamspots.keys()))
+        if not iov:
+             sortedbeamspots = OrderedDict((key, beamspots[key]) for key in sorted(list(beamspots)))
+        else:
+             sortedbeamspots = beamspots
 
         if fromDB:
             for run, bss in sortedbeamspots.items():
@@ -385,11 +388,3 @@ if __name__ == '__main__':
         h1.Draw()
         h2.Draw('SAME')
         ROOT.gPad.SaveAs(h1.GetName() + '.pdf')
-
-
-
-
-
-
-
-

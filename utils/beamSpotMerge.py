@@ -8,16 +8,18 @@ import sys
 sys.path.append('..')
 from objects.BeamSpot import BeamSpot
 
-def cleanAndSort(fullList, cleanBadFits = True):
+def cleanAndSort(fullList, cleanBadFits = True, iov = False):
     '''
     Sorts the lumi:BS dictionary and cleans it up
     from the not properly converged fits.
     '''
     # clean from badly converged
     cleaned =  {k:v for k, v in fullList.items() if v.Type > 0 and cleanBadFits}
-
     # sort by LS
-    ordered = OrderedDict(sorted(cleaned.items(), key = lambda t: t[0]))
+    if not iov:
+        ordered = OrderedDict(sorted(cleaned.items(), key = lambda t: t[0]))
+    else:
+        ordered = cleaned
                                          
     return ordered
 
@@ -67,7 +69,7 @@ def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1,
     # breaking points. 
     # First LS is the first starting point by definition
     if not len(fullList.keys()):  return []
-    breaks = [fullList.keys()[0]]
+    breaks = [list(fullList)[0]]
         
     # lumi counter
     i = 0
@@ -77,9 +79,9 @@ def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1,
     # Reset every maxLumi lumi sections or at every drift
     for j in range( 1, len(fullList.items())-1 ):
         
-        lumi        = fullList.keys()[j  ]
-        lumi_before = fullList.keys()[j-1]
-        lumi_after  = fullList.keys()[j+1]
+        lumi        = list(fullList)[j  ]
+        lumi_before = list(fullList)[j-1]
+        lumi_after  = list(fullList)[j+1]
 
         bs        = fullList[lumi       ]  # bs        is the current beam spot
         bs_before = fullList[lumi_before]  # bs_before is the previous
@@ -163,7 +165,7 @@ def splitByDrift(fullList, maxLumi = 60, splitInfo = False, run = -1,
                 break
 
     # Last LS is the first breaking point by definition
-    breaks.append(fullList.keys()[-1])
+    breaks.append(list(fullList)[-1])
 
     # sort the list. There may be repeated breaking points in case
     # one finds a lumi range of one lumi only

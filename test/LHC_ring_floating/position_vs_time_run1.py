@@ -24,7 +24,7 @@ print ('... payloads loaded')
 allBS = myPayload.fromTextToBS() 
 
 for irun, ivalues in allBS.items():
-    allBS[irun] = cleanAndSort(ivalues)
+    allBS[irun] = cleanAndSort(ivalues, cleanBadFits = True, iov = True)
 
 bs_by_run = []
 
@@ -80,7 +80,7 @@ for ibs in bs_by_run:
     month = imonth
 
 outfile = open('run1_bs_xy_vs_month.csv', 'w+')
-print >> outfile, 'year,month,x,xerr,y,yerr'
+print ('year,month,x,xerr,y,yerr', file=outfile)
 
 for ibs in newbs:
     date_start = datetime.utcfromtimestamp(ibs.IOVBeginTime)
@@ -90,12 +90,7 @@ for ibs in newbs:
           .format(date_start.year, date_start.month,
                   ibs.X          , ibs.Xerr        ,
                   ibs.Y          , ibs.Yerr        ,))
-    print >> outfile, ','.join([str(date_start.year), 
-                                str(date_start.month), 
-                                str(ibs.X), 
-                                str(ibs.Xerr), 
-                                str(ibs.Y), 
-                                str(ibs.Yerr)])     
+    print (','.join([str(date_start.year), str(date_start.month), str(ibs.X), str(ibs.Xerr), str(ibs.Y), str(ibs.Yerr)]),file=outfile)
  
 outfile.close()
 

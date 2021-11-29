@@ -3,7 +3,7 @@ import ROOT
 from objects.Payload   import Payload
 from objects.BeamSpot  import *
 from utils.fillRunDict import labelByTime, labelByFill
-from utils.getFileList   import get_files
+from utils.getFileList import get_files
    
 ROOT.gROOT.SetBatch(True)
 
@@ -43,19 +43,33 @@ def drawMyStyle(histo, var, options = '', title = '', byFill = True, byTime = Fa
     return histo
    
    
-file_TXT = ['/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/IOVforPayloads/2017F/bs_ZB_2017_%d.txt' %i for i in range(1601)]
-# file obtained by running the CondTools/BeamSpot package:
-file_DB  = '/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/CondTools/BeamSpot/test/2017F_ReRecoNov.txt'
+#file_TXT = ['/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/IOVforPayloads/2017F/bs_ZB_2017_%d.txt' %i for i in range(1601)]
+file_TXT = '/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/pilotBeams2021_FEVT_LegacyBS_v1/pilotBeams2021_FEVT_LegacyBS_v1.txt'
 
+# file obtained by running the CondTools/BeamSpot package:
+#file_DB  = '/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/CondTools/BeamSpot/test/2017F_ReRecoNov.txt'
+file_DB  = '/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/CondTools/BeamSpot/test/reference_2021_PilotBeams_LegacyBS_v2.txt'
+
+#variables = [
+#    ('X'         , 'beam spot x [cm]'         ,  0.075  , 0.095  ),
+#    ('Y'         , 'beam spot y [cm]'         , -0.04   , -0.02  ),
+#    ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
+#    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.    ),
+#    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.E-3 , 4E-3 ),
+#    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.E-3 , 4E-3 ),
+#    ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
+#    ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
+#]
+## Ranges set for 2021 pilot beam test
 variables = [
-    ('X'         , 'beam spot x [cm]'         ,  0.075  , 0.095  ),
-    ('Y'         , 'beam spot y [cm]'         , -0.04   , -0.02  ),
-    ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
-    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5    , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.E-3 , 4E-3 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.E-3 , 4E-3 ),
-    ('dxdz'      , 'beam spot dx/dz [rad]'    , -.1e-3 , .8e-3 ),
-    ('dydz'      , 'beam spot dy/dz [rad]'    , -6.e-4 , .8e-3 ),
+    ('X'         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
+    ('Y'         , 'beam spot y [cm]'         , -0.21  ,-0.175 ),
+    ('Z'         , 'beam spot z [cm]'         , -3.    , 3     ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  3.5   , 9.    ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.00  , 0.025 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.00  , 0.025 ),
+    ('dxdz'      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
+    ('dydz'      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
 ]
 
 myPL_TXT = Payload(file_TXT)
@@ -86,5 +100,5 @@ for i, histos in enumerate(zip(histosTXT, histosDB)):
     leg.Draw('same')
     
     ROOT.gPad.Update()
-    ROOT.gPad.Print('BS_comparison_plot_' + histos[0].GetName() + '_2017F.pdf')
+    ROOT.gPad.Print('BS_txt_db_comparison/' + histos[0].GetName() + '.pdf')
 

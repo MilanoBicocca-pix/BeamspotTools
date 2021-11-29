@@ -10,7 +10,6 @@ from utils.compareLists  import compareLists
 from utils.fillRunDict   import labelByTime, labelByFill, splitByMagneticField
 
 ROOT.gROOT.SetBatch(True)
-# ROOT.gROOT.Reset()
 ROOT.gROOT.SetStyle('Plain')
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPadLeftMargin(0.1)
@@ -37,7 +36,7 @@ doFromScratch   = True
 def _doMerge( bscollection, outfilename ):
   for irun, ibs in bscollection.items():
     if irun not in specialRuns:
-      pairs = splitByDrift(ibs, slopes = True)
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 20)
     else:
       pairs = splitByDrift(ibs, slopes = True, maxLumi = 1)
     for p in pairs:
@@ -53,7 +52,8 @@ def _doSaveHistos( histolist, outfilename ):
     histo.Write()
   outfile.Close()
 
-# # Plot fit results from txt file
+## Plot fit results from txt file
+## Ranges set for 2021 pilot beam test
 variables = [
     ('X'         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
     ('Y'         , 'beam spot y [cm]'         , -0.21  ,-0.175 ),
@@ -66,21 +66,21 @@ variables = [
 ]
 variables = list(variables)
 
-
 # PCL workflow name
 #  HPBS_byLumi     : reference_PCL_HPBS_byLumi.txt      ----> Prompt GT
 #  HPBS_byRun      : reference_PCL_HPBS_byRun.txt       ----> Express and HLT GT
 #  LegacyBS_byLumi : reference_PCL_LegacyBS_byLumi.txt  ----> Legacy
 #  LegacyBS_byRun  : reference_PCL_LegacyBS_byRun.txt   ----> Legacy
-nameWF = 'LegacyBS_byRun'
+nameWF = 'LegacyBS_byLumi'
 
 if doFromScratch:
 
   # Reco files
-  r_files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
+  #r_files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
+  r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt', prependPath=True)
 
   # PCL files
-  p_files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/CondTools/BeamSpot/test/txts/reference_PCL_'+nameWF+'.txt', prependPath=True)
+  p_files = get_files('/afs/cern.ch/work/f/fbrivio/public/per_Davide/PilotBeamBStxt/reference_PCL_'+nameWF+'.txt', prependPath=True)
  
   print ('start loading payloads ...')
   pclPayload  = Payload(p_files)
@@ -144,10 +144,6 @@ if doFromScratch:
     n_ok_fits_reco  = float (len(newRecoBS[irun]))
     print ('fit failures in reco for run', irun, ':',   1. - n_ok_fits_reco/n_all_fits_reco)
 
-  #print '--- Job Report ---'
-  #print 'fit failures in pcl :', 1. - n_ok_fits_pcl/n_all_fits_pcl
-  #print 'fit failures in reco:', 1. - n_ok_fits_reco/n_all_fits_reco
-
   # now check if the remaining BSs are there in both collections and delete sinlgetons
   runsLumisPclCleaned  = []
   runsLumisRecoCleaned = []
@@ -156,9 +152,9 @@ if doFromScratch:
     runsLumisPclCleaned .append(newPclBS[irun].keys())
     runsLumisRecoCleaned.append(newRecoBS[irun].keys())
 
-    for ilumi in runsLumisRecoCleaned[i]:
+    for ilumi in list(runsLumisRecoCleaned[i]):
       if ilumi not in runsLumisPclCleaned[i]:  del newRecoBS[irun][ilumi]
-    for ilumi in runsLumisPclCleaned[i]:
+    for ilumi in list(runsLumisPclCleaned[i]):
       if ilumi not in runsLumisRecoCleaned[i]:  del newPclBS[irun][ilumi]
 
   # dump the list into a txt file, and save histos into root files
@@ -180,7 +176,6 @@ if doFromScratch:
   
   _doSaveHistos( p_histos, 'BS_comparison_PCL/histos_pcl_' + nameWF + '.root' )
   _doSaveHistos( r_histos, 'BS_comparison_PCL/histos_reco_' + nameWF + '.root'   )
-
 
 histo_file_p = ROOT.TFile.Open('BS_comparison_PCL/histos_pcl_'  + nameWF + '.root', 'read')
 histo_file_r = ROOT.TFile.Open('BS_comparison_PCL/histos_reco_' + nameWF + '.root', 'read')
@@ -226,5 +221,4 @@ for ivar in variables:
   
   can.Update()
   can.Modified()
-  can.SaveAs('BS_comparison_PCL/'+nameWF + '_BS_' + ivar[0] + '.pdf')
-
+  can.SaveAs('BS_comparison_PCL/'+ nameWF + '_BS_' + ivar[0] + '.pdf')

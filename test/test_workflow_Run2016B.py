@@ -29,7 +29,10 @@ XeXeRuns = [304899,304906]
 #files = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/es0p9/HighEGJet/crab_BS_JetHT_Prompt_Run2017G_es0p9/180220_211350/0000/*.txt' , prependPath=True)
 
 ###Run2021 PilotBeam Express
-files = get_files('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/test/BSfitLocal/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt' , prependPath=True)
+#files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_test/211111_155451/0000/BeamFit_LumiBased_NewAlignWorkflow_BeamTest2021*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/test_2021_LHC_BeamTest_ExpressPhysics_FEVT/crab_FEVT_TkAlignment_postCRAFT_noRefit/211115_182853/0000/BeamFit_LumiBased_BeamTest2021_Refit_generalTracks_FEVT_*.txt' , prependPath=True)
+files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt' , prependPath=True)
 
 print ('start loading payloads ...')
 myPayload = Payload(files)
@@ -48,7 +51,7 @@ for irun, ivalues in allBS.items():
         print ("WARNING: more than 10% of the fits failed for run", irun)
 
 # check if output file exists
-fname = 'beamspot_Express_PilotBeam2021.txt'
+fname = 'pilotBeams2021_FEVT_LegacyBS_v1.txt'
 # if os.path.isfile(fname):
 #     print 'File %s exists. Recreate? (10 sec before defaults to True)' %fname
 #     i, o, e = select.select( [sys.stdin], [], [], 10 )
@@ -63,6 +66,7 @@ fname = 'beamspot_Express_PilotBeam2021.txt'
 #         os.remove(fname)
 
 # check drifts and create IOV
+## filename for txt files containing one IOV
 #filename = 'BS_result_PiltBeam2021_byIOV/beamspot_Express_PilotBeam2021_.txt'
 count = 0
 for irun, ibs in allBS.items():
@@ -74,10 +78,10 @@ for irun, ibs in allBS.items():
         myrange = set(range(p[0], p[1] + 1)) & set(ibs.keys())
         bs_list = [ibs[i] for i in sorted(list(myrange))]
         aveBeamSpot = averageBeamSpot(bs_list)
+## Create a txt file for each IOV for db object creation
 #        fname = filename.replace('_.txt', '_'+str(count)+'.txt')
         aveBeamSpot.Dump(fname, 'a+')
         count = count + 1
-
 
 merged_payload = Payload(fname)
 histos = []
@@ -97,17 +101,9 @@ variables = [
 for ivar in variables: 
     histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 4, byFill = False, returnHisto = True))
 
-histo_file = ROOT.TFile.Open('histos_Express_PilotBeam2021.root', 'recreate')
-#histo_file = ROOT.TFile.Open('BS_result_PiltBeam2021_byIOV/histos_Express_PilotBeam2021.root', 'recreate')
+histo_file = ROOT.TFile.Open('pilotBeams2021_FEVT_LegacyBS_v1.root', 'recreate')
 histo_file.cd()
 for histo in histos:
     histo.Write()
 
 histo_file.Close()
-
-
-
-
-
-
-
