@@ -25,7 +25,7 @@ def get_cookie(url):
   '''generate a cookie for the OMS website
   '''
   cookiepath = './.cookiefile_OMSfetch.txt'
-  print("[INFO] generating cookie for url", URL)
+  print("[INFO] generating cookie for url", url)
   cmd = 'auth-get-sso-cookie --url "{}" -o {}'.format(url, cookiepath)
   ret = os.system(cmd)
   cookie = cookielib.MozillaCookieJar(cookiepath)
