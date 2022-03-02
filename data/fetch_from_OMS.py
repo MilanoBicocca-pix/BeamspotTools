@@ -9,7 +9,6 @@ import json
 import requests
 import http.cookiejar as cookielib
 import multiprocessing as mp
-import signal
 
 import argparse
 parser = argparse.ArgumentParser('''
@@ -23,27 +22,53 @@ parser.add_argument('-S', '--size'           , default=100                      
 args = parser.parse_args()
 
 def get_cookie(url):
-  cookiepath = './cookiefile_OMSfetch.txt'
+  '''generate a cookie for the OMS website
+  '''
+  cookiepath = './.cookiefile_OMSfetch.txt'
   print("[INFO] generating cookie for url", URL)
-  print("[INFO] ignore the error if a valid cookie already exists")
   cmd = 'auth-get-sso-cookie --url "{}" -o {}'.format(url, cookiepath)
   ret = os.system(cmd)
   cookie = cookielib.MozillaCookieJar(cookiepath)
   cookie.load()
+  os.remove(cookiepath)
   return cookie
 
-def get_json(url):
-  global COOKIE, chunks
+def fetch_data(url):
+  '''make a request to the OMS website and filter stable-beam proton-proton entries
+  '''
+  global COOKIE
   req = requests.get(url, verify=True, cookies=COOKIE, allow_redirects=False)
+  if not req.ok:
+    return []
   jsn = req.json()
-  progress.value += 100. / len(chunks)
-  time.sleep(.5)
   if not 'data' in jsn.keys():
     return []
-  return [j['attributes'] for j in jsn['data'] if j['attributes']['stable_beams'] and 'PROTONS' in j['attributes']['fill_type_runtime']]
+  jsn = [j for j in jsn['data'] if not j['attributes']['fill_type_runtime'] is None and 'PROTONS' in j['attributes']['fill_type_runtime']]
+  jsn = [j for j in jsn if j['attributes']['stable_beams' if 'stable_beams' in j['attributes'].keys() else 'stable_beam']]
+  return jsn
+
+def get_fills(url):
+  '''fetch the fills from OMS and the corresponding collision runs
+  '''
+  global chunks
+  fills = fetch_data(url)
+  runs  = [fetch_data(f['relationships']['runs']['links']['related']) for f in fills]
+  
+  fills = [f['attributes'] for f in fills]
+  runs  = [' '.join([run['id'] for run in r if 'collisions' in run['attributes']['l1_hlt_mode']]) for r in runs]
+  
+  for i, f in enumerate(fills):
+    f['runs'] = runs[i]
+  fills = [f for f in fills if len(f['runs'])]
+  
+  progress.value += 100. / len(chunks)
+  time.sleep(.5)
+  return fills
 
 progress = mp.Value('f', 0., lock = True)
 def pbar():
+  '''print a progressbar
+  '''
   global progress
   bar = lambda: '[{}{}%{}]'.format('#'*int(progress.value / 2), int(progress.value), ' '*(50 - int(progress.value / 2)))
   while(True):
@@ -60,11 +85,11 @@ URL="https://cmsoms.cern.ch/agg/api/v1/fills/?sort=-start_time&page[offset]={OFF
 COOKIE=get_cookie('https://cmsoms.cern.ch/')
 
 print('[INFO] Fetching data from OMS')
-chunks = sorted(set([_ for _ in range(0, args.number_of_fills, 100)]+[args.number_of_fills]))
+chunks = sorted(set([_ for _ in range(0, args.number_of_fills, args.size)]+[args.number_of_fills]))
 with mp.Pool(args.streams) as pool:
   progressbar = mp.Process(target=pbar)
   progressbar.start()
-  fetched = pool.map(get_json, [URL.format(OFF=off, LIM=args.size) for off in chunks])
+  fetched = pool.map(get_fills, [URL.format(OFF=off, LIM=args.size) for off in chunks])
   progressbar.terminate()
 
 if args.update is not None:
@@ -106,7 +131,7 @@ header_map = {
   'nTar'              : lambda dic: dic['bunches_target']                 ,
   'xIng (micro rad)'  : lambda dic: dic['crossing_angle']                 ,
   'Injection Scheme'  : lambda dic: dic['injection_scheme']               ,
-  'Runs'              : lambda dic: format_runs(dic['first_run_number']   , dic['last_run_number']),
+  'Runs'              : lambda dic: dic['runs']                           ,
   'Comments'          : lambda dic: ''                                    ,
 }
 
