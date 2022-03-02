@@ -70,14 +70,15 @@ def pbar():
   '''print a progressbar
   '''
   global progress
-  bar = lambda: '[{}{}%{}]'.format('#'*int(progress.value / 2), int(progress.value), ' '*(50 - int(progress.value / 2)))
+  bar = lambda dim=50: '[{}{}%{}]'.format('#'*int(progress.value*dim/100+1), int(progress.value), ' '*int(dim-progress.value*dim/100+1))
   while(True):
-    sys.stdout.write('\r%s' %bar())
+    dim=min(50, os.get_terminal_size()[0]-10)
+    sys.stdout.write('\r%s' %bar(dim))
     sys.stdout.flush()
     time.sleep(.1)
     if progress.value == 100:
       break
-  sys.stdout.write('\r%s\n' %bar())
+  sys.stdout.write('\r%s\n' %bar(dim))
   sys.stdout.flush()
 
 STEP=100
