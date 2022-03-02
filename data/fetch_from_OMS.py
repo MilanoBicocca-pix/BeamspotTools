@@ -119,7 +119,7 @@ header_map = {
   'Eff By Lumi'       : lambda dic: dic['efficiency_lumi']                ,
   'Eff By Time'       : lambda dic: dic['efficiency_time']                ,
   'Begin Time'        : lambda dic: format_time(dic['start_stable_beam']) , # NOTE: this is the stable beam start time, not the start time
-  'to Ready'          : lambda dic: dic['to_ready_time']                  , # OMS: "to HV on". What is this? ms?
+  'to Ready'          : lambda dic: dic['to_ready_time']                  , # OMS: "to HV on" [s]
   'End Time'          : lambda dic: format_time(dic['end_stable_beam'])   , # NOTE: this is the stable beam end time, not the end time
   'Type'              : lambda dic: dic['fill_type_runtime']              ,
   'Energy'            : lambda dic: dic['energy']                         ,
