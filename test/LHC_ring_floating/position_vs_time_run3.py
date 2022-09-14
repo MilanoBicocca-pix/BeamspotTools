@@ -15,9 +15,13 @@ from utils.readJson      import readJson
 
 ## 2021
 files = get_files('/afs/cern.ch/work/f/fbrivio/public/per_Davide/BS_result_PiltBeam2021_byFill/*.txt', prependPath=True)
+###Run2022 LHC commissioning
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B*.txt' , prependPath=True)
+files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_UpToFill_8076/220801_092708/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_Fill_8078_8128/220829_074537/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_Fill_8132_8151/220829_083733/0000/BeamFit_LumiBased_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
 
 print ('start loading payloads ...')
-
 myPayload = Payload(files)
 print ('... payloads loaded')
 
@@ -34,12 +38,12 @@ for irun, ibs in allBS.items():
     aveBeamSpot = averageBeamSpot(ibs.values())
     bs_by_run.append(aveBeamSpot)
 
-
 # keep only DCS JSON
-json2021   = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/scripts/CMSSW_10_0_4/scripts/runregistry_checks/Run_RegistryScripts/Collisions21Special_DcsTrackerPixelJSON.txt')
+json2021   = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions21/collisions21Special_346235_346512_DcsTrackerPixelJSON.txt')
+json2022   = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions22/Cert_Collisions2022_355100_357900_13p6TeV_DCSOnly_TkPx.json')
 
-runs3p8T = sorted([i for i in json2021.keys() ])
-bs_by_run = [ibs for ibs in bs_by_run if ibs.Run in runs3p8T]
+runs3p8T = sorted([i for i in list(json2021.keys()) + list(json2022.keys()) ])
+bs_by_run = [ibs for ibs in bs_by_run if ibs and ibs.Run in runs3p8T]
 
 # create container for by run bs
 newbs = []
@@ -77,5 +81,3 @@ for ibs in newbs:
     print (','.join([str(date_start.year), str(date_start.month), str(ibs.X), str(ibs.Xerr), str(ibs.Y), str(ibs.Yerr)]),file=outfile)
  
 outfile.close()
-
-
