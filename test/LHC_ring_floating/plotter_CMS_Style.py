@@ -178,8 +178,12 @@ Y = np.array([
 ])
 
 # convert from cm to micron
-X = X*1.e4
-Y = Y*1.e4
+#X = X*1.e4
+#Y = Y*1.e4
+
+# convert from cm to mm
+X = X*1.e1
+Y = Y*1.e1
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -190,13 +194,13 @@ fig.autofmt_xdate()
 plt.plot(Time,X, c='tab:blue')
 plt.plot(Time,Y, c='tab:green')
 plt.scatter(Time,X, c='b', s=40, lw = 0, label='X')
-plt.scatter(Time,Y, c='g', s=40, lw = 0, label='Y')
+plt.scatter(Time,Y, c='g', s=40, lw = 0, label='Y', marker="s")
 # plt.legend((X.all(),Y.all()), ('X','Y'), loc=3)
 # plt.legend(bbox_to_anchor=(0.8, 1.02, 1., .102), loc=3,
 plt.legend(loc=3, scatterpoints=1)
 plt.xlabel('Date')
-plt.ylabel('position [micron]')
-plt.title('CMS beamspot in pp collisions')
+plt.ylabel('Beam spot centre coordinate [mm]')
+plt.title(r'$\bf{CMS}\:\it{Preliminary}$',loc='left',fontname='Nimbus Sans')
 # fit with np.polyfit
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')

@@ -55,7 +55,7 @@ def get_fills(url):
   runs  = [fetch_data(f['relationships']['runs']['links']['related']) for f in fills]
   
   fills = [f['attributes'] for f in fills]
-  runs  = [' '.join([run['id'] for run in r if 'collisions' in run['attributes']['l1_hlt_mode']]) for r in runs]
+  runs  = [' '.join([run['id'] for run in r if not run['attributes']['l1_hlt_mode'] is None and 'collisions' in run['attributes']['l1_hlt_mode']]) for r in runs]
   
   for i, f in enumerate(fills):
     f['runs'] = runs[i]

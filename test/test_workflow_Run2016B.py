@@ -32,7 +32,12 @@ XeXeRuns = [304899,304906]
 #files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt' , prependPath=True)
 #files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_test/211111_155451/0000/BeamFit_LumiBased_NewAlignWorkflow_BeamTest2021*.txt' , prependPath=True)
 #files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/test_2021_LHC_BeamTest_ExpressPhysics_FEVT/crab_FEVT_TkAlignment_postCRAFT_noRefit/211115_182853/0000/BeamFit_LumiBased_BeamTest2021_Refit_generalTracks_FEVT_*.txt' , prependPath=True)
-files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt' , prependPath=True)
+###Run2022 LHC commissioning
+files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B*.txt' , prependPath=True)
+files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_UpToFill_8076/220801_092708/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_Fill_8078_8128/220829_074537/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_Fill_8132_8151/220829_083733/0000/BeamFit_LumiBased_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
 
 print ('start loading payloads ...')
 myPayload = Payload(files)
@@ -51,7 +56,7 @@ for irun, ivalues in allBS.items():
         print ("WARNING: more than 10% of the fits failed for run", irun)
 
 # check if output file exists
-fname = 'pilotBeams2021_FEVT_LegacyBS_v1.txt'
+fname = 'LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.txt'
 # if os.path.isfile(fname):
 #     print 'File %s exists. Recreate? (10 sec before defaults to True)' %fname
 #     i, o, e = select.select( [sys.stdin], [], [], 10 )
@@ -101,7 +106,7 @@ variables = [
 for ivar in variables: 
     histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 4, byFill = False, returnHisto = True))
 
-histo_file = ROOT.TFile.Open('pilotBeams2021_FEVT_LegacyBS_v1.root', 'recreate')
+histo_file = ROOT.TFile.Open('LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.root', 'recreate')
 histo_file.cd()
 for histo in histos:
     histo.Write()

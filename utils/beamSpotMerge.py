@@ -274,7 +274,11 @@ def averageBeamSpot(bslist, doNotCheck = []):
     #      Add some logging. 
 
     bslist = [bs for bs in bslist if bs.Type > 0]
-        
+    
+    # If the run has no associated beamspots e.g. because the tracker was off exit from the function
+    
+    if not bslist: return
+            
     # get the first and the last BS in the list
     firstBS = bslist[0 ]
     lastBS  = bslist[-1]
