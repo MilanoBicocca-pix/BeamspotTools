@@ -28,7 +28,9 @@ ROOT.gStyle.SetLegendFont(42)
 #file = ROOT.TFile.Open('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2018/CMSSW_10_1_2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/forMCproduction/histos_2018A_from6688.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/f/fbrivio/beamSpot/2021/PilotBeam2021/CMSSW_10_6_29/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/BS_result_PiltBeam2021_byRun/histos_Express_PilotBeam2021.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos_PilotBeam2021_ExpressPhysics_FEVT.root')
-file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/pilotBeams2021_FEVT_LegacyBS_v1/pilotBeams2021_FEVT_LegacyBS_v1.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/pilotBeams2021_FEVT_LegacyBS_v1/pilotBeams2021_FEVT_LegacyBS_v1.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/LHC_Run3Commissioning_13p6TeV_Fills_7920_8076.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.root')
 
 file.cd()
 
@@ -41,14 +43,14 @@ beamWidthY = file.Get('beamWidthY')
 dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
-## Ranges set for 2021 pilot beam test
+## Ranges set for 2022 commissioning
 variables = [
     (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
-    (Y         , 'beam spot y [cm]'         , -0.21  ,-0.175 ),
-    (Z         , 'beam spot z [cm]'         , -3.    , 3     ),
-    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  3.5   , 9.    ),
-    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.00  , 0.025 ),
-    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.00  , 0.025 ),
+    (Y         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
+    (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
+    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  3.    , 5.    ),
+    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.    , 0.004 ),
+    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.    , 0.004 ),
     (dxdz      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
     (dydz      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
 ]
@@ -136,7 +138,7 @@ def saveHisto(var):
     leg.SetLineColor(10)
     if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
 
-    ROOT.gPad.Print('BSFit_pilotBeams2021_FEVT_LegacyBS_v1/%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('LHC_Run3Commissioning_13p6TeV_Fills_7920_8151/%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
