@@ -54,97 +54,51 @@ def _doSaveHistos( histolist, outfilename ):
   outfile.Close()
 
 ## Plot fit results from txt file
-## Ranges set for 2022 commissioning
+## Ranges set for 2022 900 GeV commissioning
 variables = [
     ('X'         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
     ('Y'         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
-    ('Z'         , 'beam spot z [cm]'         , -4.    , 4.    ),
-    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  3.    , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.    , 0.003 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.    , 0.003 ),
+    ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  4.    , 10.   ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.    , 0.03  ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.    , 0.03  ),
     ('dxdz'      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
     ('dydz'      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
 ]
 
+## Ranges set for 2022 13 TeV commissioning
+#variables = [
+#    ('X'         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
+#    ('Y'         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
+#    ('Z'         , 'beam spot z [cm]'         , -6.    , 6.    ),
+#    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5   , 4.5   ),
+#    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.    , 0.004 ),
+#    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.    , 0.004 ),
+#    ('dxdz'      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
+#    ('dydz'      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
+#]
+
 variables = list(variables)
 
-runstring = 'Run2022B_13p6TeV_355680' 
+runstring = '' 
 
 if doFromScratch:
 
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v1_es0p9/171114_165107/0000/*'	       , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v2_es0p9/171113_141403/0000/*'	       , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v1_es0p9/171114_174952/0000//*'		, prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v2_es0p9/171114_175018/0000//*txt'	   , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v3_es0p9/171114_175048/0000//*'		, prependPath=True)
-#  r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias1/crab_BS_ReRecoNov17_VdM_Run2017C_es0p9/171115_085917/0000/*'		, prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017D_es0p9/171114_175116/0000/*'	    , prependPath=True)
-#  r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias8b4e1/crab_BS_ReRecoNov17_HighPU_Run2017D_es0p9/171115_085845/0000/*'	       , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_es0p9/171114_175143/0000/*'	    , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_es0p9/171114_175143/0001/*'	    , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017F_es0p9_GTv2/171129_144416/0000/*'  	 , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017F_es0p9_GTv2/171129_144416/0001/*'  	 , prependPath=True)
-#
-#  r_files = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/es1p1/JetHT/crab_BS_JetHT_ReRecoNov_Run2017F_es1p1/180112_112626/0000/*.txt'	      , prependPath=True)
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017D_es0p9/171114_175116/0000/*'	    , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v1_es1p1/171110_150426/0000/*'	       , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017B_v2_es1p1/171110_185941/0000/*'	       , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v1_es1p1/171110_215538/0000/*'	       , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v2_es1p1/171110_215641/0000/*.txt'       , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017C_v3_es1p1/171110_215747/0000/*'	       , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017D_v1_es1p1/171110_215814/0000/*'	       , prependPath=True)
-#
-#  r_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_v1_es1p1/171110_215859/0000/*'	       , prependPath=True)
-#  r_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_ReRecoNov17_Run2017E_v1_es1p1/171110_215859/0001/*'	       , prependPath=True)
-#
-#  r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1/*'  	 , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_missingLumis/*'	      , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2/*'  	 , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_missingLumis/*'	      , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_SpecialRuns/*'	     , prependPath=True)
-#
-#  r_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1/*'  	 , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1_missingLumis/*'	      , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2/*'  	 , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_missingLumis/*'	      , prependPath=True)
-#  r_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_SpecialRuns/*'	     , prependPath=True)
-# 
-#  r_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_96perc/*.txt'	  , prependPath=True)
-#  r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/test_2021_LHC_BeamTest_ExpressPhysics_FEVT/crab_FEVT_TkAlignment_postCRAFT_noRefit/211115_182853/0000/BeamFit_LumiBased_BeamTest2021_Refit_generalTracks_FEVT_*.txt', prependPath=True)
-#  r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt', prependPath=True)
-# 
-# 
-#  p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v1_Prompt/*'	     , prependPath=True)
-#  p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_Prompt/*'	     , prependPath=True)
-#  p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017B_v2_Prompt_SpecialRuns/*'	 , prependPath=True)
-#
-#  p_files  = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v1_Prompt/*'	     , prependPath=True)
-#  p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_Prompt/*'	     , prependPath=True)
-#  p_files += get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/SeptRepro2017/crab_BS_ReproSept2017_Run2017C_v2_Prompt_SpecialRuns/*'	 , prependPath=True)
-#  p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017C_v3/171112_165810/0000/*'        , prependPath=True)
-#
-#  p_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017D/171112_165728/0000/*'	   , prependPath=True)
-#  p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias8b4e1/crab_BS_PromptNov17_HighPU_Run2017D_es1p1/171112_165429/0000/*'	    , prependPath=True)
-#
-#  p_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017E/171112_165645/0000/*'	   , prependPath=True)
-#  p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_PromptNov17_Run2017E/171112_165645/0001/*'	   , prependPath=True)
-#
-#  p_files  = get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_Prompt_Run2017F/171129_224109/0000/*'        , prependPath=True)
-#  p_files += get_files('/eos/cms//store/group/phys_tracking/beamspot/13TeV/2017/ZeroBias/crab_BS_Prompt_Run2017F/171129_224109/0001/*'        , prependPath=True)
-#
-#  p_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2017/es1p1/JetHT/crab_BS_JetHT_Prompt_Run2017F_es1p1/171205_220828/0000/*.txt'	 , prependPath=True)
-#  p_files = get_files('/afs/cern.ch/work/f/fiorendi/private/BeamSpot/2017/CMSSW_9_4_0_pre3/src/RecoVertex/BeamSpotProducer/test/split_2017H_prompt_96perc/*.txt'	 , prependPath=True)
-#  p_files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt'	   , prependPath=True)
-
-  r_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_3_6/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B_13p6TeV_355680_Legacy.txt', prependPath=True)
-  p_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_3_6/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B_13p6TeV_355680_JetHT_HP.txt'    , prependPath=True)
+  r_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE_by10LS.txt' , prependPath=True)
+  #r_files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE_byLS_specialRuns.txt' , prependPath=True)
+  #r_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE.txt' , prependPath=True)
+  #r_files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE_1.txt' , prependPath=True)
+  #r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/ZeroBias/crab_Run2022B_ZeroBias_TkAlMinBias_ALCARECO_forReReco_mp3576_giusto/221006_134630/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+  #r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_154527/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+  #r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_154527/0001/BeamFit_LumiBased_*.txt' , prependPath=True)
+  #r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv1_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_121305/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+  #r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv2_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_082248/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+  
+  p_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576.txt' , prependPath=True)
+  #p_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run*.txt' , prependPath=True)
+  #p_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_UpToFill_8076/220801_092708/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+  #p_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_Fill_8078_8128/220829_074537/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+  #p_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_Fill_8132_8151/220829_083733/0000/BeamFit_LumiBased_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
 
   print ('start loading payloads ...')
   promptPayload = Payload(p_files)
@@ -192,9 +146,7 @@ if doFromScratch:
   
   newPromptBS = {k:v for k, v in promptBS.items() if k in runsCommon}
   newRecoBS   = {k:v for k, v in recoBS.items()   if k in runsCommon}
-  
-  n_all_fits_prompt = len(newPromptBS)
-  
+    
   # remove not-converged fits and sort
   print ('--- Job Report ---')
   for irun, ivalues in newPromptBS.items():
@@ -223,8 +175,8 @@ if doFromScratch:
       if ilumi not in runsLumisRecoCleaned[i]:  del newPromptBS[irun][ilumi]
   
   # dump the list into a txt file, and save histos into root files
-  promptname = 'BS_comparison_Legacy_HP_JetHT/prompt_payloads' + runstring + '.txt'
-  reconame   = 'BS_comparison_Legacy_HP_JetHT/reco_payloads' + runstring + '.txt'
+  promptname = 'BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/prompt_payloads' + runstring + '.txt'
+  reconame   = 'BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/reco_payloads' + runstring + '.txt'
   
   _doMerge(newPromptBS, promptname)
   _doMerge(newRecoBS  , reconame  )
@@ -232,18 +184,19 @@ if doFromScratch:
   merged_payload_p = Payload(promptname)
   merged_payload_r = Payload(reconame)
   
+  
   p_histos = []
   r_histos = []
   
   for ivar in variables: 
-      p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
-      r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
+      p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 4, byFill = False, returnHisto = True))
+      r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 4, byFill = False, returnHisto = True))
   
-  _doSaveHistos( p_histos, 'BS_comparison_Legacy_HP_JetHT/histos_prompt' + runstring + '.root' )
-  _doSaveHistos( r_histos, 'BS_comparison_Legacy_HP_JetHT/histos_reco' + runstring + '.root'   )
+  _doSaveHistos( p_histos, 'BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/histos_prompt' + runstring + '.root' )
+  _doSaveHistos( r_histos, 'BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/histos_reco' + runstring + '.root'   )
 
-histo_file_p = ROOT.TFile.Open('BS_comparison_Legacy_HP_JetHT/histos_prompt' + runstring + '.root', 'read')
-histo_file_r = ROOT.TFile.Open('BS_comparison_Legacy_HP_JetHT/histos_reco' + runstring + '.root'  , 'read')
+histo_file_p = ROOT.TFile.Open('BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/histos_prompt' + runstring + '.root', 'read')
+histo_file_r = ROOT.TFile.Open('BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/histos_reco' + runstring + '.root'  , 'read')
 
 for ivar in variables: 
   print (ivar)
@@ -284,12 +237,12 @@ for ivar in variables:
   leg = ROOT.TLegend( 0.902, 0.6, 1.0, 0.75 )
   leg.SetFillColor(0)
   leg.SetLineColor(0)
-  leg.AddEntry(h_p, 'HP - JetHT', 'pel')
-  leg.AddEntry(h_r, 'Legacy - Express ', 'pel')
+  leg.AddEntry(h_p, 'Prompt Fit', 'pel')
+  leg.AddEntry(h_r, 'Fit For ReReco', 'pel')
   leg.SetTextSize(0.03)
   leg.Draw('SAME')
   
   can.Update()
   can.Modified()
-  can.SaveAs('BS_comparison_Legacy_HP_JetHT/' + runstring + '_BS_' + ivar[0] + '_HP_Legacy_Run2022B_13p6TeV_355680' + '.pdf')
+  can.SaveAs('BS_comparison_Prompt_ReReco_2022A_mp3576_by10LS/' + runstring + 'BS_' + ivar[0] + '_Prompt_ReReco_2022A' + '.pdf')
 

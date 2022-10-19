@@ -30,7 +30,16 @@ ROOT.gStyle.SetLegendFont(42)
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/histos_PilotBeam2021_ExpressPhysics_FEVT.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_0_3_patch1/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/pilotBeams2021_FEVT_LegacyBS_v1/pilotBeams2021_FEVT_LegacyBS_v1.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/LHC_Run3Commissioning_13p6TeV_Fills_7920_8076.root')
-file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022B_finalFit_forReReco.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022C_finalFit_forReReco.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022D_finalFit_forReReco.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022A_forReReco_mp3576_MINRES.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022B_forReReco_mp3576_MINRES.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022C_forReReco_mp3576_MINRES.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022Dv1_forReReco_mp3576_MINRES.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022Dv2_forReReco_mp3576_MINRES.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022E_PromptFit.root')
 
 file.cd()
 
@@ -43,12 +52,24 @@ beamWidthY = file.Get('beamWidthY')
 dxdz       = file.Get('dxdz'      )
 dydz       = file.Get('dydz'      )
 
-## Ranges set for 2022 commissioning
+## Ranges set for 2022 900 GeV commissioning
+#variables = [
+#    (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
+#    (Y         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
+#    (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
+#    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  4.    , 10.   ),
+#    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.    , 0.03  ),
+#    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.    , 0.03  ),
+#    (dxdz      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
+#    (dydz      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
+#]
+
+## Ranges set for 2022 13 TeV commissioning
 variables = [
     (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
     (Y         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
     (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
-    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  3.    , 5.    ),
+    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.5   , 4.5   ),
     (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.    , 0.004 ),
     (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.    , 0.004 ),
     (dxdz      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
@@ -138,7 +159,12 @@ def saveHisto(var):
     leg.SetLineColor(10)
     if histo3p8T .GetEntries()>0: leg.AddEntry(cloneHisto3p8T , 'B = 3.8 T' , 'EP')
 
-    ROOT.gPad.Print('LHC_Run3Commissioning_13p6TeV_Fills_7920_8151/%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print('Run2022A_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print('Run2022B_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print('Run2022C_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print('Run2022Dv1_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print('Run2022Dv2_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('Run2022E_PromptFit/%s.pdf' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:

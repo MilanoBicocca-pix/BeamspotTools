@@ -131,8 +131,6 @@ if doFromScratch:
   newPclBS  = {k:v for k, v in pclBS.items()  if k in runsCommon}
   newRecoBS = {k:v for k, v in recoBS.items() if k in runsCommon}
 
-  n_all_fits_pcl = len(newPclBS)
-
   # remove not-converged fits and sort
   print ('--- Job Report ---')
   for irun, ivalues in newPclBS.items():
