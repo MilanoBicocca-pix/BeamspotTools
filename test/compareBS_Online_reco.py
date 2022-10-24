@@ -57,10 +57,10 @@ def _doSaveHistos( histolist, outfilename ):
 variables = [
     ('X'         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
     ('Y'         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
-    ('Z'         , 'beam spot z [cm]'         , -4.    , 4.    ),
-    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  3.    , 5.    ),
-    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.    , 0.003 ),
-    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.    , 0.003 ),
+    ('Z'         , 'beam spot z [cm]'         , -3.    , 3.    ),
+    ('sigmaZ'    , 'beam spot #sigma_{z} [cm]',  2.5   , 4.5   ),
+    ('beamWidthX', 'beam spot #sigma_{x} [cm]',  0.    , 0.006 ),
+    ('beamWidthY', 'beam spot #sigma_{y} [cm]',  0.    , 0.006 ),
     ('dxdz'      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
     ('dydz'      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
 ]
@@ -69,16 +69,19 @@ variables = list(variables)
 # Online workflow name
 #  OnlineLegacy  : reference_BeamSpotOnlineLegacy.txt
 #  OnlineHLT     : reference_BeamSpotOnlineHLT.txt
-nameWF = 'Legacy'
+nameWF = 'HLT'
 
 if doFromScratch:
 
   # Reco files
-  #r_files = get_files('/afs/cern.ch/work/f/fbrivio/public/BeamSpot/perDavide/BeamFit_LumiBased_NewAlignWorkflow_alcareco_Fill*.txt', prependPath=True)
-  r_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_3_6/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B_13p6TeV_*.txt', prependPath=True)
+  #r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_154527/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+  #r_files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_154527/0001/BeamFit_LumiBased_*.txt' , prependPath=True)
+  r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv1_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_121305/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+  #r_files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv2_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_082248/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
 
   # Online files
-  p_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_3_6/src/RecoVertex/BeamSpotProducer/test/DQM_Legacy_Run2022B_13p6TeV_Fills_7920_7969.txt', prependPath=True)
+  #p_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/CondTools/BeamSpot/test/DQM_Legacy_Run2022Dv1.txt', prependPath=True)
+  p_files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/CondTools/BeamSpot/test/DQM_HLT_Run2022Dv1.txt', prependPath=True)
  
   print ('start loading payloads ...')
   onlinePayload  = Payload(p_files)
@@ -126,8 +129,6 @@ if doFromScratch:
   newOnlineBS = {k:v for k, v in onlineBS.items() if k in runsCommon}
   newRecoBS   = {k:v for k, v in recoBS.items()   if k in runsCommon}
 
-  n_all_fits_online = len(newOnlineBS)
-
   # remove not-converged fits and sort
   print ('--- Job Report ---')
   for irun, ivalues in newOnlineBS.items():
@@ -156,8 +157,8 @@ if doFromScratch:
       if ilumi not in runsLumisRecoCleaned[i]:  del newOnlineBS[irun][ilumi]
 
   # dump the list into a txt file, and save histos into root files
-  onlinename = 'BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/online_payloads_' + nameWF + '.txt'
-  reconame   = 'BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/reco_payloads_'   + nameWF + '.txt'
+  onlinename = 'BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/online_payloads_' + nameWF + '.txt'
+  reconame   = 'BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/reco_payloads_'   + nameWF + '.txt'
 
   _doMerge(newOnlineBS , onlinename)
   _doMerge(newRecoBS, reconame)
@@ -172,11 +173,11 @@ if doFromScratch:
     p_histos.append(merged_payload_p.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
     r_histos.append(merged_payload_r.plot(ivar[0] , -999999, 999999, savePdf = False, dilated = 5, byFill = False, returnHisto = True))
   
-  _doSaveHistos( p_histos, 'BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/histos_online_' + nameWF + '.root' )
-  _doSaveHistos( r_histos, 'BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/histos_reco_'   + nameWF + '.root'   )
+  _doSaveHistos( p_histos, 'BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/histos_online_' + nameWF + '.root' )
+  _doSaveHistos( r_histos, 'BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/histos_reco_'   + nameWF + '.root'   )
 
-histo_file_p = ROOT.TFile.Open('BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/histos_online_' + nameWF + '.root', 'read')
-histo_file_r = ROOT.TFile.Open('BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/histos_reco_'   + nameWF + '.root', 'read')
+histo_file_p = ROOT.TFile.Open('BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/histos_online_' + nameWF + '.root', 'read')
+histo_file_r = ROOT.TFile.Open('BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/histos_reco_'   + nameWF + '.root', 'read')
 
 for ivar in variables: 
   print (ivar)
@@ -213,10 +214,10 @@ for ivar in variables:
   leg.SetFillColor(0)
   leg.SetLineColor(0)
   leg.AddEntry(h_p, 'Online '+nameWF , 'pel')
-  leg.AddEntry(h_r, 'Offline Re-Reco', 'pel')
+  leg.AddEntry(h_r, 'Fit For Re-Reco', 'pel')
   leg.SetTextSize(0.03)
   leg.Draw('SAME')
   
   can.Update()
   can.Modified()
-  can.SaveAs('BS_comparison_Online_Run2022B_13p6TeV_Fills_7920_7969/'+ nameWF + '_BS_' + ivar[0] + '.pdf')
+  can.SaveAs('BS_comparison_Online_Fit_For_ReReco_Run2022Dv1/'+ nameWF + '_BS_' + ivar[0] + '.pdf')

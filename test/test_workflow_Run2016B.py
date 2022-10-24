@@ -34,10 +34,35 @@ XeXeRuns = [304899,304906]
 #files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/test_2021_LHC_BeamTest_ExpressPhysics_FEVT/crab_FEVT_TkAlignment_postCRAFT_noRefit/211115_182853/0000/BeamFit_LumiBased_BeamTest2021_Refit_generalTracks_FEVT_*.txt' , prependPath=True)
 #files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/2021/ExpressPhysics/crab_pilotBeams2021_FEVT_LegacyBS_v1/211124_162035/0000/BeamFit_LumiBased_pilotBeams2021_FEVT_ExpressPhysics_LegacyBS_v1_*.txt' , prependPath=True)
 ###Run2022 LHC commissioning
-files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B*.txt' , prependPath=True)
-files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_UpToFill_8076/220801_092708/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
-files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_Fill_8078_8128/220829_074537/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
-files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_Fill_8132_8151/220829_083733/0000/BeamFit_LumiBased_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+#files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B*.txt' , prependPath=True)
+#files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_UpToFill_8076/220801_092708/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+#files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_Fill_8078_8128/220829_074537/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+#files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_Fill_8132_8151/220829_083733/0000/BeamFit_LumiBased_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+## Run2022ABCD runs for ReReco
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_Run356719/220916_091737/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022D_StreamExpressAlignment_TkAlMinBias_ALCARECO_Run357612/220916_093948/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+## Run2022ABCD final fit for ReReco
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022B_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco/220921_132106/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco/220921_135051/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022D_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco/220922_094204/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+## Run2022ABCD runs for FTV MINRES 
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_forTkAlFTV_Run356719_errorScale_1p0/220930_142459/0000/BeamFit_LumiBased_forTkAlFTV_Run2022C_Run356719_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv1_forTkAlFTV_Run357612/220930_143114/0000/BeamFit_LumiBased_forTkAlFTV_Run2022Dv1_Run357612_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv2_forTkAlFTV_Run357815/220930_145232/0000/BeamFit_LumiBased_forTkAlFTV_Run2022Dv2_Run357815_*.txt' , prependPath=True)
+## Run2022ABCD final fit for ReReco MINRES
+files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE_byRun_1.txt' , prependPath=True)
+#files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576.txt' , prependPath=True)
+#files = get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE.txt' , prependPath=True)
+#files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_forReReco_Run2022A_mp3576_newAPE_1.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/ZeroBias/crab_Run2022B_ZeroBias_TkAlMinBias_ALCARECO_forReReco_mp3576_giusto/221006_134630/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_154527/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022C_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_154527/0001/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv1_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_121305/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpressAlignment/crab_Run2022Dv2_StreamExpressAlignment_TkAlMinBias_ALCARECO_forReReco_mp3576/221004_082248/0000/BeamFit_LumiBased_*.txt' , prependPath=True)
+## Run2022E prompt
+#files = get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022E_StreamExpress_TkAlMinBias_ALCARECO_promptFit/221017_095826/0000/BeamFit_LumiBased_PromptFit_Run2022E_*.txt' , prependPath=True)
+#files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022E_StreamExpress_TkAlMinBias_ALCARECO_promptFit/221017_095826/0001/BeamFit_LumiBased_PromptFit_Run2022E_*.txt' , prependPath=True)
+#files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022E_StreamExpress_TkAlMinBias_ALCARECO_promptFit/221017_095826/0002/BeamFit_LumiBased_PromptFit_Run2022E_*.txt' , prependPath=True)
 
 print ('start loading payloads ...')
 myPayload = Payload(files)
@@ -56,7 +81,14 @@ for irun, ivalues in allBS.items():
         print ("WARNING: more than 10% of the fits failed for run", irun)
 
 # check if output file exists
-fname = 'LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.txt'
+#fname = 'Run2022A_forReReco_mp3576_MINRES.txt'
+#fname = 'Run2022A_forReReco_mp3576_MINRES_newAPE.txt'
+fname = 'Run2022A_forReReco_mp3576_MINRES_newAPE_by10LS.txt'
+#fname = 'Run2022B_forReReco_mp3576_MINRES.txt'
+#fname = 'Run2022C_forReReco_mp3576_MINRES.txt'
+#fname = 'Run2022Dv1_forReReco_mp3576_MINRES.txt'
+#fname = 'Run2022Dv2_forReReco_mp3576_MINRES.txt'
+#fname = 'Run2022E_PromptFit.txt'
 # if os.path.isfile(fname):
 #     print 'File %s exists. Recreate? (10 sec before defaults to True)' %fname
 #     i, o, e = select.select( [sys.stdin], [], [], 10 )
@@ -72,19 +104,25 @@ fname = 'LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.txt'
 
 # check drifts and create IOV
 ## filename for txt files containing one IOV
-#filename = 'BS_result_PiltBeam2021_byIOV/beamspot_Express_PilotBeam2021_.txt'
+#filename = 'Run2022A_forReReco_mp3576_MINRES_.txt'
+#filename = 'Run2022A_forReReco_mp3576_MINRES_newAPE_.txt'
+filename = 'Run2022A_forReReco_mp3576_MINRES_newAPE_by10LS_.txt'
+#filename = 'Run2022B_forReReco_mp3576_MINRES_.txt'
+#filename = 'Run2022C_forReReco_mp3576_MINRES_.txt'
+#filename = 'Run2022Dv1_forReReco_mp3576_MINRES_.txt'
+#filename = 'Run2022Dv2_forReReco_mp3576_MINRES_.txt'
 count = 0
 for irun, ibs in allBS.items():
     if irun not in specialRuns:
-      pairs = splitByDrift(ibs, slopes = True)    
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 20)    
     else:
-      pairs = splitByDrift(ibs, slopes = True, maxLumi = 1)    
+      pairs = splitByDrift(ibs, slopes = True, maxLumi = 1)
     for p in pairs:
         myrange = set(range(p[0], p[1] + 1)) & set(ibs.keys())
         bs_list = [ibs[i] for i in sorted(list(myrange))]
         aveBeamSpot = averageBeamSpot(bs_list)
 ## Create a txt file for each IOV for db object creation
-#        fname = filename.replace('_.txt', '_'+str(count)+'.txt')
+        #fname = filename.replace('_.txt', '_'+str(count)+'.txt')
         aveBeamSpot.Dump(fname, 'a+')
         count = count + 1
 
@@ -106,7 +144,7 @@ variables = [
 for ivar in variables: 
     histos.append(merged_payload.plot(ivar , -999999, 999999, savePdf = True, dilated = 4, byFill = False, returnHisto = True))
 
-histo_file = ROOT.TFile.Open('LHC_Run3Commissioning_13p6TeV_Fills_7920_8151.root', 'recreate')
+histo_file = ROOT.TFile.Open('Run2022A_forReReco_mp3576_MINRES_newAPE_by10LS.root', 'recreate')
 histo_file.cd()
 for histo in histos:
     histo.Write()
