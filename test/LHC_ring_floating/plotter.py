@@ -58,8 +58,13 @@ times = [
     'year 2018, month 11',
     'year 2021, month 10',
     'year 2021, month 11',
+    'year 2022, month 5',
+    'year 2022, month 6',
     'year 2022, month 7',
     'year 2022, month 8',
+    'year 2022, month 9',
+    'year 2022, month 10',
+    'year 2022, month 11',
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m") for time in times ]
@@ -117,9 +122,15 @@ X = np.array([
     0.094505,#10
     0.171753,#2021
     0.172607,
-    0.172996,#2022 
-    0.172635,
+    0.173003,#2022
+    0.171824,
+    0.173472,
+    0.172803,
+    0.174092,
+    0.174249,
+    0.172880
 ])
+
 Y = np.array([
     0.000908, 
     0.000927, 
@@ -171,20 +182,24 @@ Y = np.array([
     -0.062271, #9
     -0.061833, #10
     -0.063482, #11
-    -0.190651, # 2021
+    -0.190651,#2021
     -0.192080,
-    -0.181876, # 2022
-    -0.183585,
+    -0.181755,#2022
+    -0.180038,
+    -0.181012,
+    -0.182373,
+    -0.183440,
+    -0.183659,
+    -0.183290,
 ])
 
-# convert from cm to micron
-X = X*1.e4
-Y = Y*1.e4
+# convert from cm to mm
+X = X*1.e1
+Y = Y*1.e1
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.grid()
-
 
 fig.autofmt_xdate()
 plt.plot(Time,X, c='tab:blue')
@@ -195,18 +210,15 @@ plt.scatter(Time,Y, c='g', s=40, lw = 0, label='Y')
 # plt.legend(bbox_to_anchor=(0.8, 1.02, 1., .102), loc=3,
 plt.legend(loc=3, scatterpoints=1)
 plt.xlabel('Date')
-plt.ylabel('position [micron]')
+plt.ylabel('Beamspor centre position [mm]')
 plt.title('CMS beamspot in pp collisions')
 # fit with np.polyfit
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
 plt.show(block=False)
-plt.savefig('cms_beamspotXY_vs_time_2022_Approval_v6.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2022_Nov.pdf')
 plt.close()
-
-
-
 
 
 # year 2010, month 3	X = 0.094127 +/- 1.6812E-05 [cm]	Y = 0.000908 +/- 1.6740E-05 [cm]
@@ -246,10 +258,12 @@ plt.close()
 # year 2016, month 9	X = 0.057529 +/- 3.8561E-07 [cm]	Y = 0.105664 +/- 3.8219E-07 [cm]
 # year 2016, month 10	X = 0.055517 +/- 2.9459E-07 [cm]	Y = 0.107506 +/- 2.9170E-07 [cm]
 
-# year 2021, month 10	X = 0.171753 +/- 2.0963E-05 [cm]	Y = -0.190651 +/- 2.0641E-05 [cm]
-# year 2021, month 11	X = 0.172607 +/- 5.4337E-05 [cm]	Y = -0.192080 +/- 5.3490E-05 [cm]
-# year 2022, month 7	X = 0.172996 +/- 1.5723E-07 [cm]	Y = -0.181876 +/- 1.5500E-07 [cm]
-# year 2022, month 8	X = 0.172635 +/- 1.3344E-07 [cm]	Y = -0.183585 +/- 1.3165E-07 [cm]
-
-
-
+#year 2021, month 10	X = 0.171753 +/- 2.0963E-05 [cm]	Y = -0.190651 +/- 2.0641E-05 [cm]
+#year 2021, month 11	X = 0.172607 +/- 5.4337E-05 [cm]	Y = -0.192080 +/- 5.3490E-05 [cm]
+#year 2022, month 5	X = 0.173003 +/- 1.9176E-05 [cm]	Y = -0.181755 +/- 1.9080E-05 [cm]
+#year 2022, month 6	X = 0.171824 +/- 1.3459E-05 [cm]	Y = -0.180038 +/- 1.3354E-05 [cm]
+#year 2022, month 7	X = 0.173472 +/- 9.7174E-08 [cm]	Y = -0.181012 +/- 9.6103E-08 [cm]
+#year 2022, month 8	X = 0.172803 +/- 7.4417E-08 [cm]	Y = -0.182373 +/- 7.3321E-08 [cm]
+#year 2022, month 9	X = 0.174092 +/- 4.5750E-07 [cm]	Y = -0.183440 +/- 4.5025E-07 [cm]
+#year 2022, month 10	X = 0.174249 +/- 8.3524E-08 [cm]	Y = -0.183659 +/- 8.1918E-08 [cm]
+#year 2022, month 11	X = 0.172880 +/- 1.2417E-07 [cm]	Y = -0.183290 +/- 1.2176E-07 [cm]
