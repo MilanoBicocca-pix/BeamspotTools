@@ -16,10 +16,13 @@ from utils.readJson      import readJson
 ## 2021
 files = get_files('/afs/cern.ch/work/f/fbrivio/public/per_Davide/BS_result_PiltBeam2021_byFill/*.txt', prependPath=True)
 ###Run2022 LHC commissioning
-files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_3/src/RecoVertex/BeamSpotProducer/test/BeamFit_LumiBased_Run2022B*.txt' , prependPath=True)
-files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_UpToFill_8076/220801_092708/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
-files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_Fill_8078_8128/220829_074537/0000/BeamFit_LumiBased_Run2022C_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
-files += get_files('/eos/cms/store/group/phys_tracking/beamspot/13TeV/StreamExpress/crab_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_Fill_8132_8151/220829_083733/0000/BeamFit_LumiBased_Run2022D_StreamExpress_TkAlMinBias_ALCARECO_*.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022A_forReReco_mp3576_MINRES_newAPE.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022B_forReReco_mp3576_MINRES.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022C_forReReco_mp3576_MINRES.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022Dv1_forReReco_mp3576_MINRES.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022Dv2_forReReco_mp3576_MINRES.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022E_PromptFit.txt' , prependPath=True)
+files += get_files('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools_Broken/test/Run2022F_PromptFit_Final.txt' , prependPath=True)
 
 print ('start loading payloads ...')
 myPayload = Payload(files)
@@ -39,10 +42,11 @@ for irun, ibs in allBS.items():
     bs_by_run.append(aveBeamSpot)
 
 # keep only DCS JSON
-json2021   = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions21/collisions21Special_346235_346512_DcsTrackerPixelJSON.txt')
-json2022   = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions22/Cert_Collisions2022_355100_357900_13p6TeV_DCSOnly_TkPx.json')
+json2021  = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions21/collisions21Special_346235_346512_DcsTrackerPixelJSON.txt')
+json2022A = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions22/DCSOnly_JSONS/Cert_Collisions2022A_352417_353709_900GeV_DCSOnly_TkPx.json')
+json2022  = readJson(fileName = '/eos/user/c/cmsdqm/www/CAF/certification/Collisions22/DCSOnly_JSONS/Cert_Collisions2022_355100_362618_13p6TeV_DCSOnly_TkPx.json')
 
-runs3p8T = sorted([i for i in list(json2021.keys()) + list(json2022.keys()) ])
+runs3p8T = sorted([i for i in list(json2021.keys()) + list(json2022A.keys()) + list(json2022.keys())])
 bs_by_run = [ibs for ibs in bs_by_run if ibs and ibs.Run in runs3p8T]
 
 # create container for by run bs
