@@ -11,6 +11,9 @@ import http.cookiejar as cookielib
 import requests
 import multiprocessing as mp
 from datetime import datetime
+from array import array
+
+ROOT.gROOT.SetBatch(True)
 
 def get_cookie(url):
   '''generate a cookie for the OMS website
@@ -23,7 +26,6 @@ def get_cookie(url):
   cookie.load()
   os.remove(cookiepath)
   return cookie
-COOKIE=get_cookie('https://cmsoms.cern.ch/')
 
 def fetch_data(url):
   global COOKIE
@@ -34,9 +36,18 @@ def fetch_data(url):
   return jsn
 
 class BeamspotFile:
-  ''' singleton for handling beamspot parsing on multiple files
+  ''' class for handling beamspot parsing on multiple files
   '''
-  TOPLOT  = ['x','y','z','widthX','widthY','widthZ','dxdz','dydx']
+  TOPLOT  = {
+    'x'     : 'x [cm]'      ,
+    'y'     : 'y [cm]'      ,
+    'z'     : 'z [cm]'      ,
+    'widthX': 'x width [cm]',
+    'widthY': 'y width [cm]',
+    'widthZ': 'z width [cm]',
+    'dxdz'  : 'dx/dz'       ,
+    'dydz'  : 'dy/dz'
+  }
   URL     = "https://cmsoms.cern.ch/agg/api/v1/{K}/{ID}/"
   def __init__(self, ifile):
     #this snippet will read the diabolic beamspot file format
@@ -70,22 +81,41 @@ class BeamspotFile:
       lsjsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(ls)])))
       lejsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(le)]))) if le!=ls else lsjsn
       filljsn = fetch_data(url=BeamspotFile.URL.format(K='fills'        , ID=runjsn['data']['attributes']['fill_number']))
+
       self.beamspots[(run,ls,le)]['fill'     ] = filljsn['data']['id']
       self.beamspots[(run,ls,le)]['fillstamp'] = toepoch(filljsn['data']['attributes']['start_time'])
-      self.beamspots[(run,ls,le)]['date'     ] = lumijsn[(run,ls)]['attributes']['start_time'] 
+      self.beamspots[(run,ls,le)]['date'     ] = lsjsn['data']['attributes']['start_time'] 
       self.beamspots[(run,ls,le)]['timestamp'] = 0.5*(
-        toepoch(lumijsn[(run, le)]['attributes']['end_time'  ]) +
-        toepoch(lumijsn[(run, ls)]['attributes']['start_time'])
+        toepoch(lejsn['data']['attributes']['end_time'  ]) +
+        toepoch(lsjsn['data']['attributes']['start_time'])
       )
       self.beamspots[(run,ls,le)]['timewidth'] = (
-        toepoch(lumijsn[(run, le)]['attributes']['end_time'  ]) -
-        toepoch(lumijsn[(run, ls)]['attributes']['start_time'])
+        toepoch(lejsn['data']['attributes']['end_time'  ]) -
+        toepoch(lsjsn['data']['attributes']['start_time'])
       )
-    
-    def graph(self):
-      '''create graphs of the beamspot entries
-      '''
-      graphs = {v: ROOT.TGraphErrors() for v in BeamspoFile.TOPLOT}
+    self.graphs = {
+      v: ROOT.TGraph(len(self.beamspots.keys()),
+        array('d', [bs['timestamp']  for bs in self.beamspots.values()]),
+        array('d', [bs[v]            for bs in self.beamspots.values()]),
+      ) 
+      for v in BeamspotFile.TOPLOT.keys()
+    }
+  @staticmethod
+  def plot(entries, outputdir):
+    os.makedirs(outputdir, exist_ok=True)
+    for v, lab in BeamspotFile.TOPLOT.items():
+      can = ROOT.TCanvas()
+      mul = ROOT.TMultiGraph()
+      leg = ROOT.TLegend()
+      mul.SetTitle('beamspot {V} vs. lumisection;lumisection;{L}'.format(V=v,L=lab))
+      for i, entry in enumerate(entries):
+        entry.graphs[v].SetMarkerStyle(20)
+        entry.graphs[v].SetMarkerColor(i+1)
+        entry.graphs[v].SetLineColor(i+1)
+        leg.AddEntry(entry.graphs[v], '', 'lep')
+        mul.Add(entry.graphs[v])
+      mul.Draw("AP")
+      can.SaveAs("{O}/{V}.pdf".format(O=outputdir,V=v), "pdf")
 
 if __name__=='__main__':
   import argparse
@@ -99,9 +129,13 @@ if __name__=='__main__':
   - format the canvas as the standard BS file
   - improve the readability and simplify where possible
   ''')
-  parser.add_argument('--input', required=True, nargs='+')
+  parser.add_argument('--input' , required=True, nargs='+')
+  parser.add_argument('--output', required=True)
   args = parser.parse_args()
   
-  beamspot_entries = [
+  COOKIE=get_cookie('https://cmsoms.cern.ch/')
+  
+  BeamspotFile.plot([
     BeamspotFile(ifile=ifile) for ifile in args.input
-  ]
+  ], outputdir=args.output)
+  import pdb; pdb.set_trace()
