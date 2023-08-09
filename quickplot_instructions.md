@@ -30,10 +30,10 @@ pip install --user uncertainties
 
 ## beamspot fit
 
-The beamspot fit is configured by the *BeamFit_flexible_workflow.py* file, which is an extension  of the standard *BeamFit_\*_Workflow.py* configuration files. To run the fit:
+The beamspot fit is configured by the [BeamFit_custom_workflow.py](python/BeamspotTools/test/BeamFit_custom_workflow.py) file, which is an extension  of the standard *BeamFit_\*_Workflow.py* configuration files. To run the fit:
 
 ```bash
-cmsRun BeamFit_flexible_workflow.py     \
+cmsRun BeamFit_custom_workflow.py     \
   jobName="name"                        \
   globalTag="tag"                       \
   refit=bool                            \
@@ -79,7 +79,7 @@ A file with the "_filelist.txt" prefix is also creted. It contains the list of f
 **NOTE** [auth-get-sso-cookie](https://gitlab.cern.ch/authzsvc/tools/auth-get-sso-cookie) is required. This is available by default on lxplus or can be installed user-side following the instructions of the repo.
 **NOTE** a valid kerberos ticket is required to download data from OMS.
 
-To plot the results, run [plotFromTxt.py](BeamspotTools/python/plotFromTxt.py):
+To plot the results, run [plotFromTxt.py](BeamspotTools/python/plot/plotFromTxt.py):
 
 ```bash
 python3 plotFromTxt.py --input input_file_list --output output_dir --streams 5
