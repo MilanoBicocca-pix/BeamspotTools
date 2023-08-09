@@ -79,7 +79,7 @@ A file with the "_filelist.txt" prefix is also creted. It contains the list of f
 **NOTE** [auth-get-sso-cookie](https://gitlab.cern.ch/authzsvc/tools/auth-get-sso-cookie) is required. This is available by default on lxplus or can be installed user-side following the instructions of the repo.
 **NOTE** a valid kerberos ticket is required to download data from OMS.
 
-To plot the results, run [plotFromTxt.py](python/plot/plotFromTxt.py):
+To plot the results, run [plotFromTxt.py](plot/plotFromTxt.py):
 
 ```bash
 python3 plotFromTxt.py --input input_file_list --output output_dir --streams 5
