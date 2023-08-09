@@ -9,9 +9,34 @@ import uncertainties
 import multiprocessing as mp
 from datetime import datetime
 from array import array
+import http.cookiejar as cookielib
+import requests
 
 ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetOptStat(False)
+
+def get_cookie(url):
+  '''generate a cookie for the OMS website
+  '''
+  cookiepath = './.cookiefile_OMSfetch.txt'
+  print("[INFO] generating cookie for url", url)
+  cmd = 'auth-get-sso-cookie --url "{}" -o {}'.format(url, cookiepath)
+  ret = os.system(cmd)
+  cookie = cookielib.MozillaCookieJar(cookiepath)
+  cookie.load()
+  os.remove(cookiepath)
+  return cookie
+
+def fetch_data(url, cookie):
+  '''make a request to the OMS website and filter stable-beam proton-proton entries
+  '''
+  req = requests.get(url, verify=True, cookies=cookie, allow_redirects=False)
+  if not req.ok:
+    return []
+  jsn = req.json()
+  if not 'data' in jsn.keys():
+    return []
+  return jsn
 
 progress = mp.Value('f', 0., lock=True)
 def pbar():
@@ -29,12 +54,11 @@ def pbar():
   sys.stdout.write('\r%s\n' %bar(dim))
   sys.stdout.flush()
 
-
-
 class BeamspotFile:
   ''' class for handling beamspot parsing on multiple files
   '''
   manager = mp.Manager()
+  COOKIE=get_cookie('https://cmsoms.cern.ch/')
   TOPLOT  = {
     'x'     : 'beam spot x [cm]'      ,
     'y'     : 'beam spot y [cm]'      ,
@@ -68,10 +92,10 @@ class BeamspotFile:
     '''
     toepoch = lambda tme: (datetime.strptime(tme, "%Y-%m-%dT%H:%M:%SZ")-datetime(1970,1,1)).total_seconds()
     run, ls, le, length = entry
-    runjsn  = fetch_data(url=BeamspotFile.URL.format(K='runs'         , ID=run))
-    lsjsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(ls)])))
-    lejsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(le)]))) if le!=ls else lsjsn
-    filljsn = fetch_data(url=BeamspotFile.URL.format(K='fills'        , ID=runjsn['data']['attributes']['fill_number']))
+    runjsn  = fetch_data(cookie=BeamspotFile.COOKIE, url=BeamspotFile.URL.format(K='runs'         , ID=run))
+    lsjsn   = fetch_data(cookie=BeamspotFile.COOKIE, url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(ls)])))
+    lejsn   = fetch_data(cookie=BeamspotFile.COOKIE, url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(le)]))) if le!=ls else lsjsn
+    filljsn = fetch_data(cookie=BeamspotFile.COOKIE, url=BeamspotFile.URL.format(K='fills'        , ID=runjsn['data']['attributes']['fill_number']))
     beamspot = {}
     beamspot[(run,ls,le)] = {}
     beamspot[(run,ls,le)]['fill'     ] = filljsn['data']['id']
@@ -168,7 +192,6 @@ if __name__=='__main__':
   parser.add_argument('--canfail' , action='store_true'     , help='ff not set, use only type 2 (good) fits')
   args = parser.parse_args()
   
-  COOKIE=get_cookie('https://cmsoms.cern.ch/')
   BeamspotFile.CANFAIL = args.canfail
 
   BeamspotFile.plot([
