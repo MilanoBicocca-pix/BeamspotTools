@@ -2,57 +2,97 @@
 blame: Luca Guzzi INFN Milano-Bicocca
 on: august 2023
 '''
-import sys
+import sys, time, os
 assert sys.version_info.major>2, "This script requires python 3+"
 import ROOT
 import uncertainties
-import os
-import http.cookiejar as cookielib
-import requests
 import multiprocessing as mp
 from datetime import datetime
 from array import array
 
 ROOT.gROOT.SetBatch(True)
+ROOT.gStyle.SetOptStat(False)
 
-def get_cookie(url):
-  '''generate a cookie for the OMS website
+progress = mp.Value('f', 0., lock=True)
+def pbar():
+  '''print a progressbar
   '''
-  cookiepath = './.cookiefile_OMSfetch.txt'
-  print("[INFO] generating cookie for url", url)
-  cmd = 'auth-get-sso-cookie --url "{}" -o {}'.format(url, cookiepath)
-  ret = os.system(cmd)
-  cookie = cookielib.MozillaCookieJar(cookiepath)
-  cookie.load()
-  os.remove(cookiepath)
-  return cookie
+  global progress
+  bar = lambda dim=50: '[{}{}%{}]'.format('#'*int(progress.value*dim/100+1), int(progress.value), ' '*int(dim-progress.value*dim/100+1))
+  while(True):
+    dim=min(50, os.get_terminal_size()[0]-10)
+    sys.stdout.write('\r%s' %bar(dim))
+    sys.stdout.flush()
+    time.sleep(.1)
+    if progress.value == 100:
+      break
+  sys.stdout.write('\r%s\n' %bar(dim))
+  sys.stdout.flush()
 
-def fetch_data(url):
-  global COOKIE
-  req = requests.get(url, verify=True, cookies=COOKIE, allow_redirects=False)
-  if not req.ok: return {}
-  jsn = req.json()
-  if not 'data' in jsn.keys(): return {}
-  return jsn
+
 
 class BeamspotFile:
   ''' class for handling beamspot parsing on multiple files
   '''
+  manager = mp.Manager()
   TOPLOT  = {
-    'x'     : 'x [cm]'      ,
-    'y'     : 'y [cm]'      ,
-    'z'     : 'z [cm]'      ,
-    'widthX': 'x width [cm]',
-    'widthY': 'y width [cm]',
-    'widthZ': 'z width [cm]',
-    'dxdz'  : 'dx/dz'       ,
-    'dydz'  : 'dy/dz'
+    'x'     : 'beam spot x [cm]'      ,
+    'y'     : 'beam spot y [cm]'      ,
+    'z'     : 'beam spot z [cm]'      ,
+    'widthX': 'beam spot #sigma_x [cm]',
+    'widthY': 'beam spot #sigma_y [cm]',
+    'widthZ': 'beam spot #sigma_z [cm]',
+    'dxdz'  : 'beam spot dx/dz'       ,
+    'dydz'  : 'beam spot dy/dz'
   }
   URL     = "https://cmsoms.cern.ch/agg/api/v1/{K}/{ID}/"
-  def __init__(self, ifile):
+  CANFAIL = False
+  @staticmethod
+  def format_graph(graph, color):
+    graph.SetMarkerStyle(8)
+    graph.SetMarkerSize(0.3)
+    graph.SetLineColor(color)
+    graph.SetMarkerColor(color)
+    graph.GetYaxis().SetTitleOffset(1.5)
+    #graph.GetYaxis().SetRangeUser(mymin, mymax)
+    #graph.SetLabelSize(0.075, 'XY')
+  @staticmethod
+  def format_canvas(canvas):
+    canvas.SetGridx()
+    canvas.SetGridy()
+    canvas.SetBottomMargin(0.1)
+  @staticmethod
+  def fetch_from_OMS(entry):
+    '''core function, fetches data from OMS in a way which is parallelizable 
+    through a mulitprocessing pool
+    '''
+    toepoch = lambda tme: (datetime.strptime(tme, "%Y-%m-%dT%H:%M:%SZ")-datetime(1970,1,1)).total_seconds()
+    run, ls, le, length = entry
+    runjsn  = fetch_data(url=BeamspotFile.URL.format(K='runs'         , ID=run))
+    lsjsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(ls)])))
+    lejsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(le)]))) if le!=ls else lsjsn
+    filljsn = fetch_data(url=BeamspotFile.URL.format(K='fills'        , ID=runjsn['data']['attributes']['fill_number']))
+    beamspot = {}
+    beamspot[(run,ls,le)] = {}
+    beamspot[(run,ls,le)]['fill'     ] = filljsn['data']['id']
+    beamspot[(run,ls,le)]['fillstamp'] = toepoch(filljsn['data']['attributes']['start_time'])
+    beamspot[(run,ls,le)]['date'     ] = lsjsn['data']['attributes']['start_time'] 
+    beamspot[(run,ls,le)]['timestamp'] = 0.5*(
+      toepoch(lejsn['data']['attributes']['end_time'  ]) +
+      toepoch(lsjsn['data']['attributes']['start_time'])
+    )
+    beamspot[(run,ls,le)]['timewidth'] = (
+      toepoch(lejsn['data']['attributes']['end_time'  ]) -
+      toepoch(lsjsn['data']['attributes']['start_time'])
+    )
+    progress.value += 100./length
+    return beamspot
+
+  def __init__(self, file, color=ROOT.kBlack):
     #this snippet will read the diabolic beamspot file format
-    with open(ifile, 'r') as ifile:
-      self.beamspots = {#key: (run, ls_begin, ls_end)
+    self.color = color
+    with open(file, 'r') as ifile:
+      self.beamspots = BeamspotFile.manager.dict({#key: (run, ls_begin, ls_end)
         ( int(lines[0]              ), 
           int(lines[3].split(' ')[1]), 
           int(lines[3].split(' ')[3])): {
@@ -72,27 +112,20 @@ class BeamspotFile:
           'betaStar'  : float (lines[22].split(' ')[-1]),
           'covariance': [[float(e) for e in row.split(' ')[1:] if len(e)] for row in lines[13:20]],
         } for lines in [d.split('\n') for d in ifile.read().split('Runnumber ') if len(d)]
-      }
-    # here we fetch lumisection information from OMS and 
-    # compute the timestamp for each one
-    toepoch = lambda tme: (datetime.strptime(tme, "%Y-%m-%dT%H:%M:%SZ")-datetime(1970,1,1)).total_seconds()
-    for run,ls,le in self.beamspots.keys():
-      runjsn  = fetch_data(url=BeamspotFile.URL.format(K='runs'         , ID=run))
-      lsjsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(ls)])))
-      lejsn   = fetch_data(url=BeamspotFile.URL.format(K='lumisections' , ID='_'.join([str(run), str(le)]))) if le!=ls else lsjsn
-      filljsn = fetch_data(url=BeamspotFile.URL.format(K='fills'        , ID=runjsn['data']['attributes']['fill_number']))
+        if int(lines[4] .split(' ')[-1])==2 or BeamspotFile.CANFAIL
+      })
 
-      self.beamspots[(run,ls,le)]['fill'     ] = filljsn['data']['id']
-      self.beamspots[(run,ls,le)]['fillstamp'] = toepoch(filljsn['data']['attributes']['start_time'])
-      self.beamspots[(run,ls,le)]['date'     ] = lsjsn['data']['attributes']['start_time'] 
-      self.beamspots[(run,ls,le)]['timestamp'] = 0.5*(
-        toepoch(lejsn['data']['attributes']['end_time'  ]) +
-        toepoch(lsjsn['data']['attributes']['start_time'])
-      )
-      self.beamspots[(run,ls,le)]['timewidth'] = (
-        toepoch(lejsn['data']['attributes']['end_time'  ]) -
-        toepoch(lsjsn['data']['attributes']['start_time'])
-      )
+    print("[INFO]fetching data from OMS for", file)
+    with mp.Pool(args.streams) as pool:
+      progressbar = mp.Process(target=pbar)
+      progressbar.start()
+      fetched = pool.map(BeamspotFile.fetch_from_OMS, [(run,ls,le,len(self.beamspots.keys())) for run,ls,le in self.beamspots.keys()])
+      progressbar.terminate()
+    print()
+    progress.value = 0.0
+    fetched = {k: v for d in fetched for k,v in d.items()}
+    for k in fetched.keys():
+      self.beamspots[k] = {**self.beamspots[k], **fetched[k]}
     self.graphs = {
       v: ROOT.TGraph(len(self.beamspots.keys()),
         array('d', [bs['timestamp']  for bs in self.beamspots.values()]),
@@ -104,14 +137,14 @@ class BeamspotFile:
   def plot(entries, outputdir):
     os.makedirs(outputdir, exist_ok=True)
     for v, lab in BeamspotFile.TOPLOT.items():
-      can = ROOT.TCanvas()
+      can = ROOT.TCanvas('c1', 'c1', 1400, 800)
+      BeamspotFile.format_canvas(can)
       mul = ROOT.TMultiGraph()
       leg = ROOT.TLegend()
-      mul.SetTitle('beamspot {V} vs. lumisection;lumisection;{L}'.format(V=v,L=lab))
+      mul.SetTitle('beamspot {V} vs. time;epoch;{L}'.format(V=v,L=lab))
       for i, entry in enumerate(entries):
+        BeamspotFile.format_graph(entry.graphs[v], entry.color)
         entry.graphs[v].SetMarkerStyle(20)
-        entry.graphs[v].SetMarkerColor(i+1)
-        entry.graphs[v].SetLineColor(i+1)
         leg.AddEntry(entry.graphs[v], '', 'lep')
         mul.Add(entry.graphs[v])
       mul.Draw("AP")
@@ -129,13 +162,15 @@ if __name__=='__main__':
   - format the canvas as the standard BS file
   - improve the readability and simplify where possible
   ''')
-  parser.add_argument('--input' , required=True, nargs='+')
-  parser.add_argument('--output', required=True)
+  parser.add_argument('--input'   , required=True, nargs='+', help='list of input files')
+  parser.add_argument('--output'  , required=True           , help='output directory')
+  parser.add_argument('--streams' , default=1, type=int     , help='number of streams for the OMS data download')
+  parser.add_argument('--canfail' , action='store_true'     , help='ff not set, use only type 2 (good) fits')
   args = parser.parse_args()
   
   COOKIE=get_cookie('https://cmsoms.cern.ch/')
-  
+  BeamspotFile.CANFAIL = args.canfail
+
   BeamspotFile.plot([
-    BeamspotFile(ifile=ifile) for ifile in args.input
+    BeamspotFile(file=file) for file in args.input
   ], outputdir=args.output)
-  import pdb; pdb.set_trace()
