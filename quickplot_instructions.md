@@ -96,11 +96,7 @@ The script will create the output directory and plot the beam spot parameters as
 
 ## payload creation
 
-WIP
-To convert the fit results in the payload format, ready for the new GT, run:
-
-```bash
-```
+To convert the *.txt* file to a *.db* file use [write2DB.py](https://github.com/cms-sw/cmssw/blob/master/RecoVertex/BeamSpotProducer/test/write2DB.py) following the instructions [here](https://github.com/MilanoBicocca-pix/cmssw/wiki/BS-parameters-for-MC-production-&-upload-to-CondDB#step3-prepare-the-payload).
 
 ## example
 
@@ -108,19 +104,19 @@ We want to fit the beamspot on ALCARECO files for run 370772 of 2023D, updating 
 
 ```bash
 xrdcp root://cms-xrd-global.cern.ch//store/express/Run2023D/StreamExpress/ALCARECO/TkAlMinBias-Express-v2/000/370/772/00001/63cbf285-ce54-4ad2-bc9b-833799330067.root AlcaFile_2023D.root
-cmsRun BeamFit_flexible_workflow.py         \
+cmsRun BeamFit_custom_workflow.py         \
   jobName="localTest_refit_alignmentUpdate" \
   inputFiles="file:AlcaFile_2023D.root"     \
   runs="370772:min-370772:max"              \
   globalTag="130X_dataRun3_Express_v3"      \
   tracks=ALCARECOTkAlMinBias                \
   refit=True                                \
-  updateGT="TrackerAlignmentRcd:TrackerAlignment_collisions23_forHLT_v5"
+  updateGT="TrackerAlignmentRcd:TrackerAlignment_collisions23_forHLT_v5:"
 ```
 The result can be compared to running without the *--updateGT* argument to see the effect of the new alignment.  
   
 To plot and check the result:
 
 ```bash
-python3 plotFromTxt.py --input --output Run2023_370772
+python3 plotFromTxt.py --input --output Run2023_370772 --streams 10
 ```
