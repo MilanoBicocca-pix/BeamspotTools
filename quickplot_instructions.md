@@ -35,7 +35,7 @@ The beamspot fit is configured by the [BeamFit_custom_workflow.py](test/BeamFit_
 ```bash
 cmsRun BeamFit_custom_workflow.py     \
   jobName="name"                        \
-  globalTag="tag"                       \
+  globalTag="Global Tag name"                       \
   refit=bool                            \
   runs="run:ls-run:ls"                  \
   dataset="/dataset/period/tier"        \
