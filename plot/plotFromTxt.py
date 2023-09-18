@@ -188,7 +188,7 @@ if __name__=='__main__':
   parser.add_argument('--input'   , required=True, nargs='+', help='list of input files')
   parser.add_argument('--output'  , required=True           , help='output directory')
   parser.add_argument('--streams' , default=1, type=int     , help='number of streams for the OMS data download')
-  parser.add_argument('--canfail' , action='store_true'     , help='ff not set, use only type 2 (good) fits')
+  parser.add_argument('--canfail' , action='store_true'     , help='use only type 2 (good) fits')
   args = parser.parse_args()
   
   BeamspotFile.CANFAIL = args.canfail
