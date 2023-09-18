@@ -42,7 +42,7 @@ cmsRun BeamFit_custom_workflow.py     \
   storage="root://service"              \
   highPurity=bool                       \
   tracks="collection_name"              \
-  alignment="record1:tag1:label1,record2:tag2:label2" \
+  updateGT="record1:tag1:label1,record2:tag2:label2" \
   saveRootFiles=bool
 ```
 
