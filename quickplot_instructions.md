@@ -68,7 +68,7 @@ A file with the "_filelist.txt" prefix is also creted. It contains the list of f
   
 **NOTE** the track collection from *ALCARECO* is *ALCARECOTkAlMinBias*, for *RAW* the label is *generalTracks*.  
 **NOTE** Other parameters of the fitter are present in the configuration file and usually there is no need to modify them.  
-**NOTE** by default, the fit is run on five lumisections. This can be changed by editing the parameters (note: set them equal).  
+**NOTE** by default, the fit is run on one lumisection. This can be changed by editing the parameters (note: set them equal).  
 **NOTE** if a track refit is done and the alignment is not changed, the beamspot result will still be different. This is because, in such case, the configuration introduces additional cuts on the PVs.
 **NOTE** the fitter appends the results of the fit to the *.txt* file live, thread safety is **NOT** guaranteed.
 
