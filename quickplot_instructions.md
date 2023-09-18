@@ -43,6 +43,7 @@ cmsRun BeamFit_custom_workflow.py     \
   highPurity=bool                       \
   tracks="collection_name"              \
   updateGT="record1:tag1:label1,record2:tag2:label2" \
+  localPL="sqlite_file:/path/to/local/file" \
   saveRootFiles=bool
 ```
 
@@ -56,6 +57,7 @@ where:
 - **highPurity** decides whether to use a high purity track selection (default: false)
 - **tracks** is the input track collection, which depends on the type of input dataset (default: generalTracks)
 - **updateGT** is used to update records, tags and labels in the global tag. Defined in the form "record1:tag1:label1,record2:tag2:label2,[...]".
+- **localPL** is used to specify a local payload for updating the GT. **NOTE** works only when *--updateGT* is set.
 - **saveRootFile** decides whether to save the fit results to a *.root* file. Usually needed only for debugging.
 
 *<sup>(\*)</sup>&nbsp;&nbsp;&nbsp;the argument is mandatory*  
