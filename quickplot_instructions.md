@@ -74,7 +74,7 @@ A file with the "_filelist.txt" prefix is also creted. It contains the list of f
 
 ## beamspot plot
 
-**NOTE** the plotting script is a work in progress. At the moment it can plot a single file in a format good for check-ups (bs parameter vs. time). For instructions on how to produce complete BS plots, see [here]().  
+**NOTE** the plotting script is a work in progress. At the moment it can plot a single file in a format good for check-ups (bs parameter vs. time).
 **NOTE** this script does not work with any CMSSW release. Python 3 is required. All the modules used should be available in the default python3 distribution, except [ROOT](https://root.cern/).  
 **NOTE** [auth-get-sso-cookie](https://gitlab.cern.ch/authzsvc/tools/auth-get-sso-cookie) is required. This is available by default on lxplus or can be installed user-side following the instructions of the repo.  
 **NOTE** a valid kerberos ticket is required to download data from OMS.
