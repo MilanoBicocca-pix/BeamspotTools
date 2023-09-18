@@ -82,7 +82,7 @@ A file with the "_filelist.txt" prefix is also creted. It contains the list of f
 To plot the results, run [plotFromTxt.py](plot/plotFromTxt.py):
 
 ```bash
-python3 plotFromTxt.py --input input_file_list --output output_dir --streams 5
+python3 plotFromTxt.py --input input_file_list --output output_dir --streams 5 [--canfail]
 ```
 
 where 
