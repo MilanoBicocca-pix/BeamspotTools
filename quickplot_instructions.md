@@ -118,5 +118,5 @@ The result can be compared to running without the *--updateGT* argument to see t
 To plot and check the result:
 
 ```bash
-python3 plotFromTxt.py --input --output Run2023_370772 --streams 10
+python3 plotFromTxt.py --input localTest_refit_alignmentUpdate.txt --output Run2023_370772 --streams 10
 ```
