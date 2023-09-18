@@ -182,7 +182,6 @@ if __name__=='__main__':
   The code works with an input file list and 
   can overlay multiple beamspots for comparison.
   WIP. TODOs:
-  - implement plotting
   - format the canvas as the standard BS file
   - improve the readability and simplify where possible
   ''')
