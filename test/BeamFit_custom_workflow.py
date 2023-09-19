@@ -60,9 +60,9 @@ options.register('updateGT', ''             ,
     VarParsing.VarParsing.varType.string    ,
     "records, tags and labels to update in the form record1:tag1:label1,record2:tag2:label2,[...]",
 )
-options.register('localPL', ''             ,
-    VarParsing.VarParsing.multiplicity.list ,
-    VarParsing.VarParsing.varType.string    ,
+options.register('localPL', ''                  ,
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.string        ,
     "update the GT using a local payload (works only when updateGT is used)",
 )
 options.register('saveRootFile', False              ,
@@ -114,11 +114,10 @@ if options.updateGT!=['']:
     align_psets = [
         cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l)) 
         for r,t,l in [o.split(':') for o in options.updateGT]
-    ] if options.localPL is '' else [
-        cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l), connect=options.localPL) 
-        for r,t,l in [o.split(':') for o in options.updateGT]   
     ]
     process.GlobalTag.toGet = cms.VPSet(*align_psets)
+    if options.localPL!='':
+        process.GlobalTag.connect = options.localPL
 
 # Track and PV refit
 INPUT_TRACKS = 'TrackRefitter'                          if options.refit else options.tracks
