@@ -114,11 +114,10 @@ if options.updateGT!=['']:
     align_psets = [
         cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l)) 
         for r,t,l in [o.split(':') for o in options.updateGT]
-    ] if options.localPL is '' else [
-        cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l), connect=options.localPL) 
-        for r,t,l in [o.split(':') for o in options.updateGT]   
     ]
     process.GlobalTag.toGet = cms.VPSet(*align_psets)
+    if options.localPL!='':
+        process.GlobalTag.connect = options.localPL
 
 # Track and PV refit
 INPUT_TRACKS = 'TrackRefitter'                          if options.refit else options.tracks
