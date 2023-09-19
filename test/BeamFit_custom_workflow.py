@@ -110,15 +110,16 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load('Configuration.Geometry.GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff") 
 process.GlobalTag.globaltag = options.globalTag
+import pdb; pdb.set_trace()
 if options.updateGT!=['']:
     align_psets = [
         cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l)) 
         for r,t,l in [o.split(':') for o in options.updateGT]
+    ] if options.localPL=='' else [
+        cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l), connect=cms.string(options.localPL))
+        for r,t,l in [o.split(':') for o in options.updateGT]
     ]
     process.GlobalTag.toGet = cms.VPSet(*align_psets)
-    if options.localPL!='':
-        process.GlobalTag.connect = options.localPL
-
 # Track and PV refit
 INPUT_TRACKS = 'TrackRefitter'                          if options.refit else options.tracks
 INPUT_PVS    = 'offlinePrimaryVerticesFromRefittedTrks' if options.refit else 'offlinePrimaryVertices'
