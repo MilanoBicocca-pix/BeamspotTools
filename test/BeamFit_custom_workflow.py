@@ -60,9 +60,9 @@ options.register('updateGT', ''             ,
     VarParsing.VarParsing.varType.string    ,
     "records, tags and labels to update in the form record1:tag1:label1,record2:tag2:label2,[...]",
 )
-options.register('localPL', ''             ,
-    VarParsing.VarParsing.multiplicity.list ,
-    VarParsing.VarParsing.varType.string    ,
+options.register('localPL', ''                  ,
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.string        ,
     "update the GT using a local payload (works only when updateGT is used)",
 )
 options.register('saveRootFile', False              ,
