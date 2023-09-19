@@ -110,7 +110,6 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load('Configuration.Geometry.GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff") 
 process.GlobalTag.globaltag = options.globalTag
-import pdb; pdb.set_trace()
 if options.updateGT!=['']:
     align_psets = [
         cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l)) 
