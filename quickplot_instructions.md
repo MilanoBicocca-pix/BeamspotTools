@@ -104,6 +104,8 @@ There are three records where the BS information are stored
 - *BeamSpotOnlineLegacyObjectsRcd* used online
 All the three records should be updated before a FTV.
 
+Then, to create pb files:
+
 - **OFFLINE:** To convert the *.txt* file to a *.db* file use [write2DB.py](https://github.com/cms-sw/cmssw/blob/master/RecoVertex/BeamSpotProducer/test/write2DB.py) following the instructions [here](https://github.com/MilanoBicocca-pix/cmssw/wiki/BS-parameters-for-MC-production-&-upload-to-CondDB#step3-prepare-the-payload). The offline record is *BeamSpotObjectRcd*.
 - **ONLINE:** To convert the *.txt* file to a *.db* file use [BeamSpotOnlineRecordsWriter_cfg.py](https://github.com/cms-sw/cmssw/blob/master/CondTools/BeamSpot/test/BeamSpotOnlineRecordsWriter_cfg.py). The online record**s** to be updated are BeamSpotOnlineHLTObjectsRcd **AND** BeamSpotOnlineLegacyObjectsRcd
 
