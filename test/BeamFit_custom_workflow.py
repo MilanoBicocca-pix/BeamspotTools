@@ -162,8 +162,8 @@ process.d0_phi_analyzer.PVFitter.minNrVerticesForFit         = 10
 process.d0_phi_analyzer.PVFitter.nSigmaCut                   = 50.0
 process.d0_phi_analyzer.PVFitter.VertexCollection            = INPUT_PVS 
    
-process.d0_phi_analyzer.BSAnalyzerParameters.fitEveryNLumi   = 1
-process.d0_phi_analyzer.BSAnalyzerParameters.resetEveryNLumi = 1
+process.d0_phi_analyzer.BSAnalyzerParameters.fitEveryNLumi   = 5
+process.d0_phi_analyzer.BSAnalyzerParameters.resetEveryNLumi = 5
 
 if options.highPurity:
     d0_phi_analyzer_cff.PVFitter.useOnlyFirstPV     = True
