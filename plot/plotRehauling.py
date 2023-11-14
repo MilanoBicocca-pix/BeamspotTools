@@ -39,7 +39,8 @@ ROOT.gStyle.SetLegendFont(42)
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022C_forReReco_mp3576_MINRES.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022Dv1_forReReco_mp3576_MINRES.root')
 #file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022Dv2_forReReco_mp3576_MINRES.root')
-file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022E_PromptFit.root')
+#file = ROOT.TFile.Open('/afs/cern.ch/work/d/dzuolo/private/BeamSpot/CMSSW_12_4_8/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2022E_PromptFit.root')
+file = ROOT.TFile.Open('/afs/cern.ch/work/f/fbrivio/beamSpot/2023/plot_from_PCL/CMSSW_13_2_6_patch2/src/RecoVertex/BeamSpotProducer/python/BeamspotTools/test/Run2023_PCL_HP_byLumi_20LS.root')
 
 file.cd()
 
@@ -65,13 +66,25 @@ dydz       = file.Get('dydz'      )
 #]
 
 ## Ranges set for 2022 13 TeV commissioning
+#variables = [
+#    (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
+#    (Y         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
+#    (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
+#    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.5   , 4.5   ),
+#    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.    , 0.004 ),
+#    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.    , 0.004 ),
+#    (dxdz      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
+#    (dydz      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
+#]
+
+## Ranges for 2023 run (both pp and HI)
 variables = [
-    (X         , 'beam spot x [cm]'         ,  0.15  , 0.19  ),
-    (Y         , 'beam spot y [cm]'         , -0.21  ,-0.17  ),
+    (X         , 'beam spot x [cm]'         ,  0.08  , 0.15  ),
+    (Y         , 'beam spot y [cm]'         , -0.22  ,-0.16  ),
     (Z         , 'beam spot z [cm]'         , -6.    , 6.    ),
-    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.5   , 4.5   ),
-    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.    , 0.004 ),
-    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.    , 0.004 ),
+    (sigmaZ    , 'beam spot #sigma_{z} [cm]',  2.5   , 6.    ),
+    (beamWidthX, 'beam spot #sigma_{x} [cm]',  0.    , 0.02 ),
+    (beamWidthY, 'beam spot #sigma_{y} [cm]',  0.    , 0.02 ),
     (dxdz      , 'beam spot dx/dz [rad]'    , -0.002 , 0.002 ),
     (dydz      , 'beam spot dy/dz [rad]'    , -0.002 , 0.002 ),
 ]
@@ -164,7 +177,9 @@ def saveHisto(var):
     #ROOT.gPad.Print('Run2022C_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
     #ROOT.gPad.Print('Run2022Dv1_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
     #ROOT.gPad.Print('Run2022Dv2_forReReco_mp3576_MINRES/%s.pdf' %histo.GetName())
-    ROOT.gPad.Print('Run2022E_PromptFit/%s.pdf' %histo.GetName())
+    #ROOT.gPad.Print('Run2022E_PromptFit/%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('Run2023_PCL_HP_byLumi_20LS/%s.pdf' %histo.GetName())
+    ROOT.gPad.Print('Run2023_PCL_HP_byLumi_20LS/%s.png' %histo.GetName())
 
 c1 = ROOT.TCanvas('c1', 'c1', 3000, 1000)
 for var in variables:
