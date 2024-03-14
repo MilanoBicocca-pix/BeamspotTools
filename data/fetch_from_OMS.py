@@ -26,6 +26,7 @@ def get_cookie(url):
   '''
   cookiepath = './.cookiefile_OMSfetch.txt'
   print("[INFO] generating cookie for url", url)
+  os.system('export PYTHONNOUSERSITE=1') # needed to use the system-wide packages, not the user defined ones
   cmd = 'auth-get-sso-cookie --url "{}" -o {}'.format(url, cookiepath)
   ret = os.system(cmd)
   cookie = cookielib.MozillaCookieJar(cookiepath)
