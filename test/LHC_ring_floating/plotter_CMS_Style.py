@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 
 import matplotlib
-matplotlib.use("TkAgg")
 
 times = [
     'year 2010, month 3',
@@ -58,8 +57,17 @@ times = [
     'year 2018, month 11',
     'year 2021, month 10',
     'year 2021, month 11',
+    'year 2022, month 5',
+    'year 2022, month 6',
     'year 2022, month 7',
     'year 2022, month 8',
+    'year 2022, month 9',
+    'year 2022, month 10',
+    'year 2022, month 11',
+    'year 2023, month 4',
+    'year 2023, month 5',
+    'year 2023, month 6',
+    'year 2023, month 7',
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m") for time in times ]
@@ -111,15 +119,25 @@ X = np.array([
     0.096432,
     0.097094,
     0.095590,
-    0.096508,#8
+    0.096508,
     0.096190,
-    0.096331,#10
-    0.094505,#10
+    0.096331,
+    0.094505,
     0.171753,#2021
     0.172607,
-    0.172996,#2022 
-    0.172635,
+    0.173003,#2022
+    0.171824,
+    0.173472,
+    0.172803,
+    0.174092,
+    0.174249,
+    0.172679,
+    0.115344,#2023
+    0.116808,
+    0.117166,
+    0.116243
 ])
+
 Y = np.array([
     0.000908, 
     0.000927, 
@@ -167,14 +185,23 @@ Y = np.array([
     -0.066068,
     -0.064077,
     -0.064396,
-    -0.060965, #8
-    -0.062271, #9
-    -0.061833, #10
-    -0.063482, #11
-    -0.190651, # 2021
+    -0.060965,
+    -0.062271,
+    -0.061833,
+    -0.063482,
+    -0.190651,#2021
     -0.192080,
-    -0.181876, # 2022
-    -0.183585,
+    -0.181755,#2022
+    -0.180038,
+    -0.181012,
+    -0.182373,
+    -0.183440,
+    -0.183659,
+    -0.183023,
+    -0.188842,#2023
+    -0.186396,
+    -0.183765,
+    -0.181976
 ])
 
 # convert from cm to micron
@@ -189,7 +216,6 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.grid()
 
-
 fig.autofmt_xdate()
 plt.plot(Time,X, c='tab:blue')
 plt.plot(Time,Y, c='tab:green')
@@ -201,16 +227,13 @@ plt.legend(loc=3, scatterpoints=1)
 plt.xlabel('Date')
 plt.ylabel('Beam spot centre coordinate [mm]')
 plt.title(r'$\bf{CMS}\:\it{Preliminary}$',loc='left',fontname='Nimbus Sans')
+plt.xticks(rotation = 0, ha='center')
 # fit with np.polyfit
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
-plt.show(block=False)
-plt.savefig('cms_beamspotXY_vs_time_2022_Approval_v6.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2023_July.pdf')
 plt.close()
-
-
-
 
 
 # year 2010, month 3	X = 0.094127 +/- 1.6812E-05 [cm]	Y = 0.000908 +/- 1.6740E-05 [cm]
@@ -250,10 +273,16 @@ plt.close()
 # year 2016, month 9	X = 0.057529 +/- 3.8561E-07 [cm]	Y = 0.105664 +/- 3.8219E-07 [cm]
 # year 2016, month 10	X = 0.055517 +/- 2.9459E-07 [cm]	Y = 0.107506 +/- 2.9170E-07 [cm]
 
-# year 2021, month 10	X = 0.171753 +/- 2.0963E-05 [cm]	Y = -0.190651 +/- 2.0641E-05 [cm]
-# year 2021, month 11	X = 0.172607 +/- 5.4337E-05 [cm]	Y = -0.192080 +/- 5.3490E-05 [cm]
-# year 2022, month 7	X = 0.172996 +/- 1.5723E-07 [cm]	Y = -0.181876 +/- 1.5500E-07 [cm]
-# year 2022, month 8	X = 0.172635 +/- 1.3344E-07 [cm]	Y = -0.183585 +/- 1.3165E-07 [cm]
-
-
-
+# year 2021, month 10   X Pos = 0.171753 - Width = 1.3734E-02 [cm]   Y Pos = -0.190651 - Width = 1.5133E-02 [cm]   Z Pos = 0.050984 - Width = 6.8873E+00 [cm]
+# year 2021, month 11   X Pos = 0.172607 - Width = 1.4820E-02 [cm]   Y Pos = -0.192080 - Width = 1.6455E-02 [cm]   Z Pos = 0.045097 - Width = 7.1213E+00 [cm]
+# year 2022, month 5    X Pos = 0.173003 - Width = 1.3459E-02 [cm]   Y Pos = -0.181755 - Width = 1.4755E-02 [cm]   Z Pos = -0.107226 - Width = 6.1230E+00 [cm]
+# year 2022, month 6    X Pos = 0.171824 - Width = 1.3523E-02 [cm]   Y Pos = -0.180038 - Width = 1.4674E-02 [cm]   Z Pos = 0.283074 - Width = 6.3571E+00 [cm]
+# year 2022, month 7    X Pos = 0.173472 - Width = 7.6120E-04 [cm]   Y Pos = -0.181012 - Width = 9.1500E-04 [cm]   Z Pos = 1.441225 - Width = 3.2385E+00 [cm]
+# year 2022, month 8    X Pos = 0.172803 - Width = 7.6612E-04 [cm]   Y Pos = -0.182373 - Width = 9.0643E-04 [cm]   Z Pos = 0.026420 - Width = 3.1990E+00 [cm]
+# year 2022, month 9    X Pos = 0.174092 - Width = 8.0332E-04 [cm]   Y Pos = -0.183440 - Width = 8.4724E-04 [cm]   Z Pos = -0.052570 - Width = 3.2982E+00 [cm]
+# year 2022, month 10   X Pos = 0.174249 - Width = 8.2544E-04 [cm]   Y Pos = -0.183659 - Width = 9.4380E-04 [cm]   Z Pos = -0.561499 - Width = 3.3948E+00 [cm]
+# year 2022, month 11   X Pos = 0.172679 - Width = 9.1814E-04 [cm]   Y Pos = -0.183023 - Width = 1.0329E-03 [cm]   Z Pos = -1.721754 - Width = 3.5523E+00 [cm]
+# year 2023, month 4    X Pos = 0.115345 - Width = 7.0596E-04 [cm]   Y Pos = -0.188842 - Width = 7.7293E-04 [cm]   Z Pos = -0.246330 - Width = 3.6249E+00 [cm]
+# year 2023, month 5    X Pos = 0.116808 - Width = 7.8006E-04 [cm]   Y Pos = -0.186396 - Width = 8.5948E-04 [cm]   Z Pos = -0.600535 - Width = 7.8904E-01 [cm]
+# year 2023, month 6    X Pos = 0.117145 - Width = 8.4810E-04 [cm]   Y Pos = -0.183745 - Width = 9.4802E-04 [cm]   Z Pos = -0.430677 - Width = 3.7080E+00 [cm]
+# year 2023, month 7    X Pos = 0.116243 - Width = 7.7234E-04 [cm]   Y Pos = -0.181976 - Width = 8.3111E-04 [cm]   Z Pos = -0.519375 - Width = 3.6933E+00 [cm]
