@@ -4,7 +4,11 @@ The file `fills.txt` needs to be update manually every once in a while to keep u
 This is needed for plotting purposes, especially for displaying re-processed BeamSpot measurements.
 
 # How to
-To get the new fills run the `fetch_from_OMS.py` script with:
+Set up the needed Kerberos ticket with:
+```
+kinit <user>
+```
+Get the new fills run the `fetch_from_OMS.py` script with:
 ```
 python3 fetch_fills_from_OMS.py \
     -n [number_of_fills] \
@@ -13,7 +17,14 @@ python3 fetch_fills_from_OMS.py \
     -u [file_to_update] \
     -o [output_file]
 ```
-Requirements:
+Add the new fills to the `fills.txt` file (or update it directly with the `-u` option).
+
+### Important note:
+By default the scripts only considers Fills:
+ - of type `PROTONS`
+ - with Stable Beams declared
+
+### Requirements:
 - `python3`
 - `auth-get-sso-cookie` (available on all lxplus nodes)
 - **DO NOT** set `cmsenv` environment!
