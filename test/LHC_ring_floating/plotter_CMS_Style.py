@@ -68,7 +68,8 @@ times = [
     'year 2023, month 5',
     'year 2023, month 6',
     'year 2023, month 7',
-    'year 2023, month 9'
+    'year 2023, month 9',
+    'year 2024, month 3'
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m") for time in times ]
@@ -137,7 +138,8 @@ X = np.array([
     0.116808,
     0.117166,
     0.116243,
-    0.112538
+    0.112538,
+    0.136365 #2024
 ])
 
 Y = np.array([
@@ -204,7 +206,8 @@ Y = np.array([
     -0.186396,
     -0.183765,
     -0.181976,
-    -0.186970
+    -0.186970,
+    -0.197122 #2024
 ])
 
 # convert from cm to micron
@@ -235,8 +238,8 @@ plt.xticks(rotation = 0, ha='center')
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
-plt.savefig('cms_beamspotXY_vs_time_2023_September.pdf')
-plt.savefig('cms_beamspotXY_vs_time_2023_September.png')
+plt.savefig('cms_beamspotXY_vs_time_2024_March.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2024_March.png')
 plt.close()
 
 
@@ -291,3 +294,4 @@ plt.close()
 # year 2023, month 6    X Pos = 0.117145 - Width = 8.4810E-04 [cm]   Y Pos = -0.183745 - Width = 9.4802E-04 [cm]   Z Pos = -0.430677 - Width = 3.7080E+00 [cm]
 # year 2023, month 7    X Pos = 0.116243 - Width = 7.7234E-04 [cm]   Y Pos = -0.181976 - Width = 8.3111E-04 [cm]   Z Pos = -0.519375 - Width = 3.6933E+00 [cm]
 # year 2023, month 9    X Pos = 0.112538 - Width = 6.5062E-03 [cm]   Y Pos = -0.186970 - Width = 6.5946E-03 [cm]   Z Pos = -0.278197 - Width = 4.5345E+00 [cm]
+# year 2024, month 3    X Pos = 0.136365 - Y Pos = -0.197122   --> from run 378238 workflow PCL_HP_byRun
