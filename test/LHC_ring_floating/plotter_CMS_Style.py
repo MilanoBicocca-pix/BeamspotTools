@@ -71,7 +71,9 @@ times = [
     'year 2023, month 9, day 1',
     'year 2024, month 3, day 21',
     'year 2024, month 4, day 1',
-    'year 2024, month 4, day 5'
+    'year 2024, month 4, day 5',
+    'year 2024, month 5, day 2',
+    'year 2024, month 6, day 1'
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m, day %d") for time in times ]
@@ -143,7 +145,9 @@ X = np.array([
     0.112538,
     0.136365, #2024
     0.131317,
-    0.095503
+    0.095503,
+    0.094333,
+    0.096182
 ])
 
 Y = np.array([
@@ -213,7 +217,9 @@ Y = np.array([
     -0.186970,
     -0.197122, #2024
     -0.195124,
-    -0.195209
+    -0.195209,
+    -0.192109,
+    -0.191280
 ])
 
 # convert from cm to micron
@@ -244,8 +250,8 @@ plt.xticks(rotation = 0, ha='center')
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
-plt.savefig('cms_beamspotXY_vs_time_2024_April_v2.pdf')
-plt.savefig('cms_beamspotXY_vs_time_2024_April_v2.png')
+plt.savefig('cms_beamspotXY_vs_time_2024_June.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2024_June.png')
 plt.close()
 
 
@@ -303,3 +309,5 @@ plt.close()
 # year 2024, month 3, day 21    X Pos = 0.136365 - Y Pos = -0.197122   --> from run 378238 workflow PCL_HP_byRun
 # year 2024, month 4, day 1     X Pos = 0.131317 - Y Pos = -0.195124   --> from run 378750 workflow PCL_HP_byRun
 # year 2024, month 4, day 5     X Pos = 0.095503 - Y Pos = -0.195209   --> from run 378985 workflow PCL_HP_byRun
+# year 2024, month 5, day 2     X Pos = 0.094333 - Y Pos = -0.192109   --> from run 380310 workflow PCL_HP_byRun
+# year 2024, month 6, day 1     X Pos = 0.096182 - Y Pos = -0.191280   --> from run 381443 workflow PCL_HP_byRun
