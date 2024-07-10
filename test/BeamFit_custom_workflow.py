@@ -166,9 +166,9 @@ process.d0_phi_analyzer.BSAnalyzerParameters.fitEveryNLumi   = 1    # do not tou
 process.d0_phi_analyzer.BSAnalyzerParameters.resetEveryNLumi = 1    # do not touch https://github.com/MilanoBicocca-pix/BeamspotTools/pull/20
 
 if options.highPurity:
-    d0_phi_analyzer_cff.PVFitter.useOnlyFirstPV     = True
-    d0_phi_analyzer_cff.PVFitter.minSumPt           = 50.0
-    d0_phi_analyzer_cff.PVFitter.minVertexNTracks   = 30
+    process.d0_phi_analyzer.PVFitter.useOnlyFirstPV     = True
+    process.d0_phi_analyzer.PVFitter.minSumPt           = 50.0
+    process.d0_phi_analyzer.PVFitter.minVertexNTracks   = 30
 
 process.p = cms.Path(   
     process.offlineBeamSpot                        + 
