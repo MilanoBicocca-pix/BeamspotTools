@@ -7,7 +7,7 @@ def get_run_ranges(run_string):
     '''
     ranges = [( int(run.split('-')[0                ].split(':')[0]),
                 int(run.split('-')[int('-' in run)  ].split(':')[0])
-    ) for run in run_string.split(',')]
+    ) for run in run_string]
     assert all(r2>=r1 for (r1,r2) in ranges), "ERROR: run ranges are ill defined"
     return ranges
 
@@ -31,7 +31,7 @@ options.register('refit', False,
     "whether to refit the tracks or not"        ,
 )
 options.register('runs', '0:min-9999999:max'    ,
-    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.multiplicity.list     ,
     VarParsing.VarParsing.varType.string        ,
     "lumirange in the format 'run:ls-run:ls,run:ls[...]'",
 )
