@@ -55,15 +55,15 @@ options.register('tracks', 'generalTracks',
     VarParsing.VarParsing.varType.string        ,
     "track collection to be used"               ,
 )
-options.register('updateGT', ''             ,
+options.register('updateGTfromCondDB', ''   ,
     VarParsing.VarParsing.multiplicity.list ,
     VarParsing.VarParsing.varType.string    ,
-    "records, tags and labels to update in the form record1:tag1:label1,record2:tag2:label2,[...]",
+    "records, tags and labels (taken from CondDB) to update in the form record1:tag1:label1,record2:tag2:label2,[...]",
 )
-options.register('localPL', ''                  ,
-    VarParsing.VarParsing.multiplicity.singleton,
-    VarParsing.VarParsing.varType.string        ,
-    "update the GT using a local payload (works only when updateGT is used)",
+options.register('updateGTfromLocalDB', ''  ,
+    VarParsing.VarParsing.multiplicity.list ,
+    VarParsing.VarParsing.varType.string    ,
+    "file, records, tags and labels (taken from LocalDB) to update in the form file1:record1:tag1:label1,file2:record2:tag2:label2,[...]",
 )
 options.register('saveRootFile', False              ,
     VarParsing.VarParsing.multiplicity.singleton    ,
@@ -110,14 +110,22 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load('Configuration.Geometry.GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff") 
 process.GlobalTag.globaltag = options.globalTag
-if options.updateGT!=['']:
-    align_psets = [
-        cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l)) 
-        for r,t,l in [o.split(':') for o in options.updateGT]
-    ] if options.localPL=='' else [
-        cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l), connect=cms.string(options.localPL))
-        for r,t,l in [o.split(':') for o in options.updateGT]
-    ]
+if options.updateGTfromCondDB != [''] or options.updateGTfromLocalDB != ['']:
+    # Conditions from CondDB
+    if options.updateGTfromCondDB != ['']:
+        align_psets_fromCondDB = [
+            cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l))
+            for r,t,l in [o.split(':') for o in options.updateGTfromCondDB]
+        ]
+    # Conditions from Local DB
+    if options.updateGTfromLocalDB != ['']:
+        align_psets_fromLocalDB = [
+            cms.PSet(record=cms.string(r), tag=cms.string(t), label=cms.untracked.string(l),
+                     connect=cms.string("sqlite_file:"+f))
+            for f,r,t,l in [o.split(':') for o in options.updateGTfromLocalDB]
+        ]
+    # Merge both cases and customize GT
+    align_psets = align_psets_fromCondDB + align_psets_fromLocalDB
     process.GlobalTag.toGet = cms.VPSet(*align_psets)
 # Track and PV refit
 INPUT_TRACKS = 'TrackRefitter'                          if options.refit else options.tracks
