@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-from __future__ import print_function
 import sys
 assert sys.version_info.major>2, "This script requires python 3+"
 import os
-assert os.system("auth-get-sso-cookie --help &> /dev/null")==0, "auth-get-sso-cookie must be installed. You should run this script on lxplus"
 import time
 import json
 import requests
-import http.cookiejar as cookielib
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from requests.exceptions import ConnectionError
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+import tsgauth
 import multiprocessing as mp
 
 import argparse
@@ -16,29 +17,17 @@ This script fetches information about stable proton fills form OMS and saves the
 Fills are fetched starting from most recent one.''')
 parser.add_argument('-n', '--number-of-fills', default=100                      , help="Number of fills to fetch"                     , type=int)
 parser.add_argument('-u', '--update'         , default=None                     , help="File to update"                               , type=str)
+parser.add_argument(      '--debug'          , action='store_true')
 parser.add_argument('-o', '--output'         , default='output.txt'             , help="Output file"                                  , type=str)
-parser.add_argument('-s', '--streams'        , default=max(mp.cpu_count()-4, 1) , help="Number of streams to use for fetching data"   , type=int)
+parser.add_argument('-s', '--streams'        , default=10                       , help="Number of streams to use for fetching data"   , type=int)
 parser.add_argument('-S', '--size'           , default=100                      , help="Number of fills to fetch with a single stream", type=int)
 args = parser.parse_args()
-
-def get_cookie(url):
-  '''generate a cookie for the OMS website
-  '''
-  cookiepath = './.cookiefile_OMSfetch.txt'
-  print("[INFO] generating cookie for url", url)
-  os.system('export PYTHONNOUSERSITE=1') # needed to use the system-wide packages, not the user defined ones
-  cmd = 'auth-get-sso-cookie --url "{}" -o {}'.format(url, cookiepath)
-  ret = os.system(cmd)
-  cookie = cookielib.MozillaCookieJar(cookiepath)
-  cookie.load()
-  os.remove(cookiepath)
-  return cookie
 
 def fetch_data(url):
   '''make a request to the OMS website and filter stable-beam proton-proton entries
   '''
-  global COOKIE
-  req = requests.get(url, verify=True, cookies=COOKIE, allow_redirects=False)
+  global AUTH
+  req = requests.get(url, verify=False, proxies={}, allow_redirects=False, **AUTH.authparams())
   if not req.ok:
     return []
   jsn = req.json()
@@ -84,15 +73,19 @@ def pbar():
 
 STEP=100
 URL="https://cmsoms.cern.ch/agg/api/v1/fills/?sort=-start_time&page[offset]={OFF}&page[limit]={LIM}"
-COOKIE=get_cookie('https://cmsoms.cern.ch/')
+AUTH=tsgauth.oidcauth.DeviceAuth(client_id="cmsoms-prod-public", client_secret=None, target_client_id="cmsoms-prod", use_auth_file=True)
 
 print('[INFO] Fetching data from OMS')
-chunks = sorted(set([_ for _ in range(0, args.number_of_fills, args.size)]+[args.number_of_fills]))
-with mp.Pool(args.streams) as pool:
-  progressbar = mp.Process(target=pbar)
-  progressbar.start()
-  fetched = pool.map(get_fills, [URL.format(OFF=off, LIM=args.size) for off in chunks])
-  progressbar.terminate()
+chunks  = [(args.size*i, args.size) for i in range(0, args.number_of_fills//args.size)]+[(args.size*(args.number_of_fills//args.size), args.number_of_fills%args.size)]
+urls    = [URL.format(OFF=off, LIM=lim) for off,lim in chunks]
+if not args.debug:
+  with mp.Pool(args.streams) as pool:
+    progressbar = mp.Process(target=pbar)
+    progressbar.start()
+    fetched = pool.map(get_fills, urls)
+    progressbar.terminate()
+else:
+  fetched = [get_fills(u) for u in urls]
 
 if args.update is not None:
   with open(args.update, 'r') as ifile:
