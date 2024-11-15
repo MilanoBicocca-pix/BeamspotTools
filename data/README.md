@@ -23,8 +23,11 @@ Add the new fills to the `fills.txt` file (or update it directly with the `-u` o
 By default the scripts only considers Fills:
  - of type `PROTONS`
  - with Stable Beams declared
+**If the execution crashes trying to fetch data from OMS, try reducing the number of streams.**
 
 ### Requirements:
 - `python3`
-- `auth-get-sso-cookie` (available on all lxplus nodes)
+- a valid kerberos ticket
+- optimism and good intentions
+- the [tsgauth](https://pypi.org/project/tsgauth/) python package
 - **DO NOT** set `cmsenv` environment!
