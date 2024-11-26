@@ -73,7 +73,12 @@ times = [
     'year 2024, month 4, day 1',
     'year 2024, month 4, day 5',
     'year 2024, month 5, day 2',
-    'year 2024, month 6, day 1'
+    'year 2024, month 6, day 1',
+    'year 2024, month 7, day 1',
+    'year 2024, month 8, day 1',
+    'year 2024, month 9, day 1',
+    'year 2024, month 10, day 1',
+    'year 2024, month 10, day 16'
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m, day %d") for time in times ]
@@ -147,7 +152,12 @@ X = np.array([
     0.131317,
     0.095503,
     0.094333,
-    0.096182
+    0.096182,
+    0.098065,
+    0.097670,
+    0.096485,
+    0.094188,
+    0.094010
 ])
 
 Y = np.array([
@@ -219,7 +229,12 @@ Y = np.array([
     -0.195124,
     -0.195209,
     -0.192109,
-    -0.191280
+    -0.191280,
+    -0.186304,
+    -0.185296,
+    -0.183877,
+    -0.188371,
+    -0.188706
 ])
 
 # convert from cm to micron
@@ -250,8 +265,8 @@ plt.xticks(rotation = 0, ha='center')
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
-plt.savefig('cms_beamspotXY_vs_time_2024_June.pdf')
-plt.savefig('cms_beamspotXY_vs_time_2024_June.png')
+plt.savefig('cms_beamspotXY_vs_time_2024_November.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2024_November.png')
 plt.close()
 
 
@@ -311,3 +326,8 @@ plt.close()
 # year 2024, month 4, day 5     X Pos = 0.095503 - Y Pos = -0.195209   --> from run 378985 workflow PCL_HP_byRun
 # year 2024, month 5, day 2     X Pos = 0.094333 - Y Pos = -0.192109   --> from run 380310 workflow PCL_HP_byRun
 # year 2024, month 6, day 1     X Pos = 0.096182 - Y Pos = -0.191280   --> from run 381443 workflow PCL_HP_byRun
+# year 2024, month 7 , day 1    X Pos = 0.098065 - Y Pos = -0.186304   --> from run 382649 workflow PCL_HP_byRun
+# year 2024, month 8 , day 1    X Pos = 0.097670 - Y Pos = -0.185296   --> from run 383944 workflow PCL_HP_byRun
+# year 2024, month 9 , day 1    X Pos = 0.096485 - Y Pos = -0.183877   --> from run 385178 workflow PCL_HP_byRun
+# year 2024, month 10, day 1    X Pos = 0.094188 - Y Pos = -0.188371   --> from run 386478 workflow PCL_HP_byRun
+# year 2024, month 10, day 16   X Pos = 0.094010 - Y Pos = -0.188706   --> from run 386951 workflow PCL_HP_byRun
