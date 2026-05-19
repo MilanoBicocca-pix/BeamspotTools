@@ -82,48 +82,56 @@ times = [
     'year 2025, month 4, day 22',
     'year 2025, month 5, day 5',
     'year 2025, month 5, day 16',
-    'year 2025, month 6, day 18'
+    'year 2025, month 6, day 18',
+    'year 2025, month 7, day 30',
+    'year 2025, month 9, day 1',
+    'year 2025, month 9, day 30',
+    'year 2025, month 10, day 29',
+    'year 2026, month 3, day 7',
+    'year 2026, month 4, day 1',
+    'year 2026, month 5, day 1',
+    'year 2026, month 5, day 16',
 ]
 
 Time = [datetime.strptime(time,"year 20%y, month %m, day %d") for time in times ]
 
 X = np.array([
-    0.094127, 
-    0.097010, 
-    0.094673, 
-    0.095701, 
-    0.096137, 
-    0.091765, 
-    0.094011, 
-    0.095973, 
-    0.077830, 
-    0.073874, 
-    0.073432, 
-    0.073288, 
-    0.070135, 
-    0.069991, 
-    0.075499, 
-    0.075489, 
-    0.073277, 
-    0.072273, 
-    0.071984, 
-    0.071005, 
-    0.070873, 
-    0.069778, 
-    0.069772, 
-    0.069930, 
-    0.069043, 
-    0.076854, 
-    0.076299, 
-    0.076813, 
-    0.077053, 
-    0.077149, 
-    0.064871, 
-    0.063223, 
-    0.058485, 
-    0.058380, 
-    0.057529, 
-    0.055517, 
+    0.094127,
+    0.097010,
+    0.094673,
+    0.095701,
+    0.096137,
+    0.091765,
+    0.094011,
+    0.095973,
+    0.077830,
+    0.073874,
+    0.073432,
+    0.073288,
+    0.070135,
+    0.069991,
+    0.075499,
+    0.075489,
+    0.073277,
+    0.072273,
+    0.071984,
+    0.071005,
+    0.070873,
+    0.069778,
+    0.069772,
+    0.069930,
+    0.069043,
+    0.076854,
+    0.076299,
+    0.076813,
+    0.077053,
+    0.077149,
+    0.064871,
+    0.063223,
+    0.058485,
+    0.058380,
+    0.057529,
+    0.055517,
     0.085308,
     0.084399,
     0.084372,
@@ -138,16 +146,16 @@ X = np.array([
     0.096190,
     0.096331,
     0.094505,
-    0.171753,#2021
+    0.171753, #2021
     0.172607,
-    0.173003,#2022
+    0.173003, #2022
     0.171824,
     0.173472,
     0.172803,
     0.174092,
     0.174249,
     0.172679,
-    0.115344,#2023
+    0.115344, #2023
     0.116808,
     0.117166,
     0.116243,
@@ -165,46 +173,54 @@ X = np.array([
     0.117524, #2025
     0.089778,
     0.087577,
-    0.089031
+    0.089031,
+    0.080082,
+    0.079202,
+    0.081725,
+    0.082176,
+    0.086807, #2026
+    0.087943,
+    0.085043,
+    0.087666
 ])
 
 Y = np.array([
-    0.000908, 
-    0.000927, 
-    0.006213, 
-    0.007750, 
-    0.008886, 
-    0.018286, 
-    0.016824, 
-    0.016994, 
-    0.028115, 
-    0.031726, 
-    0.033203, 
-    0.035653, 
-    0.041351, 
-    0.042480, 
-    0.040658, 
-    0.041007, 
-    0.056441, 
-    0.061710, 
-    0.063612, 
-    0.060969, 
-    0.063639, 
-    0.063423, 
-    0.062735, 
-    0.062511, 
-    0.062314, 
-    0.093296, 
-    0.094735, 
-    0.091153, 
-    0.092204, 
-    0.094503, 
-    0.094045, 
-    0.098545, 
-    0.101528, 
-    0.101729, 
-    0.105664, 
-    0.107506, 
+    0.000908,
+    0.000927,
+    0.006213,
+    0.007750,
+    0.008886,
+    0.018286,
+    0.016824,
+    0.016994,
+    0.028115,
+    0.031726,
+    0.033203,
+    0.035653,
+    0.041351,
+    0.042480,
+    0.040658,
+    0.041007,
+    0.056441,
+    0.061710,
+    0.063612,
+    0.060969,
+    0.063639,
+    0.063423,
+    0.062735,
+    0.062511,
+    0.062314,
+    0.093296,
+    0.094735,
+    0.091153,
+    0.092204,
+    0.094503,
+    0.094045,
+    0.098545,
+    0.101528,
+    0.101729,
+    0.105664,
+    0.107506,
     -0.034577,
     -0.033694,
     -0.032571,
@@ -219,16 +235,16 @@ Y = np.array([
     -0.062271,
     -0.061833,
     -0.063482,
-    -0.190651,#2021
+    -0.190651, #2021
     -0.192080,
-    -0.181755,#2022
+    -0.181755, #2022
     -0.180038,
     -0.181012,
     -0.182373,
     -0.183440,
     -0.183659,
     -0.183023,
-    -0.188842,#2023
+    -0.188842, #2023
     -0.186396,
     -0.183765,
     -0.181976,
@@ -246,7 +262,15 @@ Y = np.array([
     -0.191916, #2025
     -0.189424,
     -0.187853,
-    -0.189001
+    -0.189001,
+    -0.179032,
+    -0.177118,
+    -0.180274,
+    -0.179264,
+    -0.178143, #2026
+    -0.171696,
+    -0.170778,
+    -0.172999
 ])
 
 # convert from cm to micron
@@ -271,14 +295,14 @@ plt.scatter(Time,Y, c='g', s=40, lw = 0, label='Y', marker="s")
 plt.legend(loc=3, scatterpoints=1)
 plt.xlabel('Date')
 plt.ylabel('Beam spot centre coordinate [mm]')
-plt.title(r'$\bf{CMS}\:\it{Preliminary}$',loc='left',fontname='Nimbus Sans')
+plt.title(r'$\bf{CMS}\:\it{Preliminary}$',loc='left',fontname='Nimbus Sans') #, c='red')
 plt.xticks(rotation = 0, ha='center')
 # fit with np.polyfit
 # m, b = np.polyfit(Time, Y, 1)
 # plt.plot(x, m*x + b, '-', c='g')
 # plt.show()
-plt.savefig('cms_beamspotXY_vs_time_2025_June.pdf')
-plt.savefig('cms_beamspotXY_vs_time_2025_June.png')
+plt.savefig('cms_beamspotXY_vs_time_2026_May.pdf')
+plt.savefig('cms_beamspotXY_vs_time_2026_May.png')
 plt.close()
 
 
@@ -333,17 +357,25 @@ plt.close()
 # year 2023, month 6    X Pos = 0.117145 - Width = 8.4810E-04 [cm]   Y Pos = -0.183745 - Width = 9.4802E-04 [cm]   Z Pos = -0.430677 - Width = 3.7080E+00 [cm]
 # year 2023, month 7    X Pos = 0.116243 - Width = 7.7234E-04 [cm]   Y Pos = -0.181976 - Width = 8.3111E-04 [cm]   Z Pos = -0.519375 - Width = 3.6933E+00 [cm]
 # year 2023, month 9    X Pos = 0.112538 - Width = 6.5062E-03 [cm]   Y Pos = -0.186970 - Width = 6.5946E-03 [cm]   Z Pos = -0.278197 - Width = 4.5345E+00 [cm]
-# year 2024, month 3, day 21    X Pos = 0.136365 - Y Pos = -0.197122   --> from run 378238 workflow PCL_HP_byRun
-# year 2024, month 4, day 1     X Pos = 0.131317 - Y Pos = -0.195124   --> from run 378750 workflow PCL_HP_byRun
-# year 2024, month 4, day 5     X Pos = 0.095503 - Y Pos = -0.195209   --> from run 378985 workflow PCL_HP_byRun
-# year 2024, month 5, day 2     X Pos = 0.094333 - Y Pos = -0.192109   --> from run 380310 workflow PCL_HP_byRun
-# year 2024, month 6, day 1     X Pos = 0.096182 - Y Pos = -0.191280   --> from run 381443 workflow PCL_HP_byRun
+# year 2024, month 3 , day 21   X Pos = 0.136365 - Y Pos = -0.197122   --> from run 378238 workflow PCL_HP_byRun
+# year 2024, month 4 , day 1    X Pos = 0.131317 - Y Pos = -0.195124   --> from run 378750 workflow PCL_HP_byRun
+# year 2024, month 4 , day 5    X Pos = 0.095503 - Y Pos = -0.195209   --> from run 378985 workflow PCL_HP_byRun
+# year 2024, month 5 , day 2    X Pos = 0.094333 - Y Pos = -0.192109   --> from run 380310 workflow PCL_HP_byRun
+# year 2024, month 6 , day 1    X Pos = 0.096182 - Y Pos = -0.191280   --> from run 381443 workflow PCL_HP_byRun
 # year 2024, month 7 , day 1    X Pos = 0.098065 - Y Pos = -0.186304   --> from run 382649 workflow PCL_HP_byRun
 # year 2024, month 8 , day 1    X Pos = 0.097670 - Y Pos = -0.185296   --> from run 383944 workflow PCL_HP_byRun
 # year 2024, month 9 , day 1    X Pos = 0.096485 - Y Pos = -0.183877   --> from run 385178 workflow PCL_HP_byRun
 # year 2024, month 10, day 1    X Pos = 0.094188 - Y Pos = -0.188371   --> from run 386478 workflow PCL_HP_byRun
 # year 2024, month 10, day 16   X Pos = 0.094010 - Y Pos = -0.188706   --> from run 386951 workflow PCL_HP_byRun
-# year 2025, month 4,  day 22   X Pos = 0.117524 - Y Pos = -0.191916   --> from run 390951 workflow PCL_HP_byRun
-# year 2025, month 5,  day 5    X Pos = 0.089778 - Y Pos = -0.189424   --> from run 391658 workflow PCL_HP_byRun
-# year 2025, month 5,  day 16   X Pos = 0.087577 - Y Pis = -0.187853   --> from run 392197 workflow PCL_HP_byRun
-# year 2025, month 6,  day 18   X Pos = 0.089031 - Y Pis = -0.189001   --> from run 393461 workflow PCL_HP_byRun
+# year 2025, month 4 , day 22   X Pos = 0.117524 - Y Pos = -0.191916   --> from run 390951 workflow PCL_HP_byRun
+# year 2025, month 5 , day 5    X Pos = 0.089778 - Y Pos = -0.189424   --> from run 391658 workflow PCL_HP_byRun
+# year 2025, month 5 , day 16   X Pos = 0.087577 - Y P0s = -0.187853   --> from run 392197 workflow PCL_HP_byRun
+# year 2025, month 6 , day 18   X Pos = 0.089031 - Y P0s = -0.189001   --> from run 393461 workflow PCL_HP_byRun
+# year 2025, month 7 , day 30   X Pos = 0.080082 - Y Pos = -0.179032   --> from run 395237 workflow PCL_HP_byRun
+# year 2025, month 9 , day 1    X Pos = 0.079202 - Y Pos = -0.177118   --> from run 396422 workflow PCL_HP_byRun
+# year 2025, month 9 , day 30   X Pos = 0.081725 - Y Pos = -0.180274   --> from run 397638 workflow PCL_HP_byRun
+# year 2025, month 10, day 29   X Pos = 0.082176 - Y Pos = -0.179264   --> from run 398680 workflow PCL_HP_byRun
+# year 2026, month 3 , day 7    X Pos = 0.086807 - Y Pos = -0.178143   --> from run 401623 workflow PCL_HP_byRun
+# year 2026, month 4 , day 1    X Pos = 0.087943 - Y Pos = -0.171696   --> from run 402574 workflow PCL_HP_byRun
+# year 2026, month 5 , day 1    X Pos = 0.085043 - Y Pos = -0.170778   --> from run 403441 workflow PCL_HP_byRun
+# year 2026, month 5 , day 16   X Pos = 0.087666 - Y Pos = -0.172999   --> from run 403937 workflow PCL_HP_byRun
