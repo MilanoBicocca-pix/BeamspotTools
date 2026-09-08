@@ -3,7 +3,7 @@ import FWCore.ParameterSet.VarParsing   as VarParsing
 import os
 
 def filter_by_lumisection(file, run_string):
-    ''' check whether the file containes at least one
+    ''' check whether the file contains at least one
     lumisection in the luminosity range given by the run_string
     in the format "run1:ls1-run2:ls2,[...]"
     '''
