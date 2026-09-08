@@ -2,6 +2,44 @@ import FWCore.ParameterSet.Config       as cms
 import FWCore.ParameterSet.VarParsing   as VarParsing
 import os
 
+def filter_by_lumisection(file, run_string):
+    ''' check whether the file containes at least one
+    lumisection in the luminosity range given by the run_string
+    in the format "run1:ls1-run2:ls2,[...]"
+    '''
+    runs = os.popen('dasgoclient --query="run file={F}"'.format(F=file)).readlines()
+    runs = [int(r.strip('\n')) for r in runs]
+    for run in runs:
+        lss = os.popen('dasgoclient --query="lumi file={F} run={R}"'.format(F=file, R=run)).readlines()
+        lss = [int(l.strip('\n')) for l in lss]
+        for l in lss:
+            if any(check_lumisection(run, l, runrange) for runrange in run_string):
+                return True
+    return False
+
+def check_lumisection(run, ls, run_string):
+    ''' check whether the given run and lumisection pair is
+    in the luminosity range given by the run_string list
+    ("run1:ls1-run2:ls2,[...]")
+    '''
+    run_min = int(run_string.split('-')[0].split(':')[0])
+    run_max = int(run_string.split('-')[int('-' in run_string)].split(':')[0])
+    ls_min  = run_string.split('-')[0].split(':')[1]
+    ls_max  = run_string.split('-')[int('-' in run_string)].split(':')[1]
+
+    ls_min  = 0 if ls_min=='min' else int(ls_min)
+    ls_max  = 9999999 if ls_max=='max' else int(ls_max)
+
+    if run < run_min or run > run_max:
+        return False
+    if run_min==run_max and (ls<ls_min or ls>ls_max):
+        return False
+    elif run==run_min and ls<ls_min:
+        return False
+    elif run==run_max and ls>ls_max:
+        return False
+    return True
+
 def get_run_ranges(run_string):
     ''' get a list of tuples from the luminosity range string format "run1:ls1-run2:ls2,[...]"
     '''
@@ -70,6 +108,11 @@ options.register('saveRootFile', False              ,
     VarParsing.VarParsing.varType.bool              ,
     "save the fit result also in root file (debug)" ,
 )
+options.register('filterByLs', False                ,
+    VarParsing.VarParsing.multiplicity.singleton    ,
+    VarParsing.VarParsing.varType.bool              ,
+    "filter the files by lumiranges (it may take a while)",
+)
 options.parseArguments()
 
 # fetch the file list from the dataset using dasgoclient or from an input
@@ -81,6 +124,10 @@ if options.inputFiles==['']:
         )).readlines() for rrange in runranges
     ]
     filelist = [f.strip('\n') for rfiles in filelist_ for f in rfiles]
+    if options.filterByLs:
+        print('INFO: filtering files by lumisection, this may take a while...')
+        filelist = [f for f in filelist if filter_by_lumisection(f, options.runs)]
+        print('INFO: ...done.')
     filelist = [options.storePrepend+f for f in filelist]
 else:
     filelist = options.inputFiles
