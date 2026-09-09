@@ -1,20 +1,17 @@
 import FWCore.ParameterSet.Config       as cms
 import FWCore.ParameterSet.VarParsing   as VarParsing
 import os
-
-def get_run_ranges(run_string):
-    ''' get a list of tuples from the luminosity range string format "run1:ls1-run2:ls2,[...]"
-    '''
-    ranges = [( int(run.split('-')[0                ].split(':')[0]),
-                int(run.split('-')[int('-' in run)  ].split(':')[0])
-    ) for run in run_string]
-    assert all(r2>=r1 for (r1,r2) in ranges), "ERROR: run ranges are ill defined"
-    return ranges
+from das_utils import *
 
 # input arguments
 options = VarParsing.VarParsing('analysis')
 options.inputFiles = ''
 options.maxEvents  = -1
+options.register('inputFilesName', '',
+    VarParsing.VarParsing.multiplicity.singleton,
+    VarParsing.VarParsing.varType.string        ,
+    "TXT file with list of input root files"    ,
+)
 options.register('jobName', 'beamspotFit',
     VarParsing.VarParsing.multiplicity.singleton,
     VarParsing.VarParsing.varType.string        ,
@@ -72,18 +69,33 @@ options.register('saveRootFile', False              ,
 )
 options.parseArguments()
 
-# fetch the file list from the dataset using dasgoclient or from an input
-if options.inputFiles==['']:
-    runranges = get_run_ranges(options.runs)
-    dasquery  = 'dasgoclient --query="file dataset={D} run in [{L},{H}]"'
-    filelist_ = [os.popen(dasquery.format(
-        D=options.dataset, L=rrange[0], H=rrange[1]
-        )).readlines() for rrange in runranges
-    ]
-    filelist = [f.strip('\n') for rfiles in filelist_ for f in rfiles]
-    filelist = [options.storePrepend+f for f in filelist]
+# Compose the input filelist - 3 available options:
+#  1. pass a txt file with the list of files with '--inputFilesName'
+#  2. specify run/LS range with '--runs'
+#  3. pass directly a list of input root files with '--inputFiles'
+
+# Option 1
+if options.inputFilesName != '':
+    filelist = []
+    with open(options.inputFilesName, 'r') as infile:
+        for line in infile:
+            filelist.append(line.strip())
 else:
-    filelist = options.inputFiles
+    # Option 2
+    if options.inputFiles==['']:
+        runs_lumis = get_run_ranges(options.dataset, options.runs)
+        print("Parsed_runs:", runs_lumis)
+        filelist = []
+        for runls in runs_lumis:
+            for runnumber, ls_range in runls.items():
+                print("Querying files for run={R} ls={L}".format(R=runnumber,L=ls_range))
+                for ls in range(ls_range[0],ls_range[1]+1):
+                    filename = get_file(options.dataset, str(runnumber), str(ls))
+                    if filename:
+                        filelist.append(filename)
+    else:
+        # Option 3
+        filelist = options.inputFiles
 
 with open(options.jobName+'_filelist.txt', 'w') as filefile:
     filefile.write('\n'.join(filelist))
