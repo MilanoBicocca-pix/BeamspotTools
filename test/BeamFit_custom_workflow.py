@@ -7,7 +7,7 @@ from das_utils import *
 options = VarParsing.VarParsing('analysis')
 options.inputFiles = ''
 options.maxEvents  = -1
-options.register('inputFilesName', '',
+options.register('inputFilesTxt', '',
     VarParsing.VarParsing.multiplicity.singleton,
     VarParsing.VarParsing.varType.string        ,
     "TXT file with list of input root files"    ,
@@ -70,14 +70,14 @@ options.register('saveRootFile', False              ,
 options.parseArguments()
 
 # Compose the input filelist - 3 available options:
-#  1. pass a txt file with the list of files with '--inputFilesName'
+#  1. pass a txt file with the list of files with '--inputFilesTxt'
 #  2. specify run/LS range with '--runs'
 #  3. pass directly a list of input root files with '--inputFiles'
 
 # Option 1
-if options.inputFilesName != '':
+if options.inputFilesTxt != '':
     filelist = []
-    with open(options.inputFilesName, 'r') as infile:
+    with open(options.inputFilesTxt, 'r') as infile:
         for line in infile:
             filelist.append(line.strip())
 else:
